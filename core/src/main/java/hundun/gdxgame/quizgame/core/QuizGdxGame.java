@@ -17,7 +17,7 @@ import lombok.Getter;
 
 public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements IScreenSwitchHandler {
 
-    public static final int LOGIC_FRAME_PER_SECOND = 10;
+    public static final int LOGIC_FRAME_PER_SECOND = 20;
     
 	@Getter
 	TextureConfig textureConfig;

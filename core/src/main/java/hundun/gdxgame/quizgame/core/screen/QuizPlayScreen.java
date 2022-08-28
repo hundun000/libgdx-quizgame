@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.PlayCountdownClockVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.PlayQuestionVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.WaitConfirmMatchConfigMaskBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.WaitConfirmMatchSituationMaskBoardVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
@@ -41,10 +42,11 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     MatchConfig matchConfig;
     // --- quizLib quick access cache ---
     MatchSituationView currentMatchSituationView;
-    int currentCountDown;
+    int currentCountDownFrame;
     
     // ====== onShowLazyInit ======
     PlayCountdownClockVM countdownClockVM;
+    PlayQuestionVM playQuestionVM;
     // --- lazy add to stage ---
     WaitConfirmMatchConfigMaskBoardVM waitConfirmMatchConfigMaskBoardVM;
     WaitConfirmMatchSituationMaskBoardVM waitConfirmMatchSituationMaskBoardVM;
@@ -74,15 +76,20 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     }
     
     private void onShowLazyInit() {
+        
         countdownClockVM = new PlayCountdownClockVM(
                 game, 
                 new TextureRegionDrawable(game.getTextureConfig().getCountdownClockTexture())
                 );
         uiRootTable.add(countdownClockVM).height(50).width(50).left();
      
-        
+        playQuestionVM = new PlayQuestionVM(
+                game, 
+                DrawableFactory.getSimpleBoardBackground()
+                );
         uiRootTable.row();
-        uiRootTable.add(new Image()).expand();
+        uiRootTable.add(playQuestionVM).expand();
+
         
         Button showMatchSituationButton = new TextButton("showMatchSituation", game.getMainSkin());
         showMatchSituationButton.addListener(
@@ -118,7 +125,7 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     }
 
     private void renderAllPlay() {
-        countdownClockVM.updateCoutdown(currentCountDown);
+        countdownClockVM.updateCoutdownSecond(logicFrameHelper.frameNumToSecond(currentCountDownFrame));
     }
 
     @Override
@@ -127,8 +134,8 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     
     @Override
     public void onLogicFrame() {
-        currentCountDown--;
-        countdownClockVM.updateCoutdown(currentCountDown);
+        currentCountDownFrame--;
+        countdownClockVM.updateCoutdownSecond(logicFrameHelper.frameNumToSecond(currentCountDownFrame));
     }
 
 
@@ -152,8 +159,14 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
             
             currentMatchSituationView = quizLib.nextQustion(currentMatchSituationView.getId());
             SwitchQuestionEvent switchQuestionEvent = JavaFeatureForGwt.requireNonNull(currentMatchSituationView.getSwitchQuestionEvent());
-            currentCountDown = switchQuestionEvent.getTime();
+            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                    "switchQuestion by time second = %s, Question = %s", 
+                    switchQuestionEvent.getTime(),
+                    currentMatchSituationView.getQuestion()
+                    ));
             
+            currentCountDownFrame = logicFrameHelper.secondToFrameNum(switchQuestionEvent.getTime()) ;
+            playQuestionVM.updateQuestion(currentMatchSituationView.getQuestion());
             
             renderAllPlay();
         } catch (QuizgameException e) {

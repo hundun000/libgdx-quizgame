@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 
 /**
  * @author hundun
@@ -15,11 +16,13 @@ public class PlayCountdownClockVM extends Table {
     Label leftPart;
     Label rightPart;
     
+    NumberFormat format;
+    
     public PlayCountdownClockVM(
             QuizGdxGame game,
             Drawable background
             ) {
-        
+        this.format = NumberFormat.getFormat(1, 1);
         setBackground(background);
         
         leftPart = new Label("Time: ", game.getMainSkin());
@@ -28,8 +31,8 @@ public class PlayCountdownClockVM extends Table {
         this.add(rightPart);
     }
     
-    public void updateCoutdown(int second) {
-        rightPart.setText(second + "");
+    public void updateCoutdownSecond(double second) {
+        rightPart.setText(format.format(second));
     }
 
 }

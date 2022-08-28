@@ -29,13 +29,11 @@ public class QuizLibBridge implements IFrontEnd {
     
     
     @Override
-    public String[] fileGetChilePathNames(String folder) {
+    public String[] fileGetChilePathNames(String folder) {  
         FileHandle file = Gdx.files.internal(folder);
-        String[] result = Stream.of(file.list())
-                .map(it -> it.name())
-                .collect(Collectors.toList())
-                .toArray(new String[0])
-                ;
+        FileHandle listFile = file.child("list.txt");
+        String listContent = fileGetContent(listFile.path());
+        String[] result = listContent.split("\r?\n|\r");
         Gdx.app.log(this.getClass().getSimpleName(), "fileGetChilePathNames result = " + Arrays.toString(result));
         return result;
     }

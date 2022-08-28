@@ -131,7 +131,7 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
 	"default": {
-		"font": "default-font",
+		"font": "heiti26white",
 		"fontColor": "white",
 		"up": "default-round",
 		"down": "default-round-down"

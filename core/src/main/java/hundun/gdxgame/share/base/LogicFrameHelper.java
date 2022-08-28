@@ -35,4 +35,12 @@ public class LogicFrameHelper {
         }
         return false;
     }
+    
+    public double frameNumToSecond(int frameNum) {
+        return frameNum * LOGIC_FRAME_LENGTH;
+    }
+
+    public int secondToFrameNum(int second) {
+        return LOGIC_FRAME_PER_SECOND * second;
+    }
 }

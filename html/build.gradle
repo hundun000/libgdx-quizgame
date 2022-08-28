@@ -90,7 +90,7 @@ compileGwt {
 task addSource {
 	doLast {
 		sourceSets.main.compileClasspath += files(project(':core').sourceSets.main.allJava.srcDirs)
-		
+		sourceSets.main.compileClasspath += files(project(':quiz-lib').sourceSets.main.allJava.srcDirs)
 	}
 }
 

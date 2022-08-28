@@ -1,4 +1,4 @@
-package hundun.gdxgame.quigame;
+package hundun.gdxgame.quizgame.core;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import hundun.gdxgame.base.BaseHundunGame;
 import hundun.gdxgame.base.util.save.ISaveTool;
-import hundun.gdxgame.quigame.data.RootSaveData;
+import hundun.gdxgame.quizgame.core.data.RootSaveData;
 
 public class MyGdxGame extends BaseHundunGame<RootSaveData> {
 

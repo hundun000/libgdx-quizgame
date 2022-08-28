@@ -1,6 +1,6 @@
 package hundun.gdxgame.base.util.save;
 
-import hundun.gdxgame.quigame.data.RootSaveData;
+import hundun.gdxgame.quizgame.core.data.RootSaveData;
 
 /**
  * @author hundun

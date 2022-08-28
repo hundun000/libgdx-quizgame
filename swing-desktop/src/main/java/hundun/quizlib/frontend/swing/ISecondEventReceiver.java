@@ -1,4 +1,4 @@
-package hundun.quizgame.gui;
+package hundun.quizlib.frontend.swing;
 /**
  * @author hundun
  * Created on 2019/09/12

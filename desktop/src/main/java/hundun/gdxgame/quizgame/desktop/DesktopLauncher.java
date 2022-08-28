@@ -1,9 +1,9 @@
-package com.mygdx.game.desktop;
+package hundun.gdxgame.quizgame.desktop;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
-import hundun.gdxgame.quigame.MyGdxGame;
+import hundun.gdxgame.quizgame.core.MyGdxGame;
 
 
 public class DesktopLauncher {

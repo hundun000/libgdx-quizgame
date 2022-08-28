@@ -1,4 +1,4 @@
-package hundun.gdxgame.quigame.data;
+package hundun.gdxgame.quizgame.core.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

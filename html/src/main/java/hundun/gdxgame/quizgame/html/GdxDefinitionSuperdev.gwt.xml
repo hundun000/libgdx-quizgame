@@ -5,7 +5,7 @@
     <inherits name="com.github.nmorel.gwtjackson.GwtJackson" />
     
     <inherits name='HtmlApp' />
-    <entry-point class='com.mygdx.game.html.client.HtmlLauncher' />
+    <entry-point class='hundun.gdxgame.quizgame.html.client.HtmlLauncher' />
 	
 	<add-linker name="xsiframe"/>
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>

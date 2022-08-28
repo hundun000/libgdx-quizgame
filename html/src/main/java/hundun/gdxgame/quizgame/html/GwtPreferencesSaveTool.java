@@ -1,4 +1,4 @@
-package com.mygdx.game.html;
+package hundun.gdxgame.quizgame.html;
 
 
 import com.badlogic.gdx.Gdx;
@@ -6,7 +6,7 @@ import com.github.nmorel.gwtjackson.client.ObjectMapper;
 import com.google.gwt.core.client.GWT;
 
 import hundun.gdxgame.base.util.save.AbstractSaveDataSaveTool;
-import hundun.gdxgame.quigame.data.RootSaveData;
+import hundun.gdxgame.quizgame.core.data.RootSaveData;
 
 
 /**

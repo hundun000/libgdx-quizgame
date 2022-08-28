@@ -1,11 +1,11 @@
-package com.mygdx.game.html.client;
+package hundun.gdxgame.quizgame.html.client;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import com.mygdx.game.html.GwtPreferencesSaveTool;
 
-import hundun.gdxgame.quigame.MyGdxGame;
+import hundun.gdxgame.quizgame.core.MyGdxGame;
+import hundun.gdxgame.quizgame.html.GwtPreferencesSaveTool;
 
 
 

@@ -1,4 +1,4 @@
-package hundun.quizgame.gui;
+package hundun.quizlib.frontend.swing;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;

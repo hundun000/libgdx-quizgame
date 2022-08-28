@@ -1,4 +1,4 @@
-package com.mygdx.game.desktop;
+package hundun.gdxgame.quizgame.desktop;
 
 import java.io.IOException;
 
@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import hundun.gdxgame.base.util.save.AbstractSaveDataSaveTool;
-import hundun.gdxgame.quigame.data.RootSaveData;
+import hundun.gdxgame.quizgame.core.data.RootSaveData;
 
 
 

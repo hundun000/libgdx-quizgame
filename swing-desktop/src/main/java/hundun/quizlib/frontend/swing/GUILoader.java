@@ -1,4 +1,4 @@
-package hundun.quizgame.gui;
+package hundun.quizlib.frontend.swing;
 
 import hundun.quizlib.context.QuizComponentContext;
 import hundun.quizlib.service.GameService;

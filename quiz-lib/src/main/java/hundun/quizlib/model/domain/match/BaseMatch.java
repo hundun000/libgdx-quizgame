@@ -76,13 +76,13 @@ public class BaseMatch {
 	}
 	
 
-	public void start() throws QuizgameException {
+	public void start(List<String> questionIds) throws QuizgameException {
 	    checkStateException(state, ClientActionType.START_MATCH);
 	    
 	    setCurrentTeam(0);
  
 	    eventsClear();
-	    this.startMatchEvent = MatchEventFactory.getTypeStartMatch(this.teamRuntimeModels);
+	    this.startMatchEvent = MatchEventFactory.getTypeStartMatch(this.teamRuntimeModels, questionIds);
         //events.add(checkSwitchQuestionEvent());
 	    this.state = MatchState.WAIT_GENERATE_QUESTION;
     }

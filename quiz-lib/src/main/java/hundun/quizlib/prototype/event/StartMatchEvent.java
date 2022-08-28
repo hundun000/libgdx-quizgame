@@ -11,4 +11,5 @@ import lombok.Data;
 @Data
 public class StartMatchEvent extends MatchEvent {
     List<TeamPrototype> teamPrototypes;
+    List<String> questionIds;
 }

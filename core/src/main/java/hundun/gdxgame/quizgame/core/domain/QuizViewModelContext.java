@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.screen.QuizMenuScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizPlayScreen;
 import hundun.gdxgame.quizgame.core.screen.TeamScreen;
 import hundun.gdxgame.share.base.BaseHundunGame;
@@ -32,36 +33,7 @@ public class QuizViewModelContext extends BaseViewModelContext<QuizRootSaveData>
         
         BaseHundunScreen<?, ?> screen;
         
-        screen = StarterMenuScreen.Factory.simpleBuild(
-                game, 
-                "Quiz", 
-                game.getTextureConfig().getMenuTexture(), 
-                new InputListener(){
-                    @Override
-                    public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                        game.gameLoadOrNew(true);
-                        game.setScreen(getScreen(TeamScreen.class));
-                        //TextUmaGame.this.getAudioPlayManager().intoScreen(ScreenId.PLAY);
-                    }
-                    @Override
-                    public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                        return true;
-                    }
-                },
-                new InputListener(){
-                    @Override
-                    public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                        game.gameLoadOrNew(false);
-                        game.setScreen(getScreen(TeamScreen.class));
-                        //TextUmaGame.this.getAudioPlayManager().intoScreen(ScreenId.PLAY);
-                    }
-                    @Override
-                    public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                        return true;
-                    }
-                }
-                );
-        
+        screen = new QuizMenuScreen(game);
         screenMap.put(screen.getClass(), screen);
         
         screen = new TeamScreen(game);

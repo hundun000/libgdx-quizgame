@@ -69,7 +69,7 @@ public class GameService implements IQuizComponent {
         //log.info("start match:{}", sessionId);
         SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
         BaseMatch match = sessionDataPackage.getMatch();
-        match.start();
+        match.start(sessionDataPackage.getQuestionIds());
         MatchSituationView matchSituationView = match.toMatchSituationView();
         return matchSituationView;
     }

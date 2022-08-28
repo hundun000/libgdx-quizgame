@@ -5,11 +5,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.PlayCountdownClockVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.WaitConfirmMatchConfigMaskBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.WaitConfirmMatchSituationMaskBoardVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
@@ -18,7 +21,10 @@ import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.quizlib.context.QuizComponentContext;
 import hundun.quizlib.exception.QuizgameException;
+import hundun.quizlib.prototype.event.StartMatchEvent;
+import hundun.quizlib.prototype.event.SwitchQuestionEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
+import hundun.quizlib.service.GameService;
 import hundun.quizlib.view.match.MatchSituationView;
 
 /**
@@ -30,19 +36,22 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         WaitConfirmMatchSituationMaskBoardVM.CallerAndCallback
 {
 
-    private final QuizComponentContext quizLib;
-    // --- quizLib quick access cache ---
+    private final GameService quizLib;
+    
     MatchConfig matchConfig;
+    // --- quizLib quick access cache ---
+    MatchSituationView currentMatchSituationView;
+    int currentCountDown;
     
     // ====== onShowLazyInit ======
-    Label frameCountLable;
+    PlayCountdownClockVM countdownClockVM;
     // --- lazy add to stage ---
     WaitConfirmMatchConfigMaskBoardVM waitConfirmMatchConfigMaskBoardVM;
     WaitConfirmMatchSituationMaskBoardVM waitConfirmMatchSituationMaskBoardVM;
     
     public QuizPlayScreen(QuizGdxGame game) {
         super(game);
-        this.quizLib = game.getQuizLibBridge().getQuizComponentContext();
+        this.quizLib = game.getQuizLibBridge().getQuizComponentContext().getGameService();
         
         this.logicFrameHelper = new LogicFrameHelper(QuizGdxGame.LOGIC_FRAME_PER_SECOND);
     }
@@ -56,14 +65,25 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         intoPostShowState();
     }
     
+    public void prepareShow(MatchConfig matchConfig) {
+        this.matchConfig = matchConfig;
+    }
+    
     private void intoPostShowState() {
         onMatchConfigConfirmCallShow();
     }
     
     private void onShowLazyInit() {
-        frameCountLable = new Label("TEMP", game.getMainSkin());
-        uiRootTable.add(frameCountLable);
+        countdownClockVM = new PlayCountdownClockVM(
+                game, 
+                new TextureRegionDrawable(game.getTextureConfig().getCountdownClockTexture())
+                );
+        uiRootTable.add(countdownClockVM).height(50).width(50).left();
      
+        
+        uiRootTable.row();
+        uiRootTable.add(new Image()).expand();
+        
         Button showMatchSituationButton = new TextButton("showMatchSituation", game.getMainSkin());
         showMatchSituationButton.addListener(
                 new InputListener(){
@@ -78,7 +98,7 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
                 }
         );
         uiRootTable.row();
-        uiRootTable.add(showMatchSituationButton).top().expand();
+        uiRootTable.add(showMatchSituationButton);
         
         // --- lazy add to stage ---
         waitConfirmMatchConfigMaskBoardVM = new WaitConfirmMatchConfigMaskBoardVM(
@@ -97,6 +117,9 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         }
     }
 
+    private void renderAllPlay() {
+        countdownClockVM.updateCoutdown(currentCountDown);
+    }
 
     @Override
     public void dispose() {
@@ -104,8 +127,8 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     
     @Override
     public void onLogicFrame() {
-        String text = JavaFeatureForGwt.stringFormat("Frame: %s", logicFrameHelper.getClockCount()); 
-        frameCountLable.setText(text);
+        currentCountDown--;
+        countdownClockVM.updateCoutdown(currentCountDown);
     }
 
 
@@ -114,10 +137,28 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         Gdx.app.log(this.getClass().getSimpleName(), "onMatchConfigConfirmed called");
         // --- ui ---
         popupRootTable.clear();
-        
-        // --- logic ---
+        // --- screen logic ---
         Gdx.input.setInputProcessor(uiStage);
         logicFrameHelper.setLogicFramePause(false);
+        // --- play logic ---
+        try {
+            currentMatchSituationView = quizLib.createMatch(matchConfig);
+            currentMatchSituationView = quizLib.startMatch(currentMatchSituationView.getId());
+            StartMatchEvent startMatchEvent = JavaFeatureForGwt.requireNonNull(currentMatchSituationView.getStartMatchEvent());
+            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                    "startMatch by QuestionIds = %s", 
+                    startMatchEvent.getQuestionIds()
+                    ));
+            
+            currentMatchSituationView = quizLib.nextQustion(currentMatchSituationView.getId());
+            SwitchQuestionEvent switchQuestionEvent = JavaFeatureForGwt.requireNonNull(currentMatchSituationView.getSwitchQuestionEvent());
+            currentCountDown = switchQuestionEvent.getTime();
+            
+            
+            renderAllPlay();
+        } catch (QuizgameException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -150,9 +191,7 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         
         popupRootTable.add(waitConfirmMatchSituationMaskBoardVM);
         // --- logic ---
-        // TODO
-        MatchSituationView matchSituationView = null;
-        waitConfirmMatchSituationMaskBoardVM.onCallShow(matchSituationView);
+        waitConfirmMatchSituationMaskBoardVM.onCallShow(currentMatchSituationView);
         Gdx.input.setInputProcessor(popupUiStage);
         logicFrameHelper.setLogicFramePause(true);
     }

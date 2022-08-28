@@ -1,5 +1,7 @@
 package hundun.gdxgame.quizgame.core.screen;
 
+import java.util.Arrays;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -13,6 +15,10 @@ import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.AllTeamManagerAreaVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.TeamManagerVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
+import hundun.quizlib.prototype.match.MatchConfig;
+import hundun.quizlib.prototype.match.MatchStrategyType;
+import hundun.quizlib.service.BuiltinDataConfiguration;
+import hundun.quizlib.service.QuestionLoaderService;
 import hundun.quizlib.service.TeamService;
 
 /**
@@ -71,8 +77,13 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
                     new InputListener(){
                         @Override
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                            game.gameLoadOrNew(true);
-                            game.setScreen(game.getModelContext().getScreen(QuizPlayScreen.class));
+                            // TODO
+                            MatchConfig matchConfig = new MatchConfig();
+                            matchConfig.setTeamNames(Arrays.asList(BuiltinDataConfiguration.DEMO_LIST_TEAM_NAME_0));
+                            matchConfig.setQuestionPackageName(QuestionLoaderService.PRELEASE_PACKAGE_NAME);
+                            matchConfig.setMatchStrategyType(MatchStrategyType.ENDLESS);
+                            
+                            game.intoQuizPlayScreen(matchConfig);
                             //TextUmaGame.this.getAudioPlayManager().intoScreen(ScreenId.PLAY);
                         }
                         @Override

@@ -34,9 +34,11 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
     Image backImage;
     
     public static class Factory {
+        
         public static <T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> 
-        StarterMenuScreen<T_GAME, T_SAVE> 
-        simpleBuild(
+        void
+        simpleFill(
+                StarterMenuScreen<T_GAME, T_SAVE> target,
                 T_GAME game, 
                 String titleText,
                 Texture backTexture,
@@ -58,33 +60,49 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
             
             Button buttonIntoSettingScreen = new TextButton("Setting", game.getMainSkin());
             
-            return new StarterMenuScreen<T_GAME, T_SAVE>(
-                    game, 
-                    titleLabel, 
-                    backImage, 
-                    buttonContinueGame, 
-                    buttonNewGame, 
-                    buttonIntoSettingScreen
-                    );
+            target.title = titleLabel;
+            target.backImage = backImage;
+            target.buttonContinueGame = buttonContinueGame;
+            target.buttonNewGame = buttonNewGame;
+            target.buttonIntoSettingScreen = buttonIntoSettingScreen;
+        }
+        
+        public static <T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> 
+        StarterMenuScreen<T_GAME, T_SAVE> 
+        simpleBuild(
+                T_GAME game, 
+                String titleText,
+                Texture backTexture,
+                InputListener buttonContinueGameInputListener, 
+                InputListener buttonNewGameInputListener
+                ) {
+            StarterMenuScreen<T_GAME, T_SAVE> target = new StarterMenuScreen<>(game);
+            simpleFill(target, game, titleText, backTexture, buttonContinueGameInputListener, buttonNewGameInputListener);
+            return target;
         }
     }
     
-    
-    public StarterMenuScreen(T_GAME game, 
-            Actor title,
-            Image backImage,
-            Actor buttonContinueGame,
-            Actor buttonNewGame,
-            Actor buttonIntoSettingScreen
+    public StarterMenuScreen(T_GAME game
             ) {
         super(game);
-        this.backImage = backImage;
-        this.buttonContinueGame = buttonContinueGame;
-        this.buttonNewGame = buttonNewGame;
-        this.buttonIntoSettingScreen = buttonIntoSettingScreen;
-        
-
     }
+
+    
+//    public StarterMenuScreen(T_GAME game, 
+//            Actor title,
+//            Image backImage,
+//            Actor buttonContinueGame,
+//            Actor buttonNewGame,
+//            Actor buttonIntoSettingScreen
+//            ) {
+//        super(game);
+//        this.backImage = backImage;
+//        this.buttonContinueGame = buttonContinueGame;
+//        this.buttonNewGame = buttonNewGame;
+//        this.buttonIntoSettingScreen = buttonIntoSettingScreen;
+//        
+//
+//    }
 
     private void initScene2d() {
 

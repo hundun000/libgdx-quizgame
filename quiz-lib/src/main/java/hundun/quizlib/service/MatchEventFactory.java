@@ -34,7 +34,7 @@ public class MatchEventFactory {
         return false;
     }
     
-    public static StartMatchEvent getTypeStartMatch(List<TeamRuntimeModel> teamRuntimeModels){
+    public static StartMatchEvent getTypeStartMatch(List<TeamRuntimeModel> teamRuntimeModels, List<String> questionIds){
         StartMatchEvent event = new StartMatchEvent();
         event.setType(EventType.START_MATCH);
         List<TeamPrototype> teamPrototypes = new ArrayList<>();
@@ -42,6 +42,7 @@ public class MatchEventFactory {
             teamPrototypes.add(teamRuntimeModel.getPrototype());
         }
         event.setTeamPrototypes(teamPrototypes);
+        event.setQuestionIds(questionIds);
         return event;
     }
     

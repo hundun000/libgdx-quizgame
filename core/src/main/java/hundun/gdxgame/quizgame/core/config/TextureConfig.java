@@ -14,6 +14,9 @@ public class TextureConfig {
 
     @Getter
     protected Texture menuTexture;
+    @Getter
+    protected Texture countdownClockTexture;
+    
     
     private Texture textureOrDefault(FileHandle file) {
         try {
@@ -27,7 +30,7 @@ public class TextureConfig {
 
 
         menuTexture = textureOrDefault(Gdx.files.internal("menu.png"));
-        
+        countdownClockTexture = textureOrDefault(Gdx.files.internal("countdownClock.png"));
         
     }
 

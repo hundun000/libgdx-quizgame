@@ -26,7 +26,7 @@ allprojects {
         appName = 'libgdx-quizgame'
         gwtFrameworkVersion = '2.8.2'
         
-        gdxVersion = '1.9.12'
+        gdxVersion = '1.10.0'
     }
     
     

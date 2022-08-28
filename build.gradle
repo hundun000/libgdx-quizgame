@@ -1,0 +1,93 @@
+buildscript {
+    ext {
+        gwtPluginVersion = '1.1.16'
+    }
+	repositories {
+		mavenLocal()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        google()
+	}
+	dependencies {
+		classpath "org.wisepersist:gwt-gradle-plugin:$gwtPluginVersion"
+		classpath 'org.gretty:gretty:3.0.5'
+	}
+}
+
+allprojects {
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
+	apply plugin: 'java'
+	java {
+    	sourceCompatibility = JavaVersion.VERSION_1_8
+    	targetCompatibility = JavaVersion.VERSION_1_8
+    }
+	ext {
+        appName = 'libgdx-quizgame'
+        gwtFrameworkVersion = '2.8.2'
+        
+        gdxVersion = '1.9.12'
+	}
+	
+	
+}
+
+subprojects {
+	apply plugin: 'java-library'
+	version = '0.0.1-SNAPSHOT'
+	
+	repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://plugins.gradle.org/m2/" }
+	}
+}
+
+project(":core") {
+	dependencies {
+		api "com.badlogicgames.gdx:gdx:$gdxVersion"
+		
+		compileOnly 'org.projectlombok:lombok:1.18.4'
+		annotationProcessor 'org.projectlombok:lombok:1.18.4'
+	}
+}
+
+project(":desktop") {
+	dependencies {
+		implementation project(':core')
+		implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+		implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+		
+		api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.5'
+	}
+}
+
+project(":html") {
+	apply plugin: "gwt"
+	apply plugin: "war"
+	apply plugin: "org.gretty"
+
+	dependencies {
+		implementation project(':core')
+		implementation "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
+		implementation "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
+		implementation "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
+
+        implementation group: 'com.github.nmorel.gwtjackson', name: 'gwt-jackson', version: '0.15.4'
+
+        //compileOnly 'org.projectlombok:lombok:1.18.4'
+	}
+}
+
+project(":swing-desktop") {
+    eclipse.project.name = appName + '-swing-desktop'
+
+    dependencies {
+        implementation project(":core")
+    }
+}
+
+eclipse.project.name = ext.appName

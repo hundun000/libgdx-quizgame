@@ -5,8 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.github.nmorel.gwtjackson.client.ObjectMapper;
 import com.google.gwt.core.client.GWT;
 
-import hundun.gdxgame.base.util.save.AbstractSaveDataSaveTool;
-import hundun.gdxgame.quizgame.core.data.RootSaveData;
+import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
+import hundun.gdxgame.share.base.util.save.AbstractSaveDataSaveTool;
 
 
 /**
@@ -18,7 +18,7 @@ public class GwtPreferencesSaveTool extends AbstractSaveDataSaveTool {
     
     private SaveDataMapper objectMapper;
     
-    public static interface SaveDataMapper extends ObjectMapper<RootSaveData> {}
+    public static interface SaveDataMapper extends ObjectMapper<QuizRootSaveData> {}
     
     
     public GwtPreferencesSaveTool(String preferencesName) {
@@ -28,7 +28,7 @@ public class GwtPreferencesSaveTool extends AbstractSaveDataSaveTool {
 
 
     @Override
-    public void saveRootSaveData(RootSaveData saveData) {
+    public void writeRootSaveData(QuizRootSaveData saveData) {
         try {
             preferences.putString(ROOT_KEY, objectMapper.write(saveData));
             preferences.flush();
@@ -41,11 +41,11 @@ public class GwtPreferencesSaveTool extends AbstractSaveDataSaveTool {
 
 
     @Override
-    public RootSaveData loadRootSaveData() {
+    public QuizRootSaveData readRootSaveData() {
 
         try {
             String date = preferences.getString(ROOT_KEY);
-            RootSaveData saveData = objectMapper.read(date);
+            QuizRootSaveData saveData = objectMapper.read(date);
             return saveData;
         } catch (Exception e) {
             Gdx.app.error(getClass().getSimpleName(), "load() error", e);

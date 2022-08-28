@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.data;
+package hundun.gdxgame.quizgame.core.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RootSaveData {
+public class QuizRootSaveData {
     
     MyGameSaveData data;
     
@@ -23,8 +23,8 @@ public class RootSaveData {
     }
     
     public static class Factory {
-        public static RootSaveData newGame() {
-            return new RootSaveData(
+        public static QuizRootSaveData newGame() {
+            return new QuizRootSaveData(
                     new MyGameSaveData("Hello world")
                     );
         }

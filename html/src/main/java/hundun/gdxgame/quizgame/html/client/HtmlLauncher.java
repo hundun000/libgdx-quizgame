@@ -4,7 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 
-import hundun.gdxgame.quizgame.core.MyGdxGame;
+import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.html.GwtPreferencesSaveTool;
 
 
@@ -18,6 +18,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener() {
-            return new MyGdxGame(new GwtPreferencesSaveTool("demo-html-save"));
+            return new QuizGdxGame(new GwtPreferencesSaveTool("demo-html-save"));
         }
 }

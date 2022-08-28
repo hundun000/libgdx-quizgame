@@ -6,8 +6,8 @@ import com.badlogic.gdx.Gdx;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import hundun.gdxgame.base.util.save.AbstractSaveDataSaveTool;
-import hundun.gdxgame.quizgame.core.data.RootSaveData;
+import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
+import hundun.gdxgame.share.base.util.save.AbstractSaveDataSaveTool;
 
 
 
@@ -37,7 +37,7 @@ public class DesktopPreferencesSaveTool extends AbstractSaveDataSaveTool {
 
 
     @Override
-    public void saveRootSaveData(RootSaveData saveData) {
+    public void writeRootSaveData(QuizRootSaveData saveData) {
         try {
             preferences.putString(ROOT_KEY, objectMapper.writeValueAsString(saveData));
             preferences.flush();
@@ -50,10 +50,10 @@ public class DesktopPreferencesSaveTool extends AbstractSaveDataSaveTool {
 
 
     @Override
-    public RootSaveData loadRootSaveData() {
+    public QuizRootSaveData readRootSaveData() {
         try {
             String date = preferences.getString(ROOT_KEY);
-            RootSaveData saveData = objectMapper.readValue(date, RootSaveData.class);
+            QuizRootSaveData saveData = objectMapper.readValue(date, QuizRootSaveData.class);
             return saveData;
         } catch (IOException e) {
             Gdx.app.error(getClass().getSimpleName(), "load() error", e);

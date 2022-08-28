@@ -1,4 +1,4 @@
-package hundun.gdxgame.base.util.save;
+package hundun.gdxgame.share.base.util.save;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,14 +7,14 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
-import hundun.gdxgame.quizgame.core.data.RootSaveData;
+import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 
 
 /**
  * @author hundun
  * Created on 2022/08/04
  */
-public abstract class AbstractSaveDataSaveTool implements ISaveTool<RootSaveData> {
+public abstract class AbstractSaveDataSaveTool implements ISaveTool<QuizRootSaveData> {
     
     protected String preferencesName;
     protected Preferences preferences;

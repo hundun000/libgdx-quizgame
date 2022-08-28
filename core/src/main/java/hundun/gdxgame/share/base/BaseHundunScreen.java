@@ -1,10 +1,12 @@
-package hundun.gdxgame.base;
+package hundun.gdxgame.share.base;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import lombok.Getter;
 
 
 
@@ -14,19 +16,14 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
  * @param <T_GAME>
  * @param <T_SAVE>
  */
-public abstract class BaseScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> implements Screen {
-    public final T_GAME game;
+public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> implements Screen {
+    @Getter
+    protected final T_GAME game;
     protected final Stage uiStage;
 
-    protected final String screenId;
-    // ------ replace-lombok ------
-    public String getScreenId() {
-        return screenId;
-    }
 
-    public BaseScreen(T_GAME game, String screenId) {
+    public BaseHundunScreen(T_GAME game) {
         this.game = game;
-        this.screenId = screenId;
         OrthographicCamera camera = new OrthographicCamera(game.LOGIC_WIDTH, game.LOGIC_HEIGHT);
         FitViewport viewport = new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera);
         this.uiStage = new Stage(viewport, game.getBatch());

@@ -32,7 +32,6 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
     Actor buttonNewGame;
     Actor buttonIntoSettingScreen;
     Image backImage;
-    Table table;
     
     public static class Factory {
         public static <T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> 
@@ -83,66 +82,47 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
         this.buttonContinueGame = buttonContinueGame;
         this.buttonNewGame = buttonNewGame;
         this.buttonIntoSettingScreen = buttonIntoSettingScreen;
-        initScene2d();
+        
 
     }
 
     private void initScene2d() {
 
-        uiStage.addActor(backImage);
-
-        table = new Table();
-        table.setFillParent(true);
-        //table.setBounds((game.LOGIC_WIDTH - BUTTON_WIDTH)/2, 0, BUTTON_WIDTH, game.LOGIC_HEIGHT / 2);
-        uiStage.addActor(table);
+        backUiStage.addActor(backImage);
 
 
-        table.add(title)
+
+
+        uiRootTable.add(title)
                 .row();
         
 
         if (game.gameHasSave()) {
-            table.add(buttonContinueGame)
+            uiRootTable.add(buttonContinueGame)
                 .height(BUTTON_BIG_HEIGHT)
                 .fillY()
                 .padTop(10)
                 .row();
         }
 
-        table.add(buttonNewGame)
+        uiRootTable.add(buttonNewGame)
             .height(game.gameHasSave() ? BUTTON_SMALL_HEIGHT : BUTTON_BIG_HEIGHT)
             .fillY()
             .padTop(10)
             .row();
 
-        if (game.debugMode) {
-            table.debugAll();
-        }
+        
     }
 
     @Override
     public void show() {
         Gdx.input.setInputProcessor(uiStage);
-
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
-
+        
+        initScene2d();
     }
-
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-
-
-
-
-        uiStage.act();
-        uiStage.draw();
-    }
-
-
 
     @Override
     public void dispose() {}
+
 }

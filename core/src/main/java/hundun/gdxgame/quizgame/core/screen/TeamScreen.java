@@ -22,7 +22,6 @@ import hundun.quizlib.service.TeamService;
 public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> {
 
     TeamService teamService;
-    private Table uiRootTable;
     
     AllTeamManagerAreaVM allTeamManagerAreaVM;
     
@@ -37,10 +36,7 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         
         this.teamService = game.getQuizLibBridge().getQuizComponentContext().getTeamService();
     
-        uiRootTable = new Table();
-        uiRootTable.setFillParent(true);
-        uiStage.addActor(uiRootTable);
-    
+        
         allTeamManagerAreaVM = new AllTeamManagerAreaVM(this);
         uiRootTable.add(allTeamManagerAreaVM);
         
@@ -52,15 +48,6 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         }
         
         readAllTeamAndUpdateVM();
-    }
-
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        uiStage.act();
-        uiStage.draw();
     }
 
     @Override
@@ -99,4 +86,5 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         
         
     }
+
 }

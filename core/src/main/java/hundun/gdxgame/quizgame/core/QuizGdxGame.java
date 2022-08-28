@@ -12,6 +12,8 @@ import lombok.Getter;
 
 public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {
 
+    public static final int LOGIC_FRAME_PER_SECOND = 10;
+    
 	@Getter
 	TextureConfig textureConfig;
 	@Getter

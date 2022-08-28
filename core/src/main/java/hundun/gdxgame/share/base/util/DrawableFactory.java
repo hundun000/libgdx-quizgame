@@ -24,4 +24,8 @@ public class DrawableFactory {
     public static Drawable getSimpleBoardBackground() {
         return createBorderBoard(10, 10, 0.8f, 1);
     }
+    
+    public static Drawable getSimpleBoardBackground(int width, int height) {
+        return createBorderBoard(width, height, 0.8f, 1);
+    }
 }

@@ -32,9 +32,8 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
     // ------ lazy init ------
     protected final Table uiRootTable;
     protected final Table popupRootTable;
-    @Setter
-    @Getter
-    LogicFrameHelper logicFrameHelper;
+
+    protected LogicFrameHelper logicFrameHelper;
     
     public BaseHundunScreen(T_GAME game) {
         this.game = game;
@@ -51,8 +50,6 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
         popupRootTable = new Table();
         popupRootTable.setFillParent(true);
         popupUiStage.addActor(popupRootTable);
-        
-
     }
     
     public void onLogicFrame() {

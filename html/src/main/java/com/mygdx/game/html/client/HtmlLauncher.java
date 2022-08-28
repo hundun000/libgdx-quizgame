@@ -3,8 +3,9 @@ package com.mygdx.game.html.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import com.mygdx.game.core.MyGdxGame;
 import com.mygdx.game.html.GwtPreferencesSaveTool;
+
+import hundun.gdxgame.quigame.MyGdxGame;
 
 
 

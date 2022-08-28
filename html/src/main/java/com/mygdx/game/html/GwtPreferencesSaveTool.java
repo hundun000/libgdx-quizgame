@@ -4,8 +4,9 @@ package com.mygdx.game.html;
 import com.badlogic.gdx.Gdx;
 import com.github.nmorel.gwtjackson.client.ObjectMapper;
 import com.google.gwt.core.client.GWT;
-import com.mygdx.game.core.data.RootSaveData;
-import com.mygdx.game.core.util.save.AbstractSaveDataSaveTool;
+
+import hundun.gdxgame.base.util.save.AbstractSaveDataSaveTool;
+import hundun.gdxgame.quigame.data.RootSaveData;
 
 
 /**

@@ -1,7 +1,7 @@
 package hundun.quizgame.gui;
 
-import hundun.quizgame.core.context.QuizComponentContext;
-import hundun.quizgame.core.service.GameService;
+import hundun.quizlib.context.QuizComponentContext;
+import hundun.quizlib.service.GameService;
 
 /**
  * @author hundun

@@ -1,1 +1,1 @@
-include 'html', 'desktop', 'core', 'swing-desktop'
+include 'html', 'desktop', 'core', 'swing-desktop', 'quiz-lib'

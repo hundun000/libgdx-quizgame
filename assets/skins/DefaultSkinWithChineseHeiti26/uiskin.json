@@ -1,10 +1,10 @@
 {
 "com.badlogic.gdx.graphics.g2d.BitmapFont": {
-	"chineseheiti": {
-		"file": "chineseheiti.fnt"
-	},
 	"default-font": {
 		"file": "default.fnt"
+	},
+	"heiti26white": {
+		"file": "heiti26white.fnt"
 	}
 },
 "com.badlogic.gdx.graphics.Color": {
@@ -71,8 +71,8 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
 	"default": {
-		"font": "chineseheiti",
-		"fontColor": "red"
+		"font": "heiti26white",
+		"fontColor": "black"
 	}
 },
 "com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {

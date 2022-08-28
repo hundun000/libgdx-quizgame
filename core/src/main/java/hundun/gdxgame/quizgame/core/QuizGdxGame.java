@@ -21,6 +21,7 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {
 	public QuizGdxGame(ISaveTool<QuizRootSaveData> saveTool) {
 	    super(480, 320, saveTool);
 	    this.debugMode = true;
+	    this.DEFAULT_MAIN_SKIN_FILE_PATH = "skins/DefaultSkinWithChinese/uiskin.json";
 	}
 	
 	@Override

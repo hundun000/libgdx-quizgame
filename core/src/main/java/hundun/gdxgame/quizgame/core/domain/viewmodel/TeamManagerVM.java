@@ -18,7 +18,7 @@ public class TeamManagerVM extends Label {
     }
     
     public void updateData(TeamPrototype data) {
-        this.setText("Test");
+        this.setText(data.getName());
     }
 
 }

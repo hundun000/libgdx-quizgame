@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import de.eskalon.commons.screen.ManagedScreen;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +21,7 @@ import lombok.Setter;
  * @param <T_GAME>
  * @param <T_SAVE>
  */
-public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> implements Screen {
+public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> extends ManagedScreen {
     @Getter
     protected final T_GAME game;
     

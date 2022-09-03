@@ -13,6 +13,8 @@ import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
  */
 public class PlayCountdownClockVM extends Table {
 
+    private final CallerAndCallback callerAndCallback;
+    
     Label leftPart;
     Label rightPart;
     
@@ -20,8 +22,10 @@ public class PlayCountdownClockVM extends Table {
     
     public PlayCountdownClockVM(
             QuizGdxGame game,
+            CallerAndCallback callerAndCallback,
             Drawable background
             ) {
+        this.callerAndCallback = callerAndCallback;
         this.format = NumberFormat.getFormat(1, 1);
         setBackground(background);
         
@@ -33,6 +37,12 @@ public class PlayCountdownClockVM extends Table {
     
     public void updateCoutdownSecond(double second) {
         rightPart.setText(format.format(second));
+        if (second <= 0.0) {
+            callerAndCallback.onCountdownZero();
+        }
     }
 
+    public static interface CallerAndCallback {
+        void onCountdownZero();
+    }
 }

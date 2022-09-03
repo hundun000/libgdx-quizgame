@@ -1,5 +1,7 @@
 package hundun.gdxgame.quizgame.core;
 
+import com.badlogic.gdx.Gdx;
+
 import hundun.gdxgame.quizgame.core.config.TextureConfig;
 import hundun.gdxgame.quizgame.core.domain.QuizLibBridge;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
@@ -26,7 +28,7 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements ISc
 	
 	
 	public QuizGdxGame(ISaveTool<QuizRootSaveData> saveTool) {
-	    super(480, 320, saveTool);
+	    super(1600, 900, saveTool);
 	    this.debugMode = true;
 	    this.DEFAULT_MAIN_SKIN_FILE_PATH = "skins/DefaultSkinWithChineseHeiti26/uiskin.json";
 	}
@@ -39,8 +41,8 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements ISc
 	    
 	    super.create();
 
-		setScreen(modelContext.getScreen(QuizMenuScreen.class));
-
+		this.screenManager.pushScreen(QuizMenuScreen.class.getSimpleName(), "blending_transition");
+		Gdx.app.log(this.getClass().getSimpleName(), "Initialization finished.");
 	}
 	
 	@Override
@@ -57,13 +59,13 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements ISc
     public void intoQuizPlayScreen(MatchConfig matchConfig) {
         QuizPlayScreen quizPlayScreen = modelContext.getScreen(QuizPlayScreen.class);
         quizPlayScreen.prepareShow(matchConfig);
-        this.setScreen(quizPlayScreen);
+        this.screenManager.pushScreen(QuizPlayScreen.class.getSimpleName(), "blending_transition");
     }
 
     @Override
     public void intoTeamScreen(boolean load) {
         this.gameLoadOrNew(true);
-        this.setScreen(modelContext.getScreen(TeamScreen.class));
+        this.screenManager.pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");
     }
 
 

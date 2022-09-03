@@ -34,7 +34,8 @@ import hundun.quizlib.view.match.MatchSituationView;
  */
 public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
 implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
-        WaitConfirmMatchSituationMaskBoardVM.CallerAndCallback
+        WaitConfirmMatchSituationMaskBoardVM.CallerAndCallback, 
+        PlayCountdownClockVM.CallerAndCallback
 {
 
     private final GameService quizLib;
@@ -42,7 +43,9 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     MatchConfig matchConfig;
     // --- quizLib quick access cache ---
     MatchSituationView currentMatchSituationView;
-    int currentCountDownFrame;
+    // --- quiz vm data ---
+    int currentCountdownFrame;
+    boolean isCountdown;
     
     // ====== onShowLazyInit ======
     PlayCountdownClockVM countdownClockVM;
@@ -79,9 +82,10 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         
         countdownClockVM = new PlayCountdownClockVM(
                 game, 
+                this,
                 new TextureRegionDrawable(game.getTextureConfig().getCountdownClockTexture())
                 );
-        uiRootTable.add(countdownClockVM).height(50).width(50).left();
+        uiRootTable.add(countdownClockVM).left();
      
         playQuestionVM = new PlayQuestionVM(
                 game, 
@@ -108,15 +112,17 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         uiRootTable.add(showMatchSituationButton);
         
         // --- lazy add to stage ---
+        double maskBoardScale = 0.8;
+        
         waitConfirmMatchConfigMaskBoardVM = new WaitConfirmMatchConfigMaskBoardVM(
                 game, 
                 this, 
-                DrawableFactory.getSimpleBoardBackground(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
+                DrawableFactory.getSimpleBoardBackground((int) (game.LOGIC_WIDTH * maskBoardScale), (int) (game.LOGIC_HEIGHT * maskBoardScale))
                 );
         waitConfirmMatchSituationMaskBoardVM = new WaitConfirmMatchSituationMaskBoardVM(
                 game, 
                 this, 
-                DrawableFactory.getSimpleBoardBackground(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
+                DrawableFactory.getSimpleBoardBackground((int) (game.LOGIC_WIDTH * maskBoardScale), (int) (game.LOGIC_HEIGHT * maskBoardScale))
                 );
         
         if (game.debugMode) {
@@ -125,7 +131,7 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     }
 
     private void renderAllPlay() {
-        countdownClockVM.updateCoutdownSecond(logicFrameHelper.frameNumToSecond(currentCountDownFrame));
+        countdownClockVM.updateCoutdownSecond(logicFrameHelper.frameNumToSecond(currentCountdownFrame));
     }
 
     @Override
@@ -134,8 +140,10 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     
     @Override
     public void onLogicFrame() {
-        currentCountDownFrame--;
-        countdownClockVM.updateCoutdownSecond(logicFrameHelper.frameNumToSecond(currentCountDownFrame));
+        if (isCountdown) {
+            currentCountdownFrame--;
+            countdownClockVM.updateCoutdownSecond(logicFrameHelper.frameNumToSecond(currentCountdownFrame));
+        }
     }
 
 
@@ -165,7 +173,8 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
                     currentMatchSituationView.getQuestion()
                     ));
             
-            currentCountDownFrame = logicFrameHelper.secondToFrameNum(switchQuestionEvent.getTime()) ;
+            isCountdown = true;
+            currentCountdownFrame = logicFrameHelper.secondToFrameNum(switchQuestionEvent.getTime()) ;
             playQuestionVM.updateQuestion(currentMatchSituationView.getQuestion());
             
             renderAllPlay();
@@ -207,6 +216,22 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         waitConfirmMatchSituationMaskBoardVM.onCallShow(currentMatchSituationView);
         Gdx.input.setInputProcessor(popupUiStage);
         logicFrameHelper.setLogicFramePause(true);
+    }
+
+    @Override
+    public void onCountdownZero() {
+        Gdx.app.log(this.getClass().getSimpleName(), "onCountdownZero called");
+        // --- ui ---
+        
+        
+        // --- logic ---
+        isCountdown = false;
+    }
+
+    @Override
+    protected void create() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

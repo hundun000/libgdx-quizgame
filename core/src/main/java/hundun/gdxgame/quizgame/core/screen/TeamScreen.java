@@ -98,4 +98,11 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         
     }
 
+
+    @Override
+    protected void create() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

@@ -12,14 +12,18 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import de.eskalon.commons.core.ManagedGame;
+import de.eskalon.commons.screen.ManagedScreen;
+import de.eskalon.commons.screen.transition.ScreenTransition;
 import hundun.gdxgame.share.base.util.save.ISaveTool;
 import lombok.Getter;
 
 
-public abstract class BaseHundunGame<T_SAVE> extends Game {
+public abstract class BaseHundunGame<T_SAVE> extends ManagedGame<ManagedScreen, ScreenTransition> {
     public boolean debugMode;
     public final int LOGIC_WIDTH;
     public final int LOGIC_HEIGHT;
+    public final double WINDOW_SCALE = 1.0;
     protected String DEFAULT_MAIN_SKIN_FILE_PATH = "skins/default/skin/uiskin.json";
     protected String mainSkinFilePath;
 
@@ -47,6 +51,7 @@ public abstract class BaseHundunGame<T_SAVE> extends Game {
 
 	@Override
 	public void create() {
+	    super.create();
 	    
 	    this.modelContext = beforeCreateLazyInit();
 	    

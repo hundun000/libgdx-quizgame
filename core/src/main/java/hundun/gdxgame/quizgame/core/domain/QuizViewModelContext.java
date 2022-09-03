@@ -3,6 +3,7 @@ package hundun.gdxgame.quizgame.core.domain;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 
+import de.eskalon.commons.screen.transition.impl.BlendingTransition;
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.screen.QuizMenuScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizPlayScreen;
@@ -35,12 +36,18 @@ public class QuizViewModelContext extends BaseViewModelContext<QuizRootSaveData>
         
         screen = new QuizMenuScreen(game);
         screenMap.put(screen.getClass(), screen);
+        game.getScreenManager().addScreen(screen.getClass().getSimpleName(), screen);
         
         screen = new TeamScreen(game);
         screenMap.put(screen.getClass(), screen);
+        game.getScreenManager().addScreen(screen.getClass().getSimpleName(), screen);
         
         screen = new QuizPlayScreen(game);
         screenMap.put(screen.getClass(), screen);
+        game.getScreenManager().addScreen(screen.getClass().getSimpleName(), screen);
+        
+        BlendingTransition blendingTransition = new BlendingTransition(game.getBatch(), 1F);
+        game.getScreenManager().addScreenTransition("blending_transition", blendingTransition);
     }
 
     @Override

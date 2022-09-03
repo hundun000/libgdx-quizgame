@@ -143,4 +143,11 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
     @Override
     public void dispose() {}
 
+
+    @Override
+    protected void create() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -53,7 +54,7 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
         popupUiStage.addActor(popupRootTable);
     }
     
-    public void onLogicFrame() {
+    protected void onLogicFrame() {
         // base-class do nothing
     }
 
@@ -75,6 +76,11 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
         backUiStage.draw();
         uiStage.draw();
         popupUiStage.draw();
+        renderPopupAnimations(delta, game.getBatch());
+    }
+    
+    protected void renderPopupAnimations(float delta, SpriteBatch spriteBatch) {
+        // base-class do nothing
     }
     
     @Override

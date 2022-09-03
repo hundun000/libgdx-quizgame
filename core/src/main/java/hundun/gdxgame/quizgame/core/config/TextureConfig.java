@@ -16,7 +16,8 @@ public class TextureConfig {
     protected Texture menuTexture;
     @Getter
     protected Texture countdownClockTexture;
-    
+    @Getter
+    protected Texture questionResultAnimationSheet;
     
     private Texture textureOrDefault(FileHandle file) {
         try {
@@ -31,7 +32,7 @@ public class TextureConfig {
 
         menuTexture = textureOrDefault(Gdx.files.internal("menu.png"));
         countdownClockTexture = textureOrDefault(Gdx.files.internal("countdownClock.png"));
-        
+        questionResultAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
     }
 
 }

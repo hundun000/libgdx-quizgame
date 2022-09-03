@@ -22,7 +22,7 @@ import hundun.quizlib.view.match.MatchSituationView;
 public class WaitConfirmMatchSituationMaskBoardVM extends Table {
 
     MatchSituationView data;
-    CallerAndCallback callback;
+    private final CallerAndCallback callback;
     
     Label label;
     
@@ -32,7 +32,7 @@ public class WaitConfirmMatchSituationMaskBoardVM extends Table {
             CallerAndCallback callback,
             Drawable background
             ) {
-        
+        this.callback = callback;
         
         this.setBackground(background);
         this.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -67,6 +67,6 @@ public class WaitConfirmMatchSituationMaskBoardVM extends Table {
     
     public static interface CallerAndCallback {
         void onMatchSituationConfirmed();
-        void onMatchSituationConfirmCallShow();
+        void callShowMatchSituationConfirm();
     }
 }

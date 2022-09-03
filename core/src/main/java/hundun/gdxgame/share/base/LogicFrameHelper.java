@@ -40,7 +40,7 @@ public class LogicFrameHelper {
         return frameNum * LOGIC_FRAME_LENGTH;
     }
 
-    public int secondToFrameNum(int second) {
-        return LOGIC_FRAME_PER_SECOND * second;
+    public int secondToFrameNum(double second) {
+        return (int) (LOGIC_FRAME_PER_SECOND * second);
     }
 }

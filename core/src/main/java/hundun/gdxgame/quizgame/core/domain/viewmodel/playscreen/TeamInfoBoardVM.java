@@ -38,8 +38,8 @@ public class TeamInfoBoardVM extends Table {
         setBackground(background);
         
         TextButton optionButton;
-        for (int i = 0; i < 4; i++) {
-            optionButton = new SystemButton(game, i);
+        for (int i = 0; i < SystemButtonType.types.length; i++) {
+            optionButton = new SystemButton(game, SystemButtonType.types[i]);
             buttons.add(optionButton);
             this.row();
             this.add(optionButton);
@@ -54,19 +54,28 @@ public class TeamInfoBoardVM extends Table {
         }
     }
     
+    public enum SystemButtonType {
+        SHOW_MATCH_SITUATION,
+        ;
+        
+        static SystemButtonType[] types = new SystemButtonType[] {
+                SHOW_MATCH_SITUATION
+        };
+    }
+    
     public class SystemButton extends TextButton {
 
-        final int index;
+
+        final SystemButtonType type;
         
-        public SystemButton(QuizGdxGame game, int index) {
+        public SystemButton(QuizGdxGame game, SystemButtonType type) {
             super("TEMP", game.getMainSkin());
-            this.index = index;
-            
+            this.type = type;
             this.addListener(
                     new InputListener(){
                         @Override
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                            callerAndCallback.onChooseSystem(index);
+                            callerAndCallback.onChooseSystem(type);
                         }
                         @Override
                         public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -81,6 +90,6 @@ public class TeamInfoBoardVM extends Table {
     }
     
     public static interface CallerAndCallback {
-        void onChooseSystem(int index);
+        void onChooseSystem(SystemButtonType type);
     }
 }

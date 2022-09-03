@@ -2,6 +2,7 @@ package hundun.gdxgame.quizgame.core.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -19,13 +20,16 @@ import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.QuestionOptionAr
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.QuestionStemVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SkillBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.TeamInfoBoardVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.WaitConfirmMatchConfigMaskBoardVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.TeamInfoBoardVM.SystemButtonType;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.QuestionResultMaskBoardVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.WaitConfirmFirstGetQuestionMaskBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.WaitConfirmMatchSituationMaskBoardVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
 import hundun.gdxgame.share.base.LogicFrameHelper;
 import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.quizlib.exception.QuizgameException;
+import hundun.quizlib.prototype.event.AnswerResultEvent;
 import hundun.quizlib.prototype.event.StartMatchEvent;
 import hundun.quizlib.prototype.event.SwitchQuestionEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
@@ -37,12 +41,13 @@ import hundun.quizlib.view.match.MatchSituationView;
  * Created on 2022/08/30
  */
 public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
-implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
+implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         WaitConfirmMatchSituationMaskBoardVM.CallerAndCallback, 
         CountdownClockVM.CallerAndCallback, 
         QuestionOptionAreaVM.CallerAndCallback, 
         TeamInfoBoardVM.CallerAndCallback,
-        SkillBoardVM.CallerAndCallback
+        SkillBoardVM.CallerAndCallback,
+        QuestionResultMaskBoardVM.CallerAndCallback
 {
     
 
@@ -51,9 +56,7 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     MatchConfig matchConfig;
     // --- quizLib quick access cache ---
     MatchSituationView currentMatchSituationView;
-    // --- quiz vm data ---
-    int currentCountdownFrame;
-    boolean isCountdown;
+    
     // --- UI ---
     protected final Table uiRootTable1;
     
@@ -65,8 +68,9 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     ImageAreaVM imageAreaVM;
     QuestionOptionAreaVM questionOptionAreaVM;
     SkillBoardVM skillBoardVM;
+    QuestionResultMaskBoardVM questionResultAnimationMaskBoardVM;
     // --- lazy add to stage ---
-    WaitConfirmMatchConfigMaskBoardVM waitConfirmMatchConfigMaskBoardVM;
+    WaitConfirmFirstGetQuestionMaskBoardVM waitConfirmFirstGetQuestionMaskBoardVM;
     WaitConfirmMatchSituationMaskBoardVM waitConfirmMatchSituationMaskBoardVM;
     
     public QuizPlayScreen(QuizGdxGame game) {
@@ -96,7 +100,22 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     }
     
     private void intoPostShowState() {
-        onMatchConfigConfirmCallShow();
+        
+        try {
+            currentMatchSituationView = quizLib.createMatch(matchConfig);
+            currentMatchSituationView = quizLib.startMatch(currentMatchSituationView.getId());
+            StartMatchEvent startMatchEvent = JavaFeatureForGwt.requireNonNull(currentMatchSituationView.getStartMatchEvent());
+            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                    "startMatch by QuestionIds = %s", 
+                    startMatchEvent.getQuestionIds()
+                    ));
+            // optional more startMatchEvent handle
+        } catch (QuizgameException e) {
+            Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+        
+        
+        callShowFirstGetQuestionConfirm();
     }
 
 
@@ -106,68 +125,55 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
     }
     
     @Override
-    public void onLogicFrame() {
-        if (isCountdown) {
-            currentCountdownFrame--;
-            countdownClockVM.updateCoutdownSecond(logicFrameHelper.frameNumToSecond(currentCountdownFrame));
+    protected void onLogicFrame() {
+        if (countdownClockVM.isCountdownState()) {
+            countdownClockVM.updateCoutdownSecond(-1);
         }
     }
 
-
     @Override
-    public void onMatchConfigConfirmed() {
+    public void onFirstGetQuestionConfirmed() {
         Gdx.app.log(this.getClass().getSimpleName(), "onMatchConfigConfirmed called");
         // --- ui ---
         popupRootTable.clear();
         // --- screen logic ---
         Gdx.input.setInputProcessor(uiStage);
-        logicFrameHelper.setLogicFramePause(false);
-        // --- play logic ---
-        try {
-            currentMatchSituationView = quizLib.createMatch(matchConfig);
-            currentMatchSituationView = quizLib.startMatch(currentMatchSituationView.getId());
-            StartMatchEvent startMatchEvent = JavaFeatureForGwt.requireNonNull(currentMatchSituationView.getStartMatchEvent());
-            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
-                    "startMatch by QuestionIds = %s", 
-                    startMatchEvent.getQuestionIds()
-                    ));
-            
+        //logicFrameHelper.setLogicFramePause(false);
+        // --- quiz logic ---
+        try { 
             currentMatchSituationView = quizLib.nextQustion(currentMatchSituationView.getId());
             SwitchQuestionEvent switchQuestionEvent = JavaFeatureForGwt.requireNonNull(currentMatchSituationView.getSwitchQuestionEvent());
-            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
-                    "switchQuestion by time second = %s, Question = %s", 
-                    switchQuestionEvent.getTime(),
-                    currentMatchSituationView.getQuestion()
-                    ));
-            
-            updateQuestion(switchQuestionEvent);
-            
-            
 
+            handleNewQuestion(switchQuestionEvent);
         } catch (QuizgameException e) {
-            e.printStackTrace();
+            Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
     
-    private void updateQuestion(SwitchQuestionEvent switchQuestionEvent) {
-        isCountdown = true;
-        currentCountdownFrame = logicFrameHelper.secondToFrameNum(switchQuestionEvent.getTime()) ;
-        countdownClockVM.updateCoutdownSecond(logicFrameHelper.frameNumToSecond(currentCountdownFrame));
+    
+    private void handleNewQuestion(SwitchQuestionEvent switchQuestionEvent) {
+        Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                "switchQuestion by time second = %s, Question = %s", 
+                switchQuestionEvent.getTime(),
+                currentMatchSituationView.getQuestion()
+                ));
+        
+        countdownClockVM.resetCountdown(switchQuestionEvent.getTime());
         
         questionOptionAreaVM.updateQuestion(currentMatchSituationView.getQuestion());
         questionStemVM.updateQuestion(currentMatchSituationView.getQuestion());
     }
 
     @Override
-    public void onMatchConfigConfirmCallShow() {
+    public void callShowFirstGetQuestionConfirm() {
         Gdx.app.log(this.getClass().getSimpleName(), "onMatchConfigConfirmCallShow called");
         // --- ui ---
         
-        popupRootTable.add(waitConfirmMatchConfigMaskBoardVM);
+        popupRootTable.add(waitConfirmFirstGetQuestionMaskBoardVM);
         // --- logic ---
-        waitConfirmMatchConfigMaskBoardVM.onCallShow(matchConfig);
+        waitConfirmFirstGetQuestionMaskBoardVM.onCallShow(matchConfig);
         Gdx.input.setInputProcessor(popupUiStage);
-        logicFrameHelper.setLogicFramePause(true);
+        //logicFrameHelper.setLogicFramePause(true);
     }
 
     @Override
@@ -178,11 +184,13 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         
         // --- logic ---
         Gdx.input.setInputProcessor(uiStage);
-        logicFrameHelper.setLogicFramePause(false);
+        //logicFrameHelper.setLogicFramePause(false);
+        
+        
     }
 
     @Override
-    public void onMatchSituationConfirmCallShow() {
+    public void callShowMatchSituationConfirm() {
         Gdx.app.log(this.getClass().getSimpleName(), "onMatchSituationConfirmCallShow called");
         // --- ui ---
         
@@ -190,7 +198,7 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         // --- logic ---
         waitConfirmMatchSituationMaskBoardVM.onCallShow(currentMatchSituationView);
         Gdx.input.setInputProcessor(popupUiStage);
-        logicFrameHelper.setLogicFramePause(true);
+        //logicFrameHelper.setLogicFramePause(true);
     }
 
     @Override
@@ -200,7 +208,7 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         
         
         // --- logic ---
-        isCountdown = false;
+
     }
     
     @Override
@@ -224,11 +232,24 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         }
         
         try {
+            // --- pre ---
+            countdownClockVM.clearCountdown();
+            // --- call lib ---
             currentMatchSituationView = quizLib.teamAnswer(currentMatchSituationView.getId(), ans);
+            AnswerResultEvent answerResultEvent = JavaFeatureForGwt.requireNonNull(currentMatchSituationView.getAnswerResultEvent());
+            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                    "answerResultEvent by Result = %s", 
+                    answerResultEvent.getResult()
+                    ));
+            // --- pre ---
+            callShowQuestionResultAnimation(answerResultEvent);
+            
+            
         } catch (QuizgameException e) {
-            e.printStackTrace();
+            Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
+
 
     @Override
     protected void create() {
@@ -239,6 +260,7 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         countdownClockVM = new CountdownClockVM(
                 game,
                 this,
+                this.logicFrameHelper,
                 new TextureRegionDrawable(game.getTextureConfig().getCountdownClockTexture())
                 );
         uiRootTable.add(countdownClockVM)
@@ -306,25 +328,25 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
                 .expand()
                 ;
         
-        Button showMatchSituationButton = new TextButton("showMatchSituation", game.getMainSkin());
-        showMatchSituationButton.addListener(
-                new InputListener(){
-                    @Override
-                    public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                        onMatchSituationConfirmCallShow();
-                    }
-                    @Override
-                    public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                        return true;
-                    }
-                }
-        );
-        uiRootTable1.add(showMatchSituationButton).expand().left().top();
+//        Button showMatchSituationButton = new TextButton("showMatchSituation", game.getMainSkin());
+//        showMatchSituationButton.addListener(
+//                new InputListener(){
+//                    @Override
+//                    public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+//                        callShowMatchSituationConfirm();
+//                    }
+//                    @Override
+//                    public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+//                        return true;
+//                    }
+//                }
+//        );
+//        uiRootTable1.add(showMatchSituationButton).expand().left().top();
         
         // --- lazy add to stage ---
         double maskBoardScale = 0.8;
         
-        waitConfirmMatchConfigMaskBoardVM = new WaitConfirmMatchConfigMaskBoardVM(
+        waitConfirmFirstGetQuestionMaskBoardVM = new WaitConfirmFirstGetQuestionMaskBoardVM(
                 game, 
                 this, 
                 DrawableFactory.getSimpleBoardBackground((int) (game.LOGIC_WIDTH * maskBoardScale), (int) (game.LOGIC_HEIGHT * maskBoardScale))
@@ -334,6 +356,8 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
                 this, 
                 DrawableFactory.getSimpleBoardBackground((int) (game.LOGIC_WIDTH * maskBoardScale), (int) (game.LOGIC_HEIGHT * maskBoardScale))
                 );
+        questionResultAnimationMaskBoardVM = new QuestionResultMaskBoardVM(game, this);
+        
         
         if (game.debugMode) {
             uiRootTable.debugAll();
@@ -341,11 +365,7 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         
     }
 
-    @Override
-    public void onChooseSystem(int index) {
-        // TODO Auto-generated method stub
-        
-    }
+
 
     @Override
     public void onChooseSkill(int index) {
@@ -353,6 +373,58 @@ implements WaitConfirmMatchConfigMaskBoardVM.CallerAndCallback,
         
     }
 
+    @Override
+    public void onChooseSystem(SystemButtonType type) {
+        
+        switch (type) {
+            case SHOW_MATCH_SITUATION:
+                callShowMatchSituationConfirm();
+                break;
+            default:
+                break;
+        }
+
+        
+    }
+
+    @Override
+    protected void renderPopupAnimations(float delta, SpriteBatch spriteBatch) {
+        if (questionResultAnimationMaskBoardVM.isRunningState()) {
+            questionResultAnimationMaskBoardVM.update(delta, spriteBatch);
+        }
+    }
+
+    @Override
+    public void callShowQuestionResultAnimation(AnswerResultEvent answerResultEvent) {
+        Gdx.app.log(this.getClass().getSimpleName(), "callShowQuestionResultAnimation called");
+        // --- ui ---
+        
+        popupRootTable.add(questionResultAnimationMaskBoardVM);
+        // --- logic ---
+        questionResultAnimationMaskBoardVM.callShow(answerResultEvent);
+        Gdx.input.setInputProcessor(popupUiStage);
+        //logicFrameHelper.setLogicFramePause(true);
+    }
+
+    @Override
+    public void onQuestionResultAnimationDone() {
+        Gdx.app.log(this.getClass().getSimpleName(), "onQuestionResultAnimationDone called");
+        // --- ui ---
+        popupRootTable.clear();
+        
+        // --- screen logic ---
+        Gdx.input.setInputProcessor(uiStage);
+        //logicFrameHelper.setLogicFramePause(false);
+        // --- quiz logic ---
+        try { 
+            currentMatchSituationView = quizLib.nextQustion(currentMatchSituationView.getId());
+            SwitchQuestionEvent switchQuestionEvent = JavaFeatureForGwt.requireNonNull(currentMatchSituationView.getSwitchQuestionEvent());
+            
+            handleNewQuestion(switchQuestionEvent);
+        } catch (QuizgameException e) {
+            Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+    }
     
 
 }

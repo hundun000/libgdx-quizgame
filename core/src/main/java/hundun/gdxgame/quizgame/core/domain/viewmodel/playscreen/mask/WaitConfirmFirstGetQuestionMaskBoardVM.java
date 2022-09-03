@@ -18,20 +18,20 @@ import hundun.quizlib.prototype.match.MatchConfig;
  * @author hundun
  * Created on 2021/11/12
  */
-public class WaitConfirmMatchConfigMaskBoardVM extends Table {
+public class WaitConfirmFirstGetQuestionMaskBoardVM extends Table {
 
     MatchConfig data;
-    CallerAndCallback callback;
+    private final CallerAndCallback callback;
     
     Label label;
     
     
-    public WaitConfirmMatchConfigMaskBoardVM(
+    public WaitConfirmFirstGetQuestionMaskBoardVM(
             QuizGdxGame game,
             CallerAndCallback callback,
             Drawable background
             ) {
-        
+        this.callback = callback;
         
         this.setBackground(background);
         this.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -44,7 +44,7 @@ public class WaitConfirmMatchConfigMaskBoardVM extends Table {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //WaitConfirmMatchConfigMaskBoardVM.this.setVisible(false);
-                callback.onMatchConfigConfirmed();
+                callback.onFirstGetQuestionConfirmed();
             }
         });
         this.add(textButton).center();
@@ -65,7 +65,7 @@ public class WaitConfirmMatchConfigMaskBoardVM extends Table {
     
     
     public static interface CallerAndCallback {
-        void onMatchConfigConfirmed();
-        void onMatchConfigConfirmCallShow();
+        void onFirstGetQuestionConfirmed();
+        void callShowFirstGetQuestionConfirm();
     }
 }

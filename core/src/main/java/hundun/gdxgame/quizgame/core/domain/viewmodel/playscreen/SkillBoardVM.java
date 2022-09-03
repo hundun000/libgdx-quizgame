@@ -7,7 +7,10 @@ import java.util.Map;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -40,33 +43,27 @@ public class SkillBoardVM extends Table {
             ) {
         this.game = game;
         this.callerAndCallback = callerAndCallback;
-        setBackground(background);
+        //setBackground(background);
         
         
         
     }
     
     public class SkillNode extends Table {
-
+        static final int LENGTH = 160;
+        
         final SkillButton skillButton;
         
         public SkillNode(QuizGdxGame game, int index, Drawable background) {
             this.skillButton = new SkillButton(game, index);
             
-            this.setBackground(background);
-            this.add(skillButton);
-        }
-    }
-    
-    public class SkillButton extends TextButton {
-
-        final int index;
-        
-        public SkillButton(QuizGdxGame game, int index) {
-            super("TEMP", game.getMainSkin());
-            this.index = index;
+            Image backgroundImage = new Image(background);
+            backgroundImage.setBounds(0, 0, SkillNode.LENGTH, SkillNode.LENGTH);
+            this.addActor(backgroundImage);
             
-            this.addListener(
+            this.add(skillButton);
+            
+            backgroundImage.addListener(
                     new InputListener(){
                         @Override
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
@@ -78,6 +75,18 @@ public class SkillBoardVM extends Table {
                         }
                     });
         }
+    }
+    
+    public class SkillButton extends Label {
+
+        final int index;
+        
+        public SkillButton(QuizGdxGame game, int index) {
+            super("TEMP", game.getMainSkin());
+            this.index = index;
+            this.setTouchable(Touchable.disabled);
+            
+        }
         
         
         
@@ -88,7 +97,10 @@ public class SkillBoardVM extends Table {
     }
 
     public void updateRole(RolePrototype rolePrototype, RoleRuntimeView roleRuntimeView) {
-        SkillNode optionButton;
+        nodes.clear();
+        this.clear();
+        
+        int newLineIndex = (rolePrototype.getSkillSlotPrototypes().size() - 1) / 2;
         for (int i = 0; i < rolePrototype.getSkillSlotPrototypes().size(); i++) {
             SkillSlotPrototype skillSlotPrototype = rolePrototype.getSkillSlotPrototypes().get(i);
             int remainUseTime = roleRuntimeView.getSkillSlotRuntimeViews().get(i).getRemainUseTime();
@@ -98,10 +110,28 @@ public class SkillBoardVM extends Table {
             } else {
                 background = new TextureRegionDrawable(game.getTextureConfig().getSkillUseOutButtonBackground());
             }
-            optionButton = new SkillNode(game, i, background);
-            optionButton.skillButton.setText(skillSlotPrototype.getName());
-            nodes.add(optionButton);
-            this.add(optionButton).width(100).height(100);
+            SkillNode node = new SkillNode(game, i, background);
+            node.skillButton.setText(skillSlotPrototype.getName());
+            nodes.add(node);
+            Cell<SkillNode> cell = this.add(node)
+                    .padBottom(SkillNode.LENGTH / 4)
+                    .width(SkillNode.LENGTH)
+                    .height(SkillNode.LENGTH)
+                    ;
+            
+            
+            if (i == newLineIndex) {
+                cell.padRight(SkillNode.LENGTH / 2);
+                this.row();
+            }
+            if (i == newLineIndex + 1) {
+                cell.padLeft(SkillNode.LENGTH / 2);
+            }
+            
+        }
+        
+        if (game.debugMode) {
+            this.debugAll();
         }
     }
 }

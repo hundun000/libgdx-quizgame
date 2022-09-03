@@ -78,6 +78,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     Runnable afterComfirmTask;
     
     // ====== onShowLazyInit ======
+    Image backImage;
     CountdownClockVM countdownClockVM;
     QuestionStemVM questionStemVM;
     TeamInfoBoardVM teamInfoBoardVM;
@@ -305,40 +306,52 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     }
     
     protected void initUI() {
+        
+        backImage = new Image(game.getTextureConfig().getPlayScreenBackground());
+        backImage.setBounds(0, 0, game.LOGIC_WIDTH, game.LOGIC_HEIGHT);
+        backUiStage.addActor(backImage);
+        
+        
         countdownClockVM = new CountdownClockVM(
                 game,
                 this,
                 this.logicFrameHelper,
                 new TextureRegionDrawable(game.getTextureConfig().getCountdownClockTexture())
                 );
-        uiRootTable.add(countdownClockVM)
-                .center()
-                .colspan(2)
-                .expand()
-                ;
+        countdownClockVM.setBounds(10, 650, 150, 150);
+        uiRootTable.addActor(countdownClockVM);
+//        uiRootTable.add(countdownClockVM)
+//                .center()
+//                .colspan(1)
+//                .expand()
+//                ;
      
         questionStemVM = new QuestionStemVM(
                 game,
-                DrawableFactory.getSimpleBoardBackground()
+                new TextureRegionDrawable(game.getTextureConfig().getQuestionStemBackground())
                 );
-        uiRootTable.add(questionStemVM)
-                .center()
-                .colspan(6)
-                .expand()
-                //.height((float) (game.LOGIC_HEIGHT * 0.4))
-                //.width((float) (game.LOGIC_WIDTH * 0.4))
-                ;
+        questionStemVM.setBounds(230, 600, 830, 280);
+        uiRootTable.addActor(questionStemVM);
+//        uiRootTable.add(questionStemVM)
+//                .center()
+//                .colspan(3)
+//                .expand()
+//                .width(730)
+//                .height(300)
+//                ;
         
         teamInfoBoardVM = new TeamInfoBoardVM(
                 game,
                 this,
                 DrawableFactory.getSimpleBoardBackground()
                 );
-        uiRootTable.add(teamInfoBoardVM)
-                .center()
-                .colspan(4)
-                .expand()
-                ;
+        teamInfoBoardVM.setBounds(1100, 600, 400, 280);
+        uiRootTable.addActor(teamInfoBoardVM);
+//        uiRootTable.add(teamInfoBoardVM)
+//                .center()
+//                .colspan(2)
+//                .expand()
+//                ;
         
         
         uiRootTable.row();
@@ -348,33 +361,39 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
                 game,
                 DrawableFactory.getSimpleBoardBackground()
                 );
-        uiRootTable.add(imageAreaVM)
-                .center()
-                .colspan(3)
-                .expand()
-                ;
+        imageAreaVM.setBounds(0, 0, 400, 600);
+        uiRootTable.addActor(imageAreaVM);
+//        uiRootTable.add(imageAreaVM)
+//                .center()
+//                .colspan(2)
+//                .expand()
+//                ;
         
         questionOptionAreaVM = new QuestionOptionAreaVM(
                 game, 
                 this,
                 DrawableFactory.getSimpleBoardBackground()
                 );
-        uiRootTable.add(questionOptionAreaVM)
-                .center()
-                .colspan(6)
-                .expand()
-                ;
+        questionOptionAreaVM.setBounds(450, 50, 500, 500);
+        uiRootTable.addActor(questionOptionAreaVM);
+//        uiRootTable.add(questionOptionAreaVM)
+//                .center()
+//                .colspan(3)
+//                .expand()
+//                ;
 
         skillBoardVM = new SkillBoardVM(
                 game, 
                 this,
                 DrawableFactory.getSimpleBoardBackground()
                 );
-        uiRootTable.add(skillBoardVM)
-                .center()
-                .colspan(3)
-                .expand()
-                ;
+        skillBoardVM.setBounds(1000, 50, 500, 500);
+        uiRootTable.addActor(skillBoardVM);
+//        uiRootTable.add(skillBoardVM)
+//                .center()
+//                .colspan(1)
+//                .expand()
+//                ;
         
 //        Button showMatchSituationButton = new TextButton("showMatchSituation", game.getMainSkin());
 //        showMatchSituationButton.addListener(
@@ -413,7 +432,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         teamSwitchAnimationVM = new TeamSwitchAnimationVM(game, this);
         
         if (game.debugMode) {
-            uiRootTable.debugAll();
+            uiRootTable.debugCell();
         }
         
     }
@@ -431,13 +450,13 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
 
     @Override
     public void onChooseSkill(int index) {
-        // TODO Auto-generated method stub
+        Gdx.app.log(this.getClass().getSimpleName(), "onChooseSkill called");
         
     }
 
     @Override
     public void onChooseSystem(SystemButtonType type) {
-        
+        Gdx.app.log(this.getClass().getSimpleName(), "onChooseSystem called");
         switch (type) {
             case SHOW_MATCH_SITUATION:
                 callShowMatchSituationConfirm();

@@ -42,8 +42,8 @@ public class QuestionOptionAreaVM extends Table {
             optionButton = new OptionButton(game, i);
             buttons.add(optionButton);
             this.add(optionButton)
-                    .height((float) (game.LOGIC_HEIGHT * 0.1))
-                    .width((float) (game.LOGIC_WIDTH * 0.4))
+                    .height((float) (game.LOGIC_HEIGHT * 0.08))
+                    .width((float) (game.LOGIC_WIDTH * 0.3))
                     .pad((float) (game.LOGIC_HEIGHT * 0.01))
                     ;
             this.row();
@@ -76,8 +76,7 @@ public class QuestionOptionAreaVM extends Table {
                         public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                             return true;
                         }
-                    }
-                    );
+                    });
         }
         
         

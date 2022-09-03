@@ -17,6 +17,8 @@ public class TextureConfig {
     @Getter
     protected Texture menuTexture;
     @Getter
+    protected Texture playScreenBackground;
+    @Getter
     protected Texture countdownClockTexture;
     @Getter
     protected Texture questionResultCorrectAnimationSheet;
@@ -30,6 +32,8 @@ public class TextureConfig {
     protected Texture skillButtonBackground;
     @Getter
     protected Texture skillUseOutButtonBackground;
+    @Getter
+    protected Texture questionStemBackground;
     
     private Texture textureOrDefault(FileHandle file) {
         try {
@@ -51,9 +55,11 @@ public class TextureConfig {
 
 
         menuTexture = textureOrDefault("menu.png");
+        playScreenBackground = textureOrDefault("playScreen.png");
         countdownClockTexture = textureOrDefault("countdownClock.png");
         skillButtonBackground = textureOrDefault("skillButtonBackground.png");
         skillUseOutButtonBackground = textureOrDefault("skillUseOutButtonBackground.png");
+        questionStemBackground = textureOrDefault("questionStemBackground.png");
         questionResultCorrectAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
         questionResultWrongAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
         questionResultSkippedAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));

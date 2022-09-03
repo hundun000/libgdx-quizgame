@@ -12,6 +12,7 @@ import hundun.gdxgame.quizgame.core.screen.QuizPlayScreen;
 import hundun.gdxgame.quizgame.core.screen.TeamScreen;
 import hundun.gdxgame.share.base.BaseHundunGame;
 import hundun.gdxgame.share.base.BaseViewModelContext;
+import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.share.base.util.save.ISaveTool;
 import hundun.gdxgame.share.starter.StarterMenuScreen;
 import hundun.quizlib.prototype.match.MatchConfig;
@@ -47,6 +48,7 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements ISc
 	
 	@Override
 	public void pause() {
+	    super.pause();
 	    gameSaveCurrent();
 	}
 
@@ -67,8 +69,6 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements ISc
         this.gameLoadOrNew(load);
         this.screenManager.pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");
     }
-
-
     
 
 

@@ -12,7 +12,7 @@ import lombok.Getter;
 
 public class TextureConfig {
 
-    private static final String ENV = "pro";
+    private static final String ENV = "dev";
     
     @Getter
     protected Texture menuTexture;

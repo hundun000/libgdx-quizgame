@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import de.eskalon.commons.screen.ManagedScreen;
+import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,10 +41,10 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
     public BaseHundunScreen(T_GAME game) {
         this.game = game;
         OrthographicCamera camera = new OrthographicCamera(game.LOGIC_WIDTH, game.LOGIC_HEIGHT);
-        FitViewport viewport = new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera);
-        this.uiStage = new Stage(viewport, game.getBatch());
-        this.popupUiStage = new Stage(viewport, game.getBatch());
-        this.backUiStage = new Stage(viewport, game.getBatch());
+        //FitViewport viewport = new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera);
+        this.uiStage = new Stage(new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera), game.getBatch());
+        this.popupUiStage = new Stage(new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera), game.getBatch());
+        this.backUiStage = new Stage(new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera), game.getBatch());
         
         uiRootTable = new Table();
         uiRootTable.setFillParent(true);
@@ -70,7 +71,7 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
             }
         }
         
-        uiStage.act();
+        //uiStage.act();
         
         // ====== be careful of draw order ======
         backUiStage.draw();
@@ -84,16 +85,29 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
     }
     
     @Override
-    public void pause() {}
+    public void pause() {
+        super.pause();
+    }
 
     @Override
-    public void resume() {}
+    public void resume() {
+        super.resume();
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+        
+    }
 
     @Override
     public void resize(int width, int height) {
+//        Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+//                "resize by width = %s, height = %s", 
+//                width,
+//                height
+//                ));
+        this.backUiStage.getViewport().update(width, height, true);
         this.uiStage.getViewport().update(width, height, true);
+        this.popupUiStage.getViewport().update(width, height, true);
     }
 }

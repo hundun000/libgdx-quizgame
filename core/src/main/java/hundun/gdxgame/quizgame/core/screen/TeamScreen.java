@@ -37,11 +37,13 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
 
     @Override
     public void show() {
+        super.show();
         Gdx.input.setInputProcessor(uiStage);
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
         
         this.teamService = game.getQuizLibBridge().getQuizComponentContext().getTeamService();
     
+        uiRootTable.clear();
         
         allTeamManagerAreaVM = new AllTeamManagerAreaVM(this);
         uiRootTable.add(allTeamManagerAreaVM);

@@ -71,7 +71,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     MatchSituationView currentMatchSituationView;
     List<TeamPrototype> teamPrototypes;
     // --- UI ---
-    protected final Table uiRootTable1;
+//    protected final Table uiRootTable1;
     
     List<Runnable> blockingAnimationTasks = new LinkedList<>();
     Runnable afterAllAnimationDoneTask;
@@ -97,9 +97,9 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         super(game);
         
         
-        uiRootTable1 = new Table();
-        uiRootTable1.setFillParent(true);
-        uiStage.addActor(uiRootTable1);
+//        uiRootTable1 = new Table();
+//        uiRootTable1.setFillParent(true);
+//        uiStage.addActor(uiRootTable1);
         
         this.quizLib = game.getQuizLibBridge().getQuizComponentContext().getGameService();
         
@@ -108,6 +108,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
 
     @Override
     public void show() {
+        super.show();
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
         
         initUI();
@@ -305,7 +306,11 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     
     }
     
-    protected void initUI() {
+    private void initUI() {
+        
+        backUiStage.clear();
+        uiRootTable.clear();
+        popupRootTable.clear();
         
         backImage = new Image(game.getTextureConfig().getPlayScreenBackground());
         backImage.setBounds(0, 0, game.LOGIC_WIDTH, game.LOGIC_HEIGHT);
@@ -432,13 +437,13 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         teamSwitchAnimationVM = new TeamSwitchAnimationVM(game, this);
         
         if (game.debugMode) {
-            uiRootTable.debugCell();
+            uiStage.setDebugAll(true);
         }
         
     }
 
 
-    public void checkBlockingAnimationTasks() {
+    private void checkBlockingAnimationTasks() {
         if (blockingAnimationTasks.size() > 0) {
             blockingAnimationTasks.remove(0).run();
         } else if (afterAllAnimationDoneTask != null) {
@@ -461,11 +466,18 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
             case SHOW_MATCH_SITUATION:
                 callShowMatchSituationConfirm();
                 break;
+            case EXIT:
+                handelExit();
+                break;
             default:
                 break;
         }
 
         
+    }
+
+    private void handelExit() {
+        game.intoTeamScreen(false);
     }
 
     @Override
@@ -530,7 +542,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         popupRootTable.add(waitConfirmMatchFinishMaskBoardVM);
         // --- quiz logic ---
         afterComfirmTask = () -> {
-            game.intoTeamScreen(false);
+            handelExit();
         };
         
         // --- screen logic ---

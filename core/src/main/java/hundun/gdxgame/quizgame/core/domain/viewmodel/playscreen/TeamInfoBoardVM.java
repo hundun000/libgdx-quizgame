@@ -55,10 +55,12 @@ public class TeamInfoBoardVM extends Table {
     
     public enum SystemButtonType {
         SHOW_MATCH_SITUATION,
+        EXIT,
         ;
         
         static SystemButtonType[] types = new SystemButtonType[] {
-                SHOW_MATCH_SITUATION
+                SHOW_MATCH_SITUATION,
+                EXIT
         };
     }
     
@@ -68,7 +70,7 @@ public class TeamInfoBoardVM extends Table {
         final SystemButtonType type;
         
         public SystemButton(QuizGdxGame game, SystemButtonType type) {
-            super("TEMP", game.getMainSkin());
+            super(type.name(), game.getMainSkin());
             this.type = type;
             this.addListener(
                     new InputListener(){

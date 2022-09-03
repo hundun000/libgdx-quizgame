@@ -134,6 +134,8 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
 
     @Override
     public void show() {
+        super.show();
+        //addInputProcessor(uiStage);
         Gdx.input.setInputProcessor(uiStage);
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
         
@@ -141,13 +143,14 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
     }
 
     @Override
-    public void dispose() {}
+    public void dispose() {
+        
+    }
 
 
     @Override
     protected void create() {
-        // TODO Auto-generated method stub
-        
+
     }
 
 }

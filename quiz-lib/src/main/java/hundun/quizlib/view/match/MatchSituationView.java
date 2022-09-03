@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import hundun.quizlib.prototype.event.AnswerResultEvent;
-import hundun.quizlib.prototype.event.FinishEvent;
+import hundun.quizlib.prototype.event.MatchFinishEvent;
 import hundun.quizlib.prototype.event.SkillResultEvent;
 import hundun.quizlib.prototype.event.StartMatchEvent;
 import hundun.quizlib.prototype.event.SwitchQuestionEvent;
@@ -33,6 +33,6 @@ public class MatchSituationView {
     SkillResultEvent skillResultEvent;
     SwitchQuestionEvent switchQuestionEvent;
     SwitchTeamEvent switchTeamEvent;
-    FinishEvent finishEvent;
+    MatchFinishEvent finishEvent;
     StartMatchEvent startMatchEvent;
 }

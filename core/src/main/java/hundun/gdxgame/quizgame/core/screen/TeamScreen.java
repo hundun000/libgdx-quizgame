@@ -79,9 +79,12 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
                             // TODO
                             MatchConfig matchConfig = new MatchConfig();
-                            matchConfig.setTeamNames(Arrays.asList(BuiltinDataConfiguration.DEMO_LIST_TEAM_NAME_0));
+                            matchConfig.setTeamNames(Arrays.asList(
+                                    BuiltinDataConfiguration.HAS_ROLE_TEAM_NAME_1,
+                                    BuiltinDataConfiguration.HAS_ROLE_TEAM_NAME_2
+                                    ));
                             matchConfig.setQuestionPackageName(QuestionLoaderService.PRELEASE_PACKAGE_NAME);
-                            matchConfig.setMatchStrategyType(MatchStrategyType.ENDLESS);
+                            matchConfig.setMatchStrategyType(MatchStrategyType.MAIN);
                             
                             game.intoQuizPlayScreen(matchConfig);
                             //TextUmaGame.this.getAudioPlayManager().intoScreen(ScreenId.PLAY);

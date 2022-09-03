@@ -1,5 +1,6 @@
 package hundun.quizlib.context;
 
+import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.model.domain.match.strategy.MatchStrategyFactory;
 import hundun.quizlib.service.BuffService;
 import hundun.quizlib.service.BuiltinDataConfiguration;
@@ -33,7 +34,7 @@ public class QuizComponentContext {
     private BuiltinDataConfiguration builtinDataConfiguration;
     
     public static class Factory {
-        public static QuizComponentContext create(IFrontEnd frontEnd) {
+        public static QuizComponentContext create(IFrontEnd frontEnd) throws QuizgameException {
             QuizComponentContext context = new QuizComponentContext(
                     frontEnd,
                     new GameService(),

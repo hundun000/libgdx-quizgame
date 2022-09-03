@@ -11,7 +11,7 @@ import hundun.quizlib.prototype.RolePrototype;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
 import hundun.quizlib.prototype.event.EventType;
-import hundun.quizlib.prototype.event.FinishEvent;
+import hundun.quizlib.prototype.event.MatchFinishEvent;
 import hundun.quizlib.prototype.event.MatchEvent;
 import hundun.quizlib.prototype.event.SkillResultEvent;
 import hundun.quizlib.prototype.event.StartMatchEvent;
@@ -62,10 +62,10 @@ public class MatchEventFactory {
     }
     
     
-    public static FinishEvent getTypeFinish(Map<String, Integer> scores) {
+    public static MatchFinishEvent getTypeFinish(Map<String, Integer> scores) {
 //        ObjectNode data = mapper.createObjectNode();
 //        data.put("scores", scores.toString());
-        FinishEvent event = new FinishEvent();
+        MatchFinishEvent event = new MatchFinishEvent();
         event.setType(EventType.FINISH);
         return event;
     }

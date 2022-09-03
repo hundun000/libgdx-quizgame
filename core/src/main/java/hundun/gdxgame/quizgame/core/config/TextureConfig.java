@@ -12,12 +12,24 @@ import lombok.Getter;
 
 public class TextureConfig {
 
+    private static final String ENV = "pro";
+    
     @Getter
     protected Texture menuTexture;
     @Getter
     protected Texture countdownClockTexture;
     @Getter
-    protected Texture questionResultAnimationSheet;
+    protected Texture questionResultCorrectAnimationSheet;
+    @Getter
+    protected Texture questionResultWrongAnimationSheet;
+    @Getter
+    protected Texture questionResultSkippedAnimationSheet;
+    @Getter
+    protected Texture questionResultTineoutAnimationSheet;
+    @Getter
+    protected Texture skillButtonBackground;
+    @Getter
+    protected Texture skillUseOutButtonBackground;
     
     private Texture textureOrDefault(FileHandle file) {
         try {
@@ -27,12 +39,25 @@ public class TextureConfig {
         }
     }
     
+    private Texture textureOrDefault(String subName) {
+        try {
+            return new Texture(Gdx.files.internal("ui/" + ENV + "/" + subName));
+        } catch (Exception e) {
+            return new Texture(Gdx.files.internal("badlogic.jpg"));
+        }
+    }
+    
     public TextureConfig() {
 
 
-        menuTexture = textureOrDefault(Gdx.files.internal("menu.png"));
-        countdownClockTexture = textureOrDefault(Gdx.files.internal("countdownClock.png"));
-        questionResultAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
+        menuTexture = textureOrDefault("menu.png");
+        countdownClockTexture = textureOrDefault("countdownClock.png");
+        skillButtonBackground = textureOrDefault("skillButtonBackground.png");
+        skillUseOutButtonBackground = textureOrDefault("skillUseOutButtonBackground.png");
+        questionResultCorrectAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
+        questionResultWrongAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
+        questionResultSkippedAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
+        questionResultTineoutAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
     }
 
 }

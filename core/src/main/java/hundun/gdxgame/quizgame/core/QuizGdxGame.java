@@ -64,7 +64,7 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements ISc
 
     @Override
     public void intoTeamScreen(boolean load) {
-        this.gameLoadOrNew(true);
+        this.gameLoadOrNew(load);
         this.screenManager.pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");
     }
 

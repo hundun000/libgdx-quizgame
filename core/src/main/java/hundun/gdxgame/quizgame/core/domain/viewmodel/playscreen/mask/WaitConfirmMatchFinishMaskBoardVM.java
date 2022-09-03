@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.quizlib.prototype.event.MatchFinishEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.view.match.MatchSituationView;
 
@@ -19,12 +20,13 @@ import hundun.quizlib.view.match.MatchSituationView;
  * @author hundun
  * Created on 2021/11/12
  */
-public class WaitConfirmMatchSituationMaskBoardVM extends AbstractWaitConfirmMaskBoardVM {
+public class WaitConfirmMatchFinishMaskBoardVM extends AbstractWaitConfirmMaskBoardVM {
 
-    MatchSituationView data;
+    MatchFinishEvent data;
 
-
-    public WaitConfirmMatchSituationMaskBoardVM(
+    
+    
+    public WaitConfirmMatchFinishMaskBoardVM(
             QuizGdxGame game,
             CallerAndCallback callback,
             Drawable background
@@ -34,7 +36,7 @@ public class WaitConfirmMatchSituationMaskBoardVM extends AbstractWaitConfirmMas
     }
     
     
-    public void onCallShow(MatchSituationView data) {
+    public void onCallShow(MatchFinishEvent data) {
         //this.setVisible(true);
         this.data = data;
         
@@ -45,6 +47,6 @@ public class WaitConfirmMatchSituationMaskBoardVM extends AbstractWaitConfirmMas
     
     
     public static interface CallerAndCallback extends IWaitConfirmCallback {
-        void callShowMatchSituationConfirm();
+        void callShowMatchFinishConfirm(MatchFinishEvent matchFinishEvent);
     }
 }

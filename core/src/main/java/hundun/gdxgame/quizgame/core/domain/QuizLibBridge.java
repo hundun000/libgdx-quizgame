@@ -9,6 +9,7 @@ import com.badlogic.gdx.files.FileHandle;
 
 import hundun.quizlib.context.IFrontEnd;
 import hundun.quizlib.context.QuizComponentContext;
+import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.service.GameService;
 import lombok.Getter;
 
@@ -23,7 +24,11 @@ public class QuizLibBridge implements IFrontEnd {
     
     public QuizLibBridge() {
 
-        this.quizComponentContext = QuizComponentContext.Factory.create(this);
+        try {
+            this.quizComponentContext = QuizComponentContext.Factory.create(this);
+        } catch (QuizgameException e) {
+            Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
     }
     
     

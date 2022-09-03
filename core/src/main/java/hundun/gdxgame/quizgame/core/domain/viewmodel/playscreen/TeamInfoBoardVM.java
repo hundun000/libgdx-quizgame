@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
+import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.view.question.QuestionView;
 
 /**
@@ -26,6 +27,7 @@ public class TeamInfoBoardVM extends Table {
     
     CallerAndCallback callerAndCallback;
     
+    Label teamInfoLabel;
     List<TextButton> buttons = new ArrayList<>();
 
     
@@ -37,6 +39,10 @@ public class TeamInfoBoardVM extends Table {
         this.callerAndCallback = callerAndCallback;
         setBackground(background);
         
+        
+        teamInfoLabel = new Label("TEMP", game.getMainSkin());
+        this.add(teamInfoLabel);
+        
         TextButton optionButton;
         for (int i = 0; i < SystemButtonType.types.length; i++) {
             optionButton = new SystemButton(game, SystemButtonType.types[i]);
@@ -45,13 +51,6 @@ public class TeamInfoBoardVM extends Table {
             this.add(optionButton);
         }
         
-    }
-    
-    public void updateQuestion(QuestionView questionView) {
-        for (int i = 0; i < questionView.getOptions().size(); i++) {
-            String optiontext = questionView.getOptions().get(i);
-            buttons.get(i).setText(optiontext);
-        }
     }
     
     public enum SystemButtonType {
@@ -91,5 +90,9 @@ public class TeamInfoBoardVM extends Table {
     
     public static interface CallerAndCallback {
         void onChooseSystem(SystemButtonType type);
+    }
+
+    public void updateTeam(TeamPrototype teamPrototype) {
+        teamInfoLabel.setText(teamPrototype.getName());
     }
 }

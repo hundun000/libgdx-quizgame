@@ -1,6 +1,7 @@
 package hundun.quizlib.frontend.swing;
 
 import hundun.quizlib.context.QuizComponentContext;
+import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.service.GameService;
 
 /**
@@ -18,7 +19,13 @@ public class GUILoader {
     public static void main(String[] args) {
         
         MyFrame frame = new MyFrame();
-        QuizComponentContext quizComponentContext = QuizComponentContext.Factory.create(frame);
+        QuizComponentContext quizComponentContext;
+        try {
+            quizComponentContext = QuizComponentContext.Factory.create(frame);
+        } catch (QuizgameException e) {
+            e.printStackTrace();
+            return;
+        }
         
         frame.lazyInit(quizComponentContext);
         

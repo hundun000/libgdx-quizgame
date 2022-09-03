@@ -11,7 +11,7 @@ import hundun.quizlib.model.domain.buff.CombBuffStrategy;
 import hundun.quizlib.model.domain.match.BaseMatch;
 import hundun.quizlib.prototype.buff.BuffStrategyType;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
-import hundun.quizlib.prototype.event.FinishEvent;
+import hundun.quizlib.prototype.event.MatchFinishEvent;
 import hundun.quizlib.prototype.event.SkillResultEvent;
 import hundun.quizlib.prototype.event.SwitchQuestionEvent;
 import hundun.quizlib.prototype.event.SwitchTeamEvent;
@@ -114,7 +114,7 @@ public abstract class BaseMatchStrategy {
         return MatchEventFactory.getTypeSwitchQuestion(15);
     }
     
-    public FinishEvent checkFinishEvent() {
+    public MatchFinishEvent checkFinishEvent() {
         boolean anyDie = false;
         for (TeamRuntimeModel teamRuntimeModel : parent.getTeams()) {
             if (!teamRuntimeModel.isAlive()) {

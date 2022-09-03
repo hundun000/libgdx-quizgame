@@ -17,7 +17,7 @@ public class RoleRuntimeModel {
     
     private final RolePrototype prototype;
 
-    private List<SkillSlotRuntimeModel> skillSlotRuntimeModels;
+    private final List<SkillSlotRuntimeModel> skillSlotRuntimeModels = new ArrayList<>();
     
     public RoleRuntimeModel(RolePrototype prototype) {
         this.prototype = prototype;

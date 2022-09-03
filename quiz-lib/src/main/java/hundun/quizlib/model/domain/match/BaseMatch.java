@@ -13,7 +13,7 @@ import hundun.quizlib.model.domain.buff.BuffRuntimeModel;
 import hundun.quizlib.model.domain.buff.CombBuffStrategy;
 import hundun.quizlib.model.domain.match.strategy.BaseMatchStrategy;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
-import hundun.quizlib.prototype.event.FinishEvent;
+import hundun.quizlib.prototype.event.MatchFinishEvent;
 import hundun.quizlib.prototype.event.SkillResultEvent;
 import hundun.quizlib.prototype.event.StartMatchEvent;
 import hundun.quizlib.prototype.event.SwitchQuestionEvent;
@@ -44,7 +44,7 @@ public class BaseMatch {
 	public SkillResultEvent skillResultEvent;
 	public SwitchQuestionEvent switchQuestionEvent;
 	public SwitchTeamEvent switchTeamEvent;
-	public FinishEvent finishEvent;
+	public MatchFinishEvent finishEvent;
 	public StartMatchEvent startMatchEvent;
 	
 	BaseMatchStrategy strategy;

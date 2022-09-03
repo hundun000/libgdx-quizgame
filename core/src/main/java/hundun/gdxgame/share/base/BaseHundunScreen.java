@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.eskalon.commons.screen.ManagedScreen;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
@@ -27,6 +28,7 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
     @Getter
     protected final T_GAME game;
     
+    protected final Viewport sharedViewport;
     protected final Stage uiStage;
     protected final Stage popupUiStage;
     protected final Stage backUiStage;
@@ -40,11 +42,11 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
     
     public BaseHundunScreen(T_GAME game) {
         this.game = game;
-        OrthographicCamera camera = new OrthographicCamera(game.LOGIC_WIDTH, game.LOGIC_HEIGHT);
-        //FitViewport viewport = new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera);
-        this.uiStage = new Stage(new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera), game.getBatch());
-        this.popupUiStage = new Stage(new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera), game.getBatch());
-        this.backUiStage = new Stage(new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera), game.getBatch());
+        OrthographicCamera camera = new OrthographicCamera();
+        this.sharedViewport = new FitViewport(game.LOGIC_WIDTH, game.LOGIC_HEIGHT, camera);
+        this.uiStage = new Stage(sharedViewport, game.getBatch());
+        this.popupUiStage = new Stage(sharedViewport, game.getBatch());
+        this.backUiStage = new Stage(sharedViewport, game.getBatch());
         
         uiRootTable = new Table();
         uiRootTable.setFillParent(true);
@@ -61,8 +63,9 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        sharedViewport.apply();
+//        Gdx.gl.glClearColor(1, 1, 1, 1);
+//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (logicFrameHelper != null) {
             boolean isLogicFrame = logicFrameHelper.logicFrameCheck(delta);

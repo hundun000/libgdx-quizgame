@@ -12,8 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.AllTeamManagerAreaVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.TeamManagerVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.AllTeamManagerAreaVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamManagerVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.prototype.match.MatchStrategyType;

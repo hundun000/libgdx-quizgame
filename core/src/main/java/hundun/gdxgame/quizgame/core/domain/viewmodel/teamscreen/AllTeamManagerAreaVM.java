@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen;
 /**
  * @author hundun
  * Created on 2022/08/30

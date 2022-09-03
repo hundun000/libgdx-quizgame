@@ -11,13 +11,19 @@ import hundun.gdxgame.quizgame.html.GwtPreferencesSaveTool;
 
 public class HtmlLauncher extends GwtApplication {
 
-        @Override
-        public GwtApplicationConfiguration getConfig () {
-            return new GwtApplicationConfiguration(480, 320);
-        }
+    QuizGdxGame game;
+    
+    public HtmlLauncher() {
+        this.game = new QuizGdxGame(new GwtPreferencesSaveTool("demo-html-save"));
+    }
+    
+    @Override
+    public GwtApplicationConfiguration getConfig () {
+        return new GwtApplicationConfiguration(game.LOGIC_WIDTH, game.LOGIC_HEIGHT);
+    }
 
-        @Override
-        public ApplicationListener createApplicationListener() {
-            return new QuizGdxGame(new GwtPreferencesSaveTool("demo-html-save"));
-        }
+    @Override
+    public ApplicationListener createApplicationListener() {
+        return game;
+    }
 }

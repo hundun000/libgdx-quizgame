@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -11,7 +11,7 @@ import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
  * @author hundun
  * Created on 2022/09/01
  */
-public class PlayCountdownClockVM extends Table {
+public class CountdownClockVM extends Table {
 
     private final CallerAndCallback callerAndCallback;
     
@@ -20,7 +20,7 @@ public class PlayCountdownClockVM extends Table {
     
     NumberFormat format;
     
-    public PlayCountdownClockVM(
+    public CountdownClockVM(
             QuizGdxGame game,
             CallerAndCallback callerAndCallback,
             Drawable background

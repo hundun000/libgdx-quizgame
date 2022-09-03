@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -19,15 +19,15 @@ import hundun.quizlib.view.match.MatchSituationView;
  * @author hundun
  * Created on 2021/11/12
  */
-public class QuestionResultAnimationMaskBoardVM extends Table {
+public class WaitConfirmMatchSituationMaskBoardVM extends Table {
 
     MatchSituationView data;
     CallerAndCallback callback;
     
-
+    Label label;
     
     
-    public QuestionResultAnimationMaskBoardVM(
+    public WaitConfirmMatchSituationMaskBoardVM(
             QuizGdxGame game,
             CallerAndCallback callback,
             Drawable background
@@ -37,6 +37,20 @@ public class QuestionResultAnimationMaskBoardVM extends Table {
         this.setBackground(background);
         this.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        label = new Label("TEMP", game.getMainSkin());
+        this.add(label).center().row();
+
+        Button textButton = new TextButton("yes", game.getMainSkin());
+        textButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //WaitConfirmMatchConfigMaskBoardVM.this.setVisible(false);
+                callback.onMatchSituationConfirmed();
+            }
+        });
+        this.add(textButton).center();
+
+        //this.setVisible(false);
 
     }
     
@@ -52,6 +66,7 @@ public class QuestionResultAnimationMaskBoardVM extends Table {
     
     
     public static interface CallerAndCallback {
-        void onQuestionResultAnimationDone();
+        void onMatchSituationConfirmed();
+        void onMatchSituationConfirmCallShow();
     }
 }

@@ -26,6 +26,7 @@ public class TextureConfig {
         protected Texture menuTexture;
         protected Texture playScreenBackground;
         protected Texture countdownClockTexture;
+        protected Texture currentTeamSignTexture;
         protected Texture questionResultCorrectAnimationSheet;
         protected Texture questionResultWrongAnimationSheet;
         protected Texture questionResultSkippedAnimationSheet;
@@ -43,6 +44,7 @@ public class TextureConfig {
             menuTexture = textureOrDefault("menu.png");
             playScreenBackground = textureOrDefault("playScreen.png");
             countdownClockTexture = textureOrDefault("countdownClock.png");
+            currentTeamSignTexture = textureOrDefault("currentTeamSignTexture.png");
             skillButtonBackground = textureOrDefault("skillButtonBackground.png");
             skillUseOutButtonBackground = textureOrDefault("skillUseOutButtonBackground.png");
             questionStemBackground = textureOrDefault("questionStemBackground.png");
@@ -55,8 +57,8 @@ public class TextureConfig {
                 Texture texture = textureOrDefault("systemButton.png");
                 TextureRegion[][] regions = TextureRegion.split(texture, 32, 32);
                 systemButtonIconMap.put(SystemButtonType.SHOW_MATCH_SITUATION, regions[0][0]);
-                systemButtonIconMap.put(SystemButtonType.EXIT, regions[0][1]);
-//                systemButtonIconMap.put(ConstructionId.BIG_BEEHIVE, regions[0][2]);
+                systemButtonIconMap.put(SystemButtonType.EXIT_AS_DISCARD_MATCH, regions[0][1]);
+                systemButtonIconMap.put(SystemButtonType.EXIT_AS_FINISH_MATCH, regions[0][2]);
 //                systemButtonIconMap.put(ConstructionId.QUEEN_BEEHIVE, regions[0][3]);
 //                systemButtonIconMap.put(ConstructionId.WOOD_KEEPING, regions[0][4]);
             }
@@ -134,6 +136,10 @@ public class TextureConfig {
 
     public Map<SystemButtonType, TextureRegion> getSystemButtonIconMap() {
         return packageMap.get(currentEnv).systemButtonIconMap;
+    }
+    
+    public Texture getCurrentTeamSignTexture() {
+        return packageMap.get(currentEnv).currentTeamSignTexture;
     }
 
 }

@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.share.MatchFinishHistoryVM;
+import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchFinishHistory;
 import hundun.quizlib.prototype.event.MatchFinishEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.view.match.MatchSituationView;
@@ -22,9 +24,9 @@ import hundun.quizlib.view.match.MatchSituationView;
  */
 public class WaitConfirmMatchFinishMaskBoardVM extends AbstractWaitConfirmMaskBoardVM {
 
-    MatchFinishEvent data;
+    MatchFinishHistory data;
 
-    
+    MatchFinishHistoryVM vm;
     
     public WaitConfirmMatchFinishMaskBoardVM(
             QuizGdxGame game,
@@ -32,21 +34,34 @@ public class WaitConfirmMatchFinishMaskBoardVM extends AbstractWaitConfirmMaskBo
             Drawable background
             ) {
         super(game, callback, background);
-
+        
+        
     }
     
     
-    public void onCallShow(MatchFinishEvent data) {
+    public void onCallShow(MatchFinishHistory history) {
         //this.setVisible(true);
-        this.data = data;
+        this.data = history;
         
         // --- render data ---
+        this.clear();
         
+        this.vm = new MatchFinishHistoryVM(game, history.getData());
+        this.add(vm).row();
         
+        Button textButton = new TextButton("yes", this.game.getMainSkin());
+        textButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //WaitConfirmMatchConfigMaskBoardVM.this.setVisible(false);
+                WaitConfirmMatchFinishMaskBoardVM.this.callback.onConfirmed();
+            }
+        });
+        this.add(textButton);
     }
     
     
     public static interface CallerAndCallback extends IWaitConfirmCallback {
-        void callShowMatchFinishConfirm(MatchFinishEvent matchFinishEvent);
+        void callShowMatchFinishConfirm();
     }
 }

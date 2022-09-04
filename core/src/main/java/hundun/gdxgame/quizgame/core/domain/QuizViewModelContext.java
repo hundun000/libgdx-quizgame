@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 
 import de.eskalon.commons.screen.transition.impl.BlendingTransition;
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.screen.HistoryScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizMenuScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizPlayScreen;
 import hundun.gdxgame.quizgame.core.screen.TeamScreen;
@@ -27,8 +28,9 @@ public class QuizViewModelContext extends BaseViewModelContext {
         
     }
 
-    private void contextFirstLazyInit() {
-        
+
+    @Override
+    protected void lazyInitOnGameCreate() {
         BaseHundunScreen<?, ?> screen;
         
         screen = new QuizMenuScreen(game);
@@ -40,13 +42,11 @@ public class QuizViewModelContext extends BaseViewModelContext {
         screen = new QuizPlayScreen(game);
         game.getScreenManager().addScreen(screen.getClass().getSimpleName(), screen);
         
+        screen = new HistoryScreen(game);
+        game.getScreenManager().addScreen(screen.getClass().getSimpleName(), screen);
+        
         BlendingTransition blendingTransition = new BlendingTransition(game.getBatch(), 1F);
         game.getScreenManager().addScreenTransition("blending_transition", blendingTransition);
-    }
-
-    @Override
-    protected void lazyInitOnGameCreate() {
-        contextFirstLazyInit();
         
     }
 

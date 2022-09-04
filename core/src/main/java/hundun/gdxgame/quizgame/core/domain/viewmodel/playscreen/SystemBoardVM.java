@@ -55,12 +55,14 @@ public class SystemBoardVM extends Table {
     
     public enum SystemButtonType {
         SHOW_MATCH_SITUATION,
-        EXIT,
+        EXIT_AS_DISCARD_MATCH, 
+        EXIT_AS_FINISH_MATCH,
         ;
         
         static SystemButtonType[] types = new SystemButtonType[] {
                 SHOW_MATCH_SITUATION,
-                EXIT
+                EXIT_AS_DISCARD_MATCH,
+                EXIT_AS_FINISH_MATCH
         };
     }
     

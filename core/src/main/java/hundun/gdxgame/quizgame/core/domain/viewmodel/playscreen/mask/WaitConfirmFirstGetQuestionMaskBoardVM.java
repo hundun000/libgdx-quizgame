@@ -30,7 +30,7 @@ public class WaitConfirmFirstGetQuestionMaskBoardVM extends AbstractWaitConfirmM
             Drawable background
             ) {
         super(game, callback, background);
-
+        
     }
     
     
@@ -39,7 +39,7 @@ public class WaitConfirmFirstGetQuestionMaskBoardVM extends AbstractWaitConfirmM
         this.data = data;
         
         // --- render data ---
-        
+        simpleFill(this);
         
     }
     

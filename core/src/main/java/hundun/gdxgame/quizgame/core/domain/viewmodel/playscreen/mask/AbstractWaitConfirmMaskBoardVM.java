@@ -20,38 +20,42 @@ import hundun.quizlib.view.match.MatchSituationView;
  * Created on 2021/11/12
  */
 public abstract class AbstractWaitConfirmMaskBoardVM extends Table {
-
-    protected MatchSituationView data;
+    protected final QuizGdxGame game;
     
-    protected Label label;
-    protected Button textButton;
+    protected final IWaitConfirmCallback callback;
     
     public AbstractWaitConfirmMaskBoardVM(
             QuizGdxGame game,
             IWaitConfirmCallback callback,
             Drawable background
             ) {
-        
+        this.game = game;
+        this.callback = callback;
         this.setBackground(background);
         //this.setBounds(0, 0, game.LOGIC_WIDTH, game.LOGIC_HEIGHT);
 
-        label = new Label("TEMP", game.getMainSkin());
-        this.add(label).center().row();
-
-        textButton = new TextButton("yes", game.getMainSkin());
-        textButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                //WaitConfirmMatchConfigMaskBoardVM.this.setVisible(false);
-                callback.onConfirmed();
-            }
-        });
-        this.add(textButton).center();
+        
 
         //this.setVisible(false);
 
     }
 
+    public static void simpleFill(AbstractWaitConfirmMaskBoardVM boardVM) {
+        boardVM.clear();
+        
+        Label label = new Label("TEMP", boardVM.game.getMainSkin());
+        boardVM.add(label).center().row();
+
+        Button textButton = new TextButton("yes", boardVM.game.getMainSkin());
+        textButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //WaitConfirmMatchConfigMaskBoardVM.this.setVisible(false);
+                boardVM.callback.onConfirmed();
+            }
+        });
+        boardVM.add(textButton).center();
+    }
 
     public static interface IWaitConfirmCallback {
         void onConfirmed();

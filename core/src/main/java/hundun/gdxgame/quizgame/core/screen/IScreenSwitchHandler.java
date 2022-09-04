@@ -1,5 +1,7 @@
 package hundun.gdxgame.quizgame.core.screen;
 
+import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchFinishHistory;
+import hundun.quizlib.prototype.event.MatchFinishEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
 
 /**
@@ -8,7 +10,7 @@ import hundun.quizlib.prototype.match.MatchConfig;
  * Created on 2022/09/01
  */
 public interface IScreenSwitchHandler {
-    
+    void intoHistoryScreen(MatchFinishHistory history);
     void intoQuizPlayScreen(MatchConfig matchConfig);
     void intoTeamScreen();
 }

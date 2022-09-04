@@ -73,8 +73,6 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         public ToPlayScreenButtonVM(QuizGdxGame game) {
             super("Next", game.getMainSkin());
             
-            this.setWidth(100);
-            this.setHeight(100);
             this.addListener(
                     new InputListener(){
                         @Override

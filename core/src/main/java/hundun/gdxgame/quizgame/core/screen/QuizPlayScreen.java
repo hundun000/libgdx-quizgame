@@ -25,7 +25,8 @@ import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.QuestionOptionAr
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.QuestionStemVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SkillBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.TeamInfoBoardVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.TeamInfoBoardVM.SystemButtonType;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SystemBoardVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SystemBoardVM.SystemButtonType;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.QuestionResultAnimationVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.TeamSwitchAnimationVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.WaitConfirmFirstGetQuestionMaskBoardVM;
@@ -57,7 +58,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         WaitConfirmMatchFinishMaskBoardVM.CallerAndCallback,
         CountdownClockVM.CallerAndCallback, 
         QuestionOptionAreaVM.CallerAndCallback, 
-        TeamInfoBoardVM.CallerAndCallback,
+        SystemBoardVM.CallerAndCallback,
         SkillBoardVM.CallerAndCallback,
         QuestionResultAnimationVM.CallerAndCallback,
         TeamSwitchAnimationVM.CallerAndCallback
@@ -73,7 +74,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     // --- UI ---
 //    protected final Table uiRootTable1;
     
-    List<Runnable> blockingAnimationTasks = new LinkedList<>();
+    List<Runnable> blockingAnimationTaskQueue = new LinkedList<>();
     Runnable afterAllAnimationDoneTask;
     Runnable afterComfirmTask;
     
@@ -82,6 +83,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     CountdownClockVM countdownClockVM;
     QuestionStemVM questionStemVM;
     TeamInfoBoardVM teamInfoBoardVM;
+    SystemBoardVM systemBoardVM;
     ImageAreaVM imageAreaVM;
     QuestionOptionAreaVM questionOptionAreaVM;
     SkillBoardVM skillBoardVM;
@@ -111,9 +113,9 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         super.show();
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
         
-        initUI();
+        rebuildUI();
         
-        intoPostShowState();
+        handleCreateAndStartMatch();
     }
     
     public void prepareShow(MatchConfig matchConfig) {
@@ -124,7 +126,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
                 ));
     }
     
-    private void intoPostShowState() {
+    private void handleCreateAndStartMatch() {
         
         try {
             currentMatchSituationView = quizLib.createMatch(matchConfig);
@@ -167,7 +169,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         popupRootTable.clear();
         // --- screen logic ---
         Gdx.input.setInputProcessor(uiStage);
-        //logicFrameHelper.setLogicFramePause(false);
+        logicFrameHelper.setLogicFramePause(false);
         // --- quiz logic ---
         if (afterComfirmTask != null) {
             Runnable temp = afterComfirmTask;
@@ -195,6 +197,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         // --- ui ---
         
         popupRootTable.add(waitConfirmFirstGetQuestionMaskBoardVM);
+        logicFrameHelper.setLogicFramePause(true);
         // --- quiz logic ---
         afterComfirmTask = () -> {
             try { 
@@ -220,6 +223,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         // --- ui ---
         
         popupRootTable.add(waitConfirmMatchSituationMaskBoardVM);
+        logicFrameHelper.setLogicFramePause(true);
         // --- screen logic ---
         Gdx.input.setInputProcessor(popupUiStage);
         waitConfirmMatchSituationMaskBoardVM.onCallShow(currentMatchSituationView);
@@ -249,13 +253,13 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
             MatchFinishEvent matchFinishEvent = currentMatchSituationView.getFinishEvent();
             // --- post ---
             countdownClockVM.clearCountdown();
-            blockingAnimationTasks.add(() -> callShowQuestionResultAnimation(answerResultEvent));
+            blockingAnimationTaskQueue.add(() -> callShowQuestionResultAnimation(answerResultEvent));
             
             if (matchFinishEvent != null) {
-                blockingAnimationTasks.add(() -> callShowMatchFinishConfirm(matchFinishEvent));
+                blockingAnimationTaskQueue.add(() -> callShowMatchFinishConfirm(matchFinishEvent));
             } else {
                 if (switchTeamEvent != null) {
-                    blockingAnimationTasks.add(() -> callShowTeamSwitchAnimation(switchTeamEvent));
+                    blockingAnimationTaskQueue.add(() -> callShowTeamSwitchAnimation(switchTeamEvent));
                 }
                 
                 afterAllAnimationDoneTask = () -> {
@@ -270,7 +274,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
                     }
                 };
             }
-            checkBlockingAnimationTasks();
+            checkBlockingAnimationTaskQueue();
             
             
         } catch (QuizgameException e) {
@@ -306,7 +310,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     
     }
     
-    private void initUI() {
+    private void rebuildUI() {
         
         backUiStage.clear();
         uiRootTable.clear();
@@ -347,10 +351,9 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         
         teamInfoBoardVM = new TeamInfoBoardVM(
                 game,
-                this,
                 DrawableFactory.getSimpleBoardBackground()
                 );
-        teamInfoBoardVM.setBounds(1100, 600, 400, 280);
+        teamInfoBoardVM.setBounds(1100, 600, 350, 280);
         uiRootTable.addActor(teamInfoBoardVM);
 //        uiRootTable.add(teamInfoBoardVM)
 //                .center()
@@ -359,8 +362,14 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
 //                ;
         
         
-        uiRootTable.row();
-        
+        systemBoardVM = new SystemBoardVM(
+                game,
+                this,
+                DrawableFactory.getSimpleBoardBackground()
+                );
+        systemBoardVM.setBounds(1500, 600, 100, 280);
+        uiRootTable.addActor(systemBoardVM);
+
         
         imageAreaVM = new ImageAreaVM(
                 game,
@@ -443,9 +452,9 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     }
 
 
-    private void checkBlockingAnimationTasks() {
-        if (blockingAnimationTasks.size() > 0) {
-            blockingAnimationTasks.remove(0).run();
+    private void checkBlockingAnimationTaskQueue() {
+        if (blockingAnimationTaskQueue.size() > 0) {
+            blockingAnimationTaskQueue.remove(0).run();
         } else if (afterAllAnimationDoneTask != null) {
             Runnable temp = afterAllAnimationDoneTask;
             afterAllAnimationDoneTask = null;
@@ -477,7 +486,13 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     }
 
     private void handelExit() {
-        game.intoTeamScreen(false);
+        matchConfig = null;
+        currentMatchSituationView = null;
+        blockingAnimationTaskQueue.clear();
+        afterAllAnimationDoneTask = null;
+        afterComfirmTask = null;
+        
+        game.intoTeamScreen();
     }
 
     @Override
@@ -510,7 +525,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         // --- logic ---
         Gdx.input.setInputProcessor(uiStage);
         
-        checkBlockingAnimationTasks();
+        checkBlockingAnimationTaskQueue();
     }
 
     @Override

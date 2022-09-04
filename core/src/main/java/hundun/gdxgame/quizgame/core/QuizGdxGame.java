@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import hundun.gdxgame.quizgame.core.config.TextureConfig;
 import hundun.gdxgame.quizgame.core.domain.QuizLibBridge;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
+import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler;
 import hundun.gdxgame.quizgame.core.domain.QuizViewModelContext;
 import hundun.gdxgame.quizgame.core.screen.IScreenSwitchHandler;
 import hundun.gdxgame.quizgame.core.screen.QuizMenuScreen;
@@ -31,19 +32,6 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements ISc
 	public QuizGdxGame(ISaveTool<QuizRootSaveData> saveTool) {
 	    super(1600, 900, saveTool);
 	    this.debugMode = true;
-	    this.DEFAULT_MAIN_SKIN_FILE_PATH = "skins/DefaultSkinWithChineseHeiti26/uiskin.json";
-	}
-	
-	@Override
-	public void create() {
-	    
-	    this.textureConfig = new TextureConfig();
-        this.quizLibBridge = new QuizLibBridge();
-	    
-	    super.create();
-
-		this.screenManager.pushScreen(QuizMenuScreen.class.getSimpleName(), "blending_transition");
-		Gdx.app.log(this.getClass().getSimpleName(), "Initialization finished.");
 	}
 	
 	@Override
@@ -52,22 +40,36 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements ISc
 	    gameSaveCurrent();
 	}
 
-    @Override
-    protected BaseViewModelContext<QuizRootSaveData> beforeCreateLazyInit() {
-        return new QuizViewModelContext(this);
-    }
 
     @Override
     public void intoQuizPlayScreen(MatchConfig matchConfig) {
-        QuizPlayScreen quizPlayScreen = modelContext.getScreen(QuizPlayScreen.class);
+        QuizPlayScreen quizPlayScreen = this.getScreen(QuizPlayScreen.class);
         quizPlayScreen.prepareShow(matchConfig);
         this.screenManager.pushScreen(QuizPlayScreen.class.getSimpleName(), "blending_transition");
     }
 
     @Override
-    public void intoTeamScreen(boolean load) {
-        this.gameLoadOrNew(load);
+    public void intoTeamScreen() {
         this.screenManager.pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");
+    }
+
+    @Override
+    protected void createStage1() {
+        // ------ for super ------
+        this.modelContext = new QuizViewModelContext(this);
+        this.saveHandler = new QuizSaveHandler(this);
+        this.mainSkinFilePath = "skins/DefaultSkinWithChineseHeiti26/uiskin.json";
+        // ------ for self ------
+        this.textureConfig = new TextureConfig();
+        this.quizLibBridge = new QuizLibBridge();
+    }
+
+    @Override
+    protected void createStage3() {
+        systemSettingLoad();
+        
+        this.screenManager.pushScreen(QuizMenuScreen.class.getSimpleName(), "blending_transition");
+        Gdx.app.log(this.getClass().getSimpleName(), "Initialization finished.");
     }
     
 

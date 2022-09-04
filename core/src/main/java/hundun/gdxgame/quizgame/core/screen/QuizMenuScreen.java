@@ -16,13 +16,20 @@ public class QuizMenuScreen extends StarterMenuScreen<QuizGdxGame, QuizRootSaveD
     public QuizMenuScreen(QuizGdxGame game) {
         super(game);
         
+        
+    }
+
+    
+    @Override
+    protected void create() {
         StarterMenuScreen.Factory.simpleFill(this, game, 
                 "Quiz", 
                 game.getTextureConfig().getMenuTexture(), 
                 new InputListener(){
                     @Override
                     public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                        game.intoTeamScreen(true);
+                        game.gameLoadOrNew(true);
+                        game.intoTeamScreen();
                     }
                     @Override
                     public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -32,7 +39,8 @@ public class QuizMenuScreen extends StarterMenuScreen<QuizGdxGame, QuizRootSaveD
                 new InputListener(){
                     @Override
                     public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                        game.intoTeamScreen(false);
+                        game.gameLoadOrNew(false);
+                        game.intoTeamScreen();
                     }
                     @Override
                     public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -41,5 +49,4 @@ public class QuizMenuScreen extends StarterMenuScreen<QuizGdxGame, QuizRootSaveD
                 }
                 );
     }
-
 }

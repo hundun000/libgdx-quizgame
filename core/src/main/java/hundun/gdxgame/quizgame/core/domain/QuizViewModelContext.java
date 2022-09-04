@@ -18,10 +18,7 @@ import lombok.Getter;
  * @author hundun
  * Created on 2022/08/30
  */
-public class QuizViewModelContext extends BaseViewModelContext<QuizRootSaveData> {
-
-    @Getter
-    private QuizRootSaveData rootSaveData;
+public class QuizViewModelContext extends BaseViewModelContext {
 
     QuizGdxGame game;
     
@@ -35,15 +32,12 @@ public class QuizViewModelContext extends BaseViewModelContext<QuizRootSaveData>
         BaseHundunScreen<?, ?> screen;
         
         screen = new QuizMenuScreen(game);
-        screenMap.put(screen.getClass(), screen);
         game.getScreenManager().addScreen(screen.getClass().getSimpleName(), screen);
         
         screen = new TeamScreen(game);
-        screenMap.put(screen.getClass(), screen);
         game.getScreenManager().addScreen(screen.getClass().getSimpleName(), screen);
         
         screen = new QuizPlayScreen(game);
-        screenMap.put(screen.getClass(), screen);
         game.getScreenManager().addScreen(screen.getClass().getSimpleName(), screen);
         
         BlendingTransition blendingTransition = new BlendingTransition(game.getBatch(), 1F);
@@ -62,22 +56,7 @@ public class QuizViewModelContext extends BaseViewModelContext<QuizRootSaveData>
         
     }
 
-    @Override
-    protected void applySaveData(QuizRootSaveData rootSaveData) {
-        this.rootSaveData = rootSaveData;
-    }
     
-    @Override
-    protected QuizRootSaveData currentSituationToSaveData() {
-        return rootSaveData;
-    }
-    
-    @Override
-    protected QuizRootSaveData genereateNewGameSaveData() {
-        QuizRootSaveData rootSaveData = QuizRootSaveData.Factory.newGame();
-        rootSaveData.getData().setValue("new Hello world");
-        return rootSaveData;
-    }
 
 
 }

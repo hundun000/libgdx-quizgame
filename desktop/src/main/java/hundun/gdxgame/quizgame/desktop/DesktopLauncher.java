@@ -8,10 +8,12 @@ import hundun.gdxgame.quizgame.core.QuizGdxGame;
 
 
 public class DesktopLauncher {
-	public static void main (String[] arg) {
-	    QuizGdxGame game = new QuizGdxGame(new DesktopPreferencesSaveTool("demo-desktop-save"));
+    public static double WINDOW_SCALE = 0.5;
+    
+	public static void main (String[] args) {
+	    QuizGdxGame game = new QuizGdxGame(new DesktopPreferencesSaveTool("quizgame-desktop-save.xml"));
 	    Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-	    config.setWindowedMode((int) (game.LOGIC_WIDTH * game.WINDOW_SCALE), (int) (game.LOGIC_HEIGHT* game.WINDOW_SCALE));
+	    config.setWindowedMode((int) (game.LOGIC_WIDTH * WINDOW_SCALE), (int) (game.LOGIC_HEIGHT* WINDOW_SCALE));
 		new Lwjgl3Application(game, config);
 	}
 }

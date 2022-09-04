@@ -14,7 +14,7 @@ public class HtmlLauncher extends GwtApplication {
     QuizGdxGame game;
     
     public HtmlLauncher() {
-        this.game = new QuizGdxGame(new GwtPreferencesSaveTool("demo-html-save"));
+        this.game = new QuizGdxGame(new GwtPreferencesSaveTool("quizgame-html-save"));
     }
     
     @Override

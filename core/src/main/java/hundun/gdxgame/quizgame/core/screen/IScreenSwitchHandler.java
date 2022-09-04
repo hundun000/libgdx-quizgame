@@ -10,5 +10,5 @@ import hundun.quizlib.prototype.match.MatchConfig;
 public interface IScreenSwitchHandler {
     
     void intoQuizPlayScreen(MatchConfig matchConfig);
-    void intoTeamScreen(boolean load);
+    void intoTeamScreen();
 }

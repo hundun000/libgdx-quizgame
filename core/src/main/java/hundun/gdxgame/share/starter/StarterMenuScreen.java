@@ -35,9 +35,7 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
     
     public static class Factory {
         
-        public static <T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> 
-        void
-        simpleFill(
+        public static <T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> void simpleFill(
                 StarterMenuScreen<T_GAME, T_SAVE> target,
                 T_GAME game, 
                 String titleText,
@@ -67,9 +65,7 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
             target.buttonIntoSettingScreen = buttonIntoSettingScreen;
         }
         
-        public static <T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> 
-        StarterMenuScreen<T_GAME, T_SAVE> 
-        simpleBuild(
+        public static <T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> StarterMenuScreen<T_GAME, T_SAVE> simpleBuild(
                 T_GAME game, 
                 String titleText,
                 Texture backTexture,

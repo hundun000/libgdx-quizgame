@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class SkillSlotPrototype {
-    
+
     private String name;
     private String description;
     private List<String> eventArgs;

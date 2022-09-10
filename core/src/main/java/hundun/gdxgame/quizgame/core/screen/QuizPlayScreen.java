@@ -22,7 +22,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.CountdownClockVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.ImageAreaVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.QuestionResourceAreaVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.QuestionResourceAreaVM.IAudioCallback;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.QuestionOptionAreaVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.QuestionStemVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SkillBoardVM;
@@ -54,6 +55,7 @@ import hundun.quizlib.prototype.event.SwitchQuestionEvent;
 import hundun.quizlib.prototype.event.SwitchTeamEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.prototype.skill.SkillSlotPrototype;
+import hundun.quizlib.service.BuiltinSkillSlotPrototypeFactory;
 import hundun.quizlib.service.GameService;
 import hundun.quizlib.view.match.MatchSituationView;
 import lombok.Setter;
@@ -66,7 +68,8 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         CountdownClockVM.CallerAndCallback, 
         QuestionOptionAreaVM.CallerAndCallback, 
         SystemBoardVM.CallerAndCallback,
-        SkillBoardVM.CallerAndCallback
+        SkillBoardVM.CallerAndCallback, 
+        IAudioCallback
 {
     
 
@@ -88,7 +91,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
     QuestionStemVM questionStemVM;
     TeamInfoBoardVM teamInfoBoardVM;
     SystemBoardVM systemBoardVM;
-    ImageAreaVM imageAreaVM;
+    QuestionResourceAreaVM questionResourceAreaVM;
     QuestionOptionAreaVM questionOptionAreaVM;
     SkillBoardVM skillBoardVM;
     
@@ -196,12 +199,15 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         uiRootTable.addActor(systemBoardVM);
 
         
-        imageAreaVM = new ImageAreaVM(
+        questionResourceAreaVM = new QuestionResourceAreaVM(
                 game,
+                this,
+                DrawableFactory.getSimpleBoardBackground(),
+                DrawableFactory.getSimpleBoardBackground(),
                 DrawableFactory.getSimpleBoardBackground()
                 );
-        imageAreaVM.setBounds(0, 0, 400, 600);
-        uiRootTable.addActor(imageAreaVM);
+        questionResourceAreaVM.setBounds(0, 0, 400, 600);
+        uiRootTable.addActor(questionResourceAreaVM);
 //        uiRootTable.add(imageAreaVM)
 //                .center()
 //                .colspan(2)
@@ -313,6 +319,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         if (countdownClockVM.isCountdownState()) {
             countdownClockVM.updateCoutdownSecond(-1);
         }
+        
     }
 
     
@@ -336,6 +343,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         countdownClockVM.resetCountdown(switchQuestionEvent.getTime());
         questionOptionAreaVM.updateQuestion(currentMatchSituationView.getQuestion());
         questionStemVM.updateQuestion(currentMatchSituationView.getQuestion());
+        questionResourceAreaVM.updateQuestion(currentMatchSituationView.getQuestion());
     }
 
 
@@ -434,18 +442,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             animationQueueHandler.addAnimationTask(() -> animationCallerAndCallback.callShowSkillAnimation(skillResultEvent));
             animationQueueHandler.setAfterAllAnimationDoneTask(() -> {
                         skillBoardVM.updateSkill(index, skillResultEvent.getSkillRemainTime());
-                        switch (skillResultEvent.getSkillName()) {
-                            case "5050":
-                                skillEffectHandler.handle5050(skillResultEvent.getArgs()); 
-                                break;
-            
-                            default:
-                                Gdx.app.error(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
-                                        "unhandle SkillName = %s", 
-                                        skillResultEvent.getSkillName()
-                                        ));
-                                break;
-                        }
+                        skillEffectHandler.handle(skillResultEvent);
                     });
             animationQueueHandler.checkNextAnimation();
             
@@ -530,7 +527,21 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
     
     class SkillEffectHandler {
 
-        public void handle5050(List<String> args) {
+        public void handle(SkillResultEvent skillResultEvent) {
+            switch (skillResultEvent.getSkillName()) {
+                case BuiltinSkillSlotPrototypeFactory.SKILL_NAME_5050:
+                    this.handle5050(skillResultEvent.getArgs()); 
+                    break;
+                default:
+                    Gdx.app.error(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                            "unhandle SkillName = %s", 
+                            skillResultEvent.getSkillName()
+                            ));
+                break;
+            }
+        }
+        
+        private void handle5050(List<String> args) {
             int showOptionAmout = Integer.valueOf(args.get(0));
             questionOptionAreaVM.showRandomOption(showOptionAmout);
         }
@@ -541,7 +552,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             FirstGetQuestionNotificationBoardVM.CallerAndCallback,
             MatchSituationNotificationBoardVM.CallerAndCallback, 
             MatchFinishNotificationBoardVM.CallerAndCallback {
-        @Setter
+        
         Runnable afterComfirmTask;
         
         @Override
@@ -697,6 +708,18 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                 currentAnimationVM.updateFrame(delta, spriteBatch);
             }
         }
+    }
+
+    @Override
+    public void onFirstPlayDone() {
+        Gdx.app.log(this.getClass().getSimpleName(), "onFirstPlayDone called");
+        logicFrameHelper.setLogicFramePause(false);
+    }
+
+    @Override
+    public void onPlayReady() {
+        Gdx.app.log(this.getClass().getSimpleName(), "onPlayReady called");
+        logicFrameHelper.setLogicFramePause(true);
     }
     
 

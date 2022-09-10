@@ -19,7 +19,7 @@ import hundun.quizlib.view.match.MatchSituationView;
  * @author hundun
  * Created on 2021/11/12
  */
-public class MatchSituationNotificationBoardVM extends AbstractNotificationBoardVM {
+public class MatchSituationNotificationBoardVM extends AbstractNotificationBoardVM<MatchSituationView> {
 
     MatchSituationView data;
 
@@ -33,7 +33,7 @@ public class MatchSituationNotificationBoardVM extends AbstractNotificationBoard
 
     }
     
-    
+    @Override
     public void onCallShow(MatchSituationView data) {
         //this.setVisible(true);
         this.data = data;

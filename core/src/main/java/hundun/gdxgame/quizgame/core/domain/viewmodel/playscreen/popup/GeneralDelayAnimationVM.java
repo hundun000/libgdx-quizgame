@@ -29,7 +29,7 @@ import lombok.Getter;
  * @author hundun
  * Created on 2021/11/12
  */
-public class GeneralDelayAnimationVM extends AbstractAnimationVM {
+public class GeneralDelayAnimationVM extends AbstractAnimationVM<Float> {
 
 
     CallerAndCallback callerAndCallback;
@@ -54,8 +54,8 @@ public class GeneralDelayAnimationVM extends AbstractAnimationVM {
         this.add(resultLable);
     }
     
-    
-    public void callShow(float second) {
+    @Override
+    public void callShow(Float second) {
 
         // Initialize the Animation with the frame interval and array of frames
         float duration = second / (FRAME_COLS * FRAME_ROWS);
@@ -65,7 +65,7 @@ public class GeneralDelayAnimationVM extends AbstractAnimationVM {
                 )));
         resultLable.setText("GeneralDelay " + second + " second(s)");
         
-        super.resetBackground();
+        super.resetFrame();
     }
     
     

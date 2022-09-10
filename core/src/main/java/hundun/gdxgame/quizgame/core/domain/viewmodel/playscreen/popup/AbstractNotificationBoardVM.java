@@ -18,8 +18,9 @@ import hundun.quizlib.view.match.MatchSituationView;
 /**
  * @author hundun
  * Created on 2021/11/12
+ * @param <T>
  */
-public abstract class AbstractNotificationBoardVM extends Table {
+public abstract class AbstractNotificationBoardVM<T> extends Table {
     protected final QuizGdxGame game;
     
     protected final IWaitConfirmNotificationCallback callback;
@@ -39,8 +40,10 @@ public abstract class AbstractNotificationBoardVM extends Table {
         //this.setVisible(false);
 
     }
+    
+    public abstract void onCallShow(T arg);
 
-    public static void simpleFill(AbstractNotificationBoardVM boardVM) {
+    public static void simpleFill(AbstractNotificationBoardVM<?> boardVM) {
         boardVM.clear();
         
         Label label = new Label("TEMP", boardVM.game.getMainSkin());

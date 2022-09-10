@@ -27,7 +27,7 @@ import lombok.Getter;
  * @author hundun
  * Created on 2021/11/12
  */
-public class QuestionResultAnimationVM extends AbstractAnimationVM {
+public class QuestionResultAnimationVM extends AbstractAnimationVM<AnswerResultEvent> {
 
 
     CallerAndCallback callerAndCallback;
@@ -51,7 +51,7 @@ public class QuestionResultAnimationVM extends AbstractAnimationVM {
         this.add(resultLable);
     }
     
-    
+    @Override
     public void callShow(AnswerResultEvent answerResultEvent) {
         
         setAnimation(new Animation<>(0.025f, aminationFactory(
@@ -60,7 +60,7 @@ public class QuestionResultAnimationVM extends AbstractAnimationVM {
                 )));
         resultLable.setText(answerResultEvent.getResult().name());
         
-        super.resetBackground();
+        super.resetFrame();
     }
     
     

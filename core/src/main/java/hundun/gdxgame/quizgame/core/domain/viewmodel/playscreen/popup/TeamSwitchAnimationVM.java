@@ -28,7 +28,7 @@ import lombok.Getter;
  * @author hundun
  * Created on 2021/11/12
  */
-public class TeamSwitchAnimationVM extends AbstractAnimationVM {
+public class TeamSwitchAnimationVM extends AbstractAnimationVM<SwitchTeamEvent> {
 
 
     CallerAndCallback callerAndCallback;
@@ -53,7 +53,7 @@ public class TeamSwitchAnimationVM extends AbstractAnimationVM {
         this.add(resultLable);
     }
     
-    
+    @Override
     public void callShow(SwitchTeamEvent switchTeamEvent) {
 
         // Initialize the Animation with the frame interval and array of frames
@@ -63,7 +63,7 @@ public class TeamSwitchAnimationVM extends AbstractAnimationVM {
                 )));
         resultLable.setText(switchTeamEvent.getToTeamName());
         
-        super.resetBackground();
+        super.resetFrame();
     }
     
     

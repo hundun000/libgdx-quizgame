@@ -22,7 +22,7 @@ import hundun.quizlib.view.match.MatchSituationView;
  * @author hundun
  * Created on 2021/11/12
  */
-public class MatchFinishNotificationBoardVM extends AbstractNotificationBoardVM {
+public class MatchFinishNotificationBoardVM extends AbstractNotificationBoardVM<MatchFinishHistory> {
 
     MatchFinishHistory data;
 
@@ -38,7 +38,7 @@ public class MatchFinishNotificationBoardVM extends AbstractNotificationBoardVM 
         
     }
     
-    
+    @Override
     public void onCallShow(MatchFinishHistory history) {
         //this.setVisible(true);
         this.data = history;

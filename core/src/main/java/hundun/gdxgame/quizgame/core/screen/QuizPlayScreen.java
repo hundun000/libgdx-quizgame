@@ -30,6 +30,7 @@ import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.TeamInfoBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SystemBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SystemBoardVM.SystemButtonType;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.AbstractAnimationVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.AbstractNotificationBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.GeneralDelayAnimationVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.QuestionResultAnimationVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.SkillAnimationVM;
@@ -55,43 +56,34 @@ import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.prototype.skill.SkillSlotPrototype;
 import hundun.quizlib.service.GameService;
 import hundun.quizlib.view.match.MatchSituationView;
+import lombok.Setter;
 
 /**
  * @author hundun
  * Created on 2022/08/30
  */
-public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
-implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
-        MatchSituationNotificationBoardVM.CallerAndCallback, 
-        MatchFinishNotificationBoardVM.CallerAndCallback,
+public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> implements 
         CountdownClockVM.CallerAndCallback, 
         QuestionOptionAreaVM.CallerAndCallback, 
         SystemBoardVM.CallerAndCallback,
-        SkillBoardVM.CallerAndCallback,
-        QuestionResultAnimationVM.CallerAndCallback,
-        TeamSwitchAnimationVM.CallerAndCallback,
-        SkillAnimationVM.CallerAndCallback,
-        GeneralDelayAnimationVM.CallerAndCallback
+        SkillBoardVM.CallerAndCallback
 {
     
 
     private final GameService quizLib;
+    // --- inner class ---
     private final SkillEffectHandler skillEffectHandler = new SkillEffectHandler();
+    private final BlockingAnimationQueueHandler animationQueueHandler = new BlockingAnimationQueueHandler(); 
+    private final AnimationCallerAndCallbackDelegation animationCallerAndCallback = new AnimationCallerAndCallbackDelegation();
+    private final NotificationCallerAndCallbackDelegation notificationCallerAndCallback = new NotificationCallerAndCallbackDelegation();
     
+    // --- for quizLib ---
     MatchConfig matchConfig;
-    // --- quizLib quick access cache ---
-    MatchSituationView currentMatchSituationView;
     List<TeamPrototype> teamPrototypes;
-    // --- UI ---
-//    protected final Table uiRootTable1;
-    
-    List<Runnable> blockingAnimationTaskQueue = new LinkedList<>();
-    Runnable afterAllAnimationDoneTask;
-    Runnable afterComfirmTask;
-    AbstractAnimationVM currentAnimationVM;
     
     // ====== onShowLazyInit ======
     Image backImage;
+    MatchSituationView currentMatchSituationView;
     CountdownClockVM countdownClockVM;
     QuestionStemVM questionStemVM;
     TeamInfoBoardVM teamInfoBoardVM;
@@ -262,23 +254,23 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
         
         waitConfirmFirstGetQuestionMaskBoardVM = new FirstGetQuestionNotificationBoardVM(
                 game, 
-                this, 
+                notificationCallerAndCallback, 
                 DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
                 );
         waitConfirmMatchSituationMaskBoardVM = new MatchSituationNotificationBoardVM(
                 game, 
-                this, 
+                notificationCallerAndCallback, 
                 DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
                 );
         waitConfirmMatchFinishMaskBoardVM = new MatchFinishNotificationBoardVM(
                 game, 
-                this, 
+                notificationCallerAndCallback, 
                 DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
                 );
-        questionResultAnimationVM = new QuestionResultAnimationVM(game, this);
-        teamSwitchAnimationVM = new TeamSwitchAnimationVM(game, this);
-        skillAnimationVM = new SkillAnimationVM(game, this);
-        generalDelayAnimationVM = new GeneralDelayAnimationVM(game, this);
+        questionResultAnimationVM = new QuestionResultAnimationVM(game, animationCallerAndCallback);
+        teamSwitchAnimationVM = new TeamSwitchAnimationVM(game, animationCallerAndCallback);
+        skillAnimationVM = new SkillAnimationVM(game, animationCallerAndCallback);
+        generalDelayAnimationVM = new GeneralDelayAnimationVM(game, animationCallerAndCallback);
         
         if (game.debugMode) {
             uiStage.setDebugAll(true);
@@ -307,7 +299,7 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
         }
         
         
-        callShowFirstGetQuestionConfirm();
+        notificationCallerAndCallback.callShowFirstGetQuestionConfirm();
     }
 
 
@@ -323,22 +315,7 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
         }
     }
 
-    @Override
-    public void onNotificationConfirmed() {
-        Gdx.app.log(this.getClass().getSimpleName(), "onConfirmed called");
-        // --- ui ---
-        popupRootTable.clear();
-        // --- screen logic ---
-        Gdx.input.setInputProcessor(uiStage);
-        logicFrameHelper.setLogicFramePause(false);
-        // --- quiz logic ---
-        if (afterComfirmTask != null) {
-            Gdx.app.log(this.getClass().getSimpleName(), "has afterComfirmTask");
-            Runnable temp = afterComfirmTask;
-            afterComfirmTask = null;
-            temp.run();
-        }
-    }
+    
     
     
     private void handleNewQuestion() {
@@ -361,39 +338,6 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
         questionStemVM.updateQuestion(currentMatchSituationView.getQuestion());
     }
 
-    @Override
-    public void callShowFirstGetQuestionConfirm() {
-        Gdx.app.log(this.getClass().getSimpleName(), "callShowFirstGetQuestionConfirm called");
-        // --- ui ---
-        
-        popupRootTable.add(waitConfirmFirstGetQuestionMaskBoardVM);
-        logicFrameHelper.setLogicFramePause(true);
-        // --- quiz logic ---
-        afterComfirmTask = () -> {
-            handleNewQuestion();
-        };
-        
-        // --- screen logic ---
-        Gdx.input.setInputProcessor(popupUiStage);
-        waitConfirmFirstGetQuestionMaskBoardVM.onCallShow(matchConfig);
-
-    }
-
-
-    @Override
-    public void callShowMatchSituationConfirm() {
-        Gdx.app.log(this.getClass().getSimpleName(), "callShowMatchSituationConfirm called");
-        // --- ui ---
-        
-        popupRootTable.add(waitConfirmMatchSituationMaskBoardVM);
-        logicFrameHelper.setLogicFramePause(true);
-        // --- quiz logic ---
-        afterComfirmTask = null;
-        // --- screen logic ---
-        Gdx.input.setInputProcessor(popupUiStage);
-        waitConfirmMatchSituationMaskBoardVM.onCallShow(currentMatchSituationView);
-
-    }
 
     @Override
     public void onCountdownZero() {
@@ -420,28 +364,27 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
             countdownClockVM.clearCountdown();
             questionOptionAreaVM.showAllOption();
             
-            blockingAnimationTaskQueue.add(() -> callShowQuestionResultAnimation(answerResultEvent));
-            blockingAnimationTaskQueue.add(() -> callShowGeneralDelayAnimation(3.0f));
+            animationQueueHandler.addAnimationTask(() -> animationCallerAndCallback.callShowQuestionResultAnimation(answerResultEvent));
+            animationQueueHandler.addAnimationTask(() -> animationCallerAndCallback.callShowGeneralDelayAnimation(3.0f));
             
             if (matchFinishEvent != null) {
-                blockingAnimationTaskQueue.add(() -> callShowMatchFinishConfirm());
-                afterAllAnimationDoneTask = () -> {
-                    handelExitAsFinishMatch(toHistory());
-                };
+                animationQueueHandler.addAnimationTask(() -> notificationCallerAndCallback.callShowMatchFinishConfirm());
+                animationQueueHandler.setAfterAllAnimationDoneTask(() -> {
+                            handelExitAsFinishMatch(toHistory());
+                        });
             } else {
                 if (switchTeamEvent != null) {
-                    blockingAnimationTaskQueue.add(() -> callShowTeamSwitchAnimation(switchTeamEvent));
+                    animationQueueHandler.addAnimationTask(() -> animationCallerAndCallback.callShowTeamSwitchAnimation(switchTeamEvent));
                 }
-                
-                afterAllAnimationDoneTask = () -> {
-                    // --- quiz logic ---
-                    if (switchTeamEvent != null) {
-                        handleCurrentTeam();
-                    }
-                    handleNewQuestion();
-                };
+                animationQueueHandler.setAfterAllAnimationDoneTask(() -> {
+                            // --- quiz logic ---
+                            if (switchTeamEvent != null) {
+                                handleCurrentTeam();
+                            }
+                            handleNewQuestion();
+                        });
             }
-            checkBlockingAnimationTaskQueue();
+            animationQueueHandler.checkNextAnimation();
             
             
         } catch (QuizgameException e) {
@@ -474,15 +417,7 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
 
 
 
-    private void checkBlockingAnimationTaskQueue() {
-        if (blockingAnimationTaskQueue.size() > 0) {
-            blockingAnimationTaskQueue.remove(0).run();
-        } else if (afterAllAnimationDoneTask != null) {
-            Runnable temp = afterAllAnimationDoneTask;
-            afterAllAnimationDoneTask = null;
-            temp.run();
-        }
-    }
+    
 
     @Override
     public void onChooseSkill(int index) {
@@ -496,23 +431,23 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
                     "skillResultEvent by Type = %s", 
                     skillResultEvent.getType()
                     ));
-            blockingAnimationTaskQueue.add(() -> callShowSkillAnimation(skillResultEvent));
-            afterAllAnimationDoneTask = () -> {
-                skillBoardVM.updateSkill(index, skillResultEvent.getSkillRemainTime());
-                switch (skillResultEvent.getSkillName()) {
-                    case "5050":
-                        skillEffectHandler.handle5050(skillResultEvent.getArgs()); 
-                        break;
-    
-                    default:
-                        Gdx.app.error(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
-                                "unhandle SkillName = %s", 
-                                skillResultEvent.getSkillName()
-                                ));
-                        break;
-                }
-            };
-            checkBlockingAnimationTaskQueue();
+            animationQueueHandler.addAnimationTask(() -> animationCallerAndCallback.callShowSkillAnimation(skillResultEvent));
+            animationQueueHandler.setAfterAllAnimationDoneTask(() -> {
+                        skillBoardVM.updateSkill(index, skillResultEvent.getSkillRemainTime());
+                        switch (skillResultEvent.getSkillName()) {
+                            case "5050":
+                                skillEffectHandler.handle5050(skillResultEvent.getArgs()); 
+                                break;
+            
+                            default:
+                                Gdx.app.error(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                                        "unhandle SkillName = %s", 
+                                        skillResultEvent.getSkillName()
+                                        ));
+                                break;
+                        }
+                    });
+            animationQueueHandler.checkNextAnimation();
             
         } catch (QuizgameException e) {
             Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
@@ -527,16 +462,13 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
         Gdx.app.log(this.getClass().getSimpleName(), "onChooseSystem called");
         switch (type) {
             case SHOW_MATCH_SITUATION:
-                callShowMatchSituationConfirm();
+                notificationCallerAndCallback.callShowMatchSituationConfirm();
                 break;
             case EXIT_AS_DISCARD_MATCH:
                 handelExitAsDiscardMatch();
                 break;
             case EXIT_AS_FINISH_MATCH:
-                callShowMatchFinishConfirm();
-                afterAllAnimationDoneTask = () -> {
-                    handelExitAsFinishMatch(toHistory());
-                };
+                notificationCallerAndCallback.callShowMatchFinishConfirm();
                 break;
             default:
                 break;
@@ -548,9 +480,8 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
     private void exitClear() {
         matchConfig = null;
         currentMatchSituationView = null;
-        blockingAnimationTaskQueue.clear();
-        afterAllAnimationDoneTask = null;
-        afterComfirmTask = null;
+        
+        animationQueueHandler.clear();
     }
 
     private void handelExitAsDiscardMatch() {
@@ -565,48 +496,9 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
                 history
                 );
     }
-    @Override
-    protected void renderPopupAnimations(float delta, SpriteBatch spriteBatch) {
-        if (currentAnimationVM != null) {
-            currentAnimationVM.updateBackground(delta, spriteBatch);
-        }
+    
 
-    }
-
-    @Override
-    public void callShowQuestionResultAnimation(AnswerResultEvent answerResultEvent) {
-        Gdx.app.log(this.getClass().getSimpleName(), "callShowQuestionResultAnimation called");
-        // --- ui ---
-        popupRootTable.add(questionResultAnimationVM);
-        // --- logic ---
-        currentAnimationVM = questionResultAnimationVM;
-        questionResultAnimationVM.callShow(answerResultEvent);
-        Gdx.input.setInputProcessor(popupUiStage);
-        //logicFrameHelper.setLogicFramePause(true);
-    }
-
-    @Override
-    public void onAnimationDone() {
-        Gdx.app.log(this.getClass().getSimpleName(), "onAnimationDone called");
-        // --- ui ---
-        popupRootTable.clear();
-        // --- logic ---
-        Gdx.input.setInputProcessor(uiStage);
-        currentAnimationVM = null;
-        
-        checkBlockingAnimationTaskQueue();
-    }
-
-    @Override
-    public void callShowTeamSwitchAnimation(SwitchTeamEvent switchTeamEvent) {
-        Gdx.app.log(this.getClass().getSimpleName(), "callShowTeamSwitchAnimation called");
-        // --- ui ---
-        popupRootTable.add(teamSwitchAnimationVM);
-        // --- screen logic ---
-        currentAnimationVM = teamSwitchAnimationVM;
-        teamSwitchAnimationVM.callShow(switchTeamEvent);
-        Gdx.input.setInputProcessor(popupUiStage);
-    }
+    
     
     
     private void handleCurrentTeam() {
@@ -614,25 +506,7 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
         teamInfoBoardVM.updateTeam(currentTeamPrototype, teamPrototypes);
         skillBoardVM.updateRole(currentTeamPrototype.getRolePrototype(), currentMatchSituationView.getCurrentTeamRuntimeInfo().getRoleRuntimeInfo());
     }
-
-    @Override
-    public void callShowMatchFinishConfirm() {
-        Gdx.app.log(this.getClass().getSimpleName(), "callShowMatchFinishConfirm called");
-        // --- ui ---
-        
-        popupRootTable.add(waitConfirmMatchFinishMaskBoardVM);
-        // --- quiz logic ---
-        MatchFinishHistory history = toHistory();
-        afterComfirmTask = () -> {
-            handelExitAsFinishMatch(history);
-        };
-        
-        // --- screen logic ---
-        Gdx.input.setInputProcessor(popupUiStage);
-        
-        waitConfirmMatchFinishMaskBoardVM.onCallShow(history);
-    }
-    
+   
     private MatchFinishHistory toHistory() {
         
         MatchFinishHistory history = new MatchFinishHistory();
@@ -645,26 +519,13 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
         return history;
     }
 
-    @Override
-    public void callShowSkillAnimation(SkillResultEvent skillResultEvent) {
-        Gdx.app.log(this.getClass().getSimpleName(), "callShowSkillAnimation called");
-        // --- ui ---
-        popupRootTable.add(skillAnimationVM);
-        // --- logic ---
-        currentAnimationVM = skillAnimationVM;
-        skillAnimationVM.callShow(skillResultEvent);
-        Gdx.input.setInputProcessor(popupUiStage);
-    }
+    
+    
+    
     
     @Override
-    public void callShowGeneralDelayAnimation(float second) {
-        Gdx.app.log(this.getClass().getSimpleName(), "callShowGeneralDelayAnimation called");
-        // --- ui ---
-        popupRootTable.add(generalDelayAnimationVM);
-        // --- screen logic ---
-        currentAnimationVM = generalDelayAnimationVM;
-        generalDelayAnimationVM.callShow(second);
-        Gdx.input.setInputProcessor(popupUiStage);
+    protected void renderPopupAnimations(float delta, SpriteBatch spriteBatch) {
+        animationQueueHandler.render(delta, spriteBatch);
     }
     
     class SkillEffectHandler {
@@ -676,6 +537,167 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
         
     }
 
+    class NotificationCallerAndCallbackDelegation implements 
+            FirstGetQuestionNotificationBoardVM.CallerAndCallback,
+            MatchSituationNotificationBoardVM.CallerAndCallback, 
+            MatchFinishNotificationBoardVM.CallerAndCallback {
+        @Setter
+        Runnable afterComfirmTask;
+        
+        @Override
+        public void onNotificationConfirmed() {
+            Gdx.app.log(this.getClass().getSimpleName(), "onConfirmed called");
+            // --- for screen ---
+            popupRootTable.clear();
+            Gdx.input.setInputProcessor(uiStage);
+            logicFrameHelper.setLogicFramePause(false);
+            // --- for notificationBoardVM ---
+            if (afterComfirmTask != null) {
+                Gdx.app.log(this.getClass().getSimpleName(), "has afterComfirmTask");
+                Runnable temp = afterComfirmTask;
+                afterComfirmTask = null;
+                temp.run();
+            }
+        }
+        
+
+        @Override
+        public void callShowMatchFinishConfirm() {
+            MatchFinishHistory history = toHistory();
+            generalCallShowNotificationBoard(
+                    waitConfirmMatchFinishMaskBoardVM, 
+                    history, 
+                    () -> {
+                        handelExitAsFinishMatch(history);
+                    }
+                    );
+        }
+     
+        @Override
+        public void callShowFirstGetQuestionConfirm() {
+            generalCallShowNotificationBoard(
+                    waitConfirmFirstGetQuestionMaskBoardVM, 
+                    matchConfig, 
+                    () -> {
+                        handleNewQuestion();
+                    }
+                    );
+        }
+
+
+        @Override
+        public void callShowMatchSituationConfirm() {
+            generalCallShowNotificationBoard(
+                    waitConfirmMatchSituationMaskBoardVM, 
+                    currentMatchSituationView, 
+                    null
+                    );
+        }
+
+        private <T> void generalCallShowNotificationBoard(
+                AbstractNotificationBoardVM<T> notificationBoardVM, 
+                T arg,
+                Runnable afterComfirmTask
+                ) {
+            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                    "generalCallShowNotificationBoard called, notificationBoardVM = %s", 
+                    notificationBoardVM.getClass().getSimpleName()
+                    ));
+            // --- for screen ---
+            popupRootTable.add(notificationBoardVM);
+            logicFrameHelper.setLogicFramePause(true);
+            Gdx.input.setInputProcessor(popupUiStage);
+            // --- for notificationBoardVM ---
+            this.afterComfirmTask = afterComfirmTask;
+            notificationBoardVM.onCallShow(arg);
+        }
+    }
+    
+    class AnimationCallerAndCallbackDelegation implements 
+            QuestionResultAnimationVM.CallerAndCallback,
+            TeamSwitchAnimationVM.CallerAndCallback,
+            SkillAnimationVM.CallerAndCallback,
+            GeneralDelayAnimationVM.CallerAndCallback {
+        
+        @Override
+        public void callShowGeneralDelayAnimation(float second) {
+            generalCallShowAnimation(generalDelayAnimationVM, second);
+        }
+
+        @Override
+        public void callShowQuestionResultAnimation(AnswerResultEvent answerResultEvent) {
+            generalCallShowAnimation(questionResultAnimationVM, answerResultEvent);
+        }
+
+        @Override
+        public void onAnimationDone() {
+            Gdx.app.log(this.getClass().getSimpleName(), "onAnimationDone called");
+            // --- for screen ---
+            popupRootTable.clear();
+            Gdx.input.setInputProcessor(uiStage);
+            logicFrameHelper.setLogicFramePause(false);
+            // --- for animationVM ---
+            animationQueueHandler.setCurrentAnimationVM(null);
+            animationQueueHandler.checkNextAnimation();
+        }
+        
+        @Override
+        public void callShowSkillAnimation(SkillResultEvent skillResultEvent) {
+            generalCallShowAnimation(skillAnimationVM, skillResultEvent);
+        }
+        
+        private <T> void generalCallShowAnimation(AbstractAnimationVM<T> animationVM, T arg) {
+            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                    "generalCallShowAnimation called, animationVM = %s", 
+                    animationVM.getClass().getSimpleName()
+                    ));
+            // --- for screen ---
+            popupRootTable.add(animationVM);
+            Gdx.input.setInputProcessor(popupUiStage);
+            logicFrameHelper.setLogicFramePause(true);
+            // --- for animationVM ---
+            animationQueueHandler.setCurrentAnimationVM(animationVM);
+            animationVM.callShow(arg);
+        }
+        
+        @Override
+        public void callShowTeamSwitchAnimation(SwitchTeamEvent switchTeamEvent) {
+            generalCallShowAnimation(teamSwitchAnimationVM, switchTeamEvent);
+        }
+    }
+    
+    static class BlockingAnimationQueueHandler {
+        private List<Runnable> blockingAnimationTaskQueue = new LinkedList<>();
+        @Setter
+        private Runnable afterAllAnimationDoneTask;
+        @Setter
+        private AbstractAnimationVM<?> currentAnimationVM;
+        
+        public void addAnimationTask(Runnable animationTask) {
+            this.blockingAnimationTaskQueue.add(animationTask);
+        }
+
+        public void checkNextAnimation() {
+            if (blockingAnimationTaskQueue.size() > 0) {
+                blockingAnimationTaskQueue.remove(0).run();
+            } else if (afterAllAnimationDoneTask != null) {
+                Runnable temp = afterAllAnimationDoneTask;
+                afterAllAnimationDoneTask = null;
+                temp.run();
+            }
+        }
+        
+        public void clear() {
+            blockingAnimationTaskQueue.clear();
+            afterAllAnimationDoneTask = null;
+        }
+        
+        public void render(float delta, SpriteBatch spriteBatch) {
+            if (currentAnimationVM != null) {
+                currentAnimationVM.updateFrame(delta, spriteBatch);
+            }
+        }
+    }
     
 
 }

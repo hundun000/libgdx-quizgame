@@ -29,7 +29,7 @@ import lombok.Getter;
  * @author hundun
  * Created on 2021/11/12
  */
-public class SkillAnimationVM extends AbstractAnimationVM {
+public class SkillAnimationVM extends AbstractAnimationVM<SkillResultEvent> {
 
 
     CallerAndCallback callerAndCallback;
@@ -54,7 +54,7 @@ public class SkillAnimationVM extends AbstractAnimationVM {
         this.add(resultLable);
     }
     
-    
+    @Override
     public void callShow(SkillResultEvent skillResultEvent) {
 
         // Initialize the Animation with the frame interval and array of frames
@@ -64,7 +64,7 @@ public class SkillAnimationVM extends AbstractAnimationVM {
                 )));
         resultLable.setText(skillResultEvent.getSkillName() + "\n" + skillResultEvent.getSkillDesc());
         
-        super.resetBackground();
+        super.resetFrame();
     }
     
     

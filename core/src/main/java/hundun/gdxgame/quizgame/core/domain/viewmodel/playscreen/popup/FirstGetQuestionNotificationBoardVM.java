@@ -18,7 +18,7 @@ import hundun.quizlib.prototype.match.MatchConfig;
  * @author hundun
  * Created on 2021/11/12
  */
-public class FirstGetQuestionNotificationBoardVM extends AbstractNotificationBoardVM {
+public class FirstGetQuestionNotificationBoardVM extends AbstractNotificationBoardVM<MatchConfig> {
 
     MatchConfig data;
 
@@ -33,7 +33,7 @@ public class FirstGetQuestionNotificationBoardVM extends AbstractNotificationBoa
         
     }
     
-    
+    @Override
     public void onCallShow(MatchConfig data) {
         //this.setVisible(true);
         this.data = data;

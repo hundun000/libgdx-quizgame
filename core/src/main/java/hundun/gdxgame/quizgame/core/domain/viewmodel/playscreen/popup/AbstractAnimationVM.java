@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
+import hundun.quizlib.prototype.event.SkillResultEvent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +20,9 @@ import lombok.Setter;
 /**
  * @author hundun
  * Created on 2022/09/07
+ * @param <T>
  */
-public abstract class AbstractAnimationVM extends Table {
+public abstract class AbstractAnimationVM<T> extends Table {
     private final IAnimationCallback callback;
     
     protected final QuizGdxGame game;
@@ -40,7 +42,9 @@ public abstract class AbstractAnimationVM extends Table {
         this.callback = callback;
     }
     
-    public void resetBackground() {
+    public abstract void callShow(T arg);
+    
+    public void resetFrame() {
         // Instantiate a SpriteBatch for drawing and reset the elapsed animation
         // time to 0
         runningState = true;
@@ -49,7 +53,7 @@ public abstract class AbstractAnimationVM extends Table {
         this.setBackground(currentFrame);
     }
     
-    public void updateBackground(float delta, SpriteBatch spriteBatch) {
+    public void updateFrame(float delta, SpriteBatch spriteBatch) {
         stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
 
         if (!animation.isAnimationFinished(stateTime)) {

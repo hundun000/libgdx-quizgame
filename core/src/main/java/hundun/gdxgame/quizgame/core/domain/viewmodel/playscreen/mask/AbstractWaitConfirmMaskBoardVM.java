@@ -32,7 +32,7 @@ public abstract class AbstractWaitConfirmMaskBoardVM extends Table {
         this.game = game;
         this.callback = callback;
         this.setBackground(background);
-        //this.setBounds(0, 0, game.LOGIC_WIDTH, game.LOGIC_HEIGHT);
+        //this.setBounds(0, 0, game.getWidth(), game.getHeight());
 
         
 

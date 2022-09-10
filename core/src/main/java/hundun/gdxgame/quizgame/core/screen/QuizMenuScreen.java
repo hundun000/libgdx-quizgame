@@ -29,7 +29,7 @@ public class QuizMenuScreen extends StarterMenuScreen<QuizGdxGame, QuizRootSaveD
                     @Override
                     public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
                         game.gameLoadOrNew(true);
-                        game.intoTeamScreen();
+                        game.getScreenManager().pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");;
                     }
                     @Override
                     public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -40,7 +40,7 @@ public class QuizMenuScreen extends StarterMenuScreen<QuizGdxGame, QuizRootSaveD
                     @Override
                     public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
                         game.gameLoadOrNew(false);
-                        game.intoTeamScreen();
+                        game.getScreenManager().pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");;
                     }
                     @Override
                     public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {

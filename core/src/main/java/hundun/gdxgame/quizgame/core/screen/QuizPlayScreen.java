@@ -116,17 +116,15 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         super.show();
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
         
+        this.matchConfig = (MatchConfig) pushParams[0];
+        Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                "pushParams by matchConfig = %s", 
+                matchConfig.toString()
+                ));
+        
         rebuildUI();
         
         handleCreateAndStartMatch();
-    }
-    
-    public void prepareShow(MatchConfig matchConfig) {
-        this.matchConfig = matchConfig;
-        Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
-                "prepareShow by matchConfig = %s", 
-                matchConfig.toString()
-                ));
     }
     
     private void handleCreateAndStartMatch() {
@@ -320,7 +318,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         popupRootTable.clear();
         
         backImage = new Image(game.getTextureConfig().getPlayScreenBackground());
-        backImage.setBounds(0, 0, game.LOGIC_WIDTH, game.LOGIC_HEIGHT);
+        backImage.setBounds(0, 0, game.getWidth(), game.getHeight());
         backUiStage.addActor(backImage);
         
         
@@ -433,17 +431,17 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         waitConfirmFirstGetQuestionMaskBoardVM = new WaitConfirmFirstGetQuestionMaskBoardVM(
                 game, 
                 this, 
-                DrawableFactory.getSimpleBoardBackground((int) (game.LOGIC_WIDTH * maskBoardScale), (int) (game.LOGIC_HEIGHT * maskBoardScale))
+                DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
                 );
         waitConfirmMatchSituationMaskBoardVM = new WaitConfirmMatchSituationMaskBoardVM(
                 game, 
                 this, 
-                DrawableFactory.getSimpleBoardBackground((int) (game.LOGIC_WIDTH * maskBoardScale), (int) (game.LOGIC_HEIGHT * maskBoardScale))
+                DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
                 );
         waitConfirmMatchFinishMaskBoardVM = new WaitConfirmMatchFinishMaskBoardVM(
                 game, 
                 this, 
-                DrawableFactory.getSimpleBoardBackground((int) (game.LOGIC_WIDTH * maskBoardScale), (int) (game.LOGIC_HEIGHT * maskBoardScale))
+                DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
                 );
         questionResultAnimationVM = new QuestionResultAnimationVM(game, this);
         teamSwitchAnimationVM = new TeamSwitchAnimationVM(game, this);
@@ -504,12 +502,15 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
 
     private void handelExitAsDiscardMatch() {
         exitClear();
-        game.intoTeamScreen();
+        game.getScreenManager().pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");
     }
 
     private void handelExitAsFinishMatch(MatchFinishHistory history) {
         exitClear();
-        game.intoHistoryScreen(history);
+        game.getScreenManager().pushScreen(HistoryScreen.class.getSimpleName(), 
+                "blending_transition",
+                history
+                );
     }
     @Override
     protected void renderPopupAnimations(float delta, SpriteBatch spriteBatch) {

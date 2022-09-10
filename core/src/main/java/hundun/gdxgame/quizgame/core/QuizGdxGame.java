@@ -8,7 +8,6 @@ import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler;
 import hundun.gdxgame.quizgame.core.domain.QuizViewModelContext;
 import hundun.gdxgame.quizgame.core.screen.HistoryScreen;
-import hundun.gdxgame.quizgame.core.screen.IScreenSwitchHandler;
 import hundun.gdxgame.quizgame.core.screen.QuizMenuScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizPlayScreen;
 import hundun.gdxgame.quizgame.core.screen.TeamScreen;
@@ -22,7 +21,7 @@ import hundun.quizlib.prototype.event.MatchFinishEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
 import lombok.Getter;
 
-public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements IScreenSwitchHandler {
+public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {
 
     public static final int LOGIC_FRAME_PER_SECOND = 20;
     
@@ -43,25 +42,6 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> implements ISc
 	    gameSaveCurrent();
 	}
 
-
-    @Override
-    public void intoQuizPlayScreen(MatchConfig matchConfig) {
-        QuizPlayScreen quizPlayScreen = this.getScreen(QuizPlayScreen.class);
-        quizPlayScreen.prepareShow(matchConfig);
-        this.screenManager.pushScreen(QuizPlayScreen.class.getSimpleName(), "blending_transition");
-    }
-
-    @Override
-    public void intoTeamScreen() {
-        this.screenManager.pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");
-    }
-
-    @Override
-    public void intoHistoryScreen(MatchFinishHistory history) {
-        HistoryScreen historyScreen = this.getScreen(HistoryScreen.class);
-        historyScreen.prepareShow(history);
-        this.screenManager.pushScreen(HistoryScreen.class.getSimpleName(), "blending_transition");
-    }
     
     @Override
     protected void createStage1() {

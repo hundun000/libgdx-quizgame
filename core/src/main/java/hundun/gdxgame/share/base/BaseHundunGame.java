@@ -22,8 +22,8 @@ import lombok.Getter;
 
 public abstract class BaseHundunGame<T_SAVE> extends ManagedGame<ManagedScreen, ScreenTransition> {
     public boolean debugMode;
-    public final int LOGIC_WIDTH;
-    public final int LOGIC_HEIGHT;
+    private final int constMainViewportWidth;
+    private final int constMainViewportHeight;
     
     private static final String DEFAULT_MAIN_SKIN_FILE_PATH = "skins/default/skin/uiskin.json";
     
@@ -46,11 +46,11 @@ public abstract class BaseHundunGame<T_SAVE> extends ManagedGame<ManagedScreen, 
     protected String mainSkinFilePath;
     
     
-    public BaseHundunGame(int LOGIC_WIDTH, int LOGIC_HEIGHT, 
+    public BaseHundunGame(int viewportWidth, int viewportHeight, 
             ISaveTool<T_SAVE> saveTool
             ) {
-        this.LOGIC_WIDTH = LOGIC_WIDTH;
-        this.LOGIC_HEIGHT = LOGIC_HEIGHT;
+        this.constMainViewportWidth = viewportWidth;
+        this.constMainViewportHeight = viewportHeight;
         this.saveTool = saveTool;
     }
     
@@ -122,5 +122,13 @@ public abstract class BaseHundunGame<T_SAVE> extends ManagedGame<ManagedScreen, 
     }
 
 
+    @Override
+    public int getWidth() {
+        return constMainViewportWidth;
+    }
     
+    @Override
+    public int getHeight() {
+        return constMainViewportHeight;
+    }
 }

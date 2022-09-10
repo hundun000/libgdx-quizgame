@@ -86,7 +86,10 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
                             matchConfig.setQuestionPackageName(QuestionLoaderService.PRELEASE_PACKAGE_NAME);
                             matchConfig.setMatchStrategyType(MatchStrategyType.MAIN);
                             
-                            game.intoQuizPlayScreen(matchConfig);
+                            game.getScreenManager().pushScreen(QuizPlayScreen.class.getSimpleName(), 
+                                    "blending_transition",
+                                    matchConfig
+                                    );
                             //TextUmaGame.this.getAudioPlayManager().intoScreen(ScreenId.PLAY);
                         }
                         @Override

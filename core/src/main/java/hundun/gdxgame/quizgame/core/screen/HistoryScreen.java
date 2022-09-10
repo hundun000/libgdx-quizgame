@@ -16,6 +16,7 @@ import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.AllTeamManagerAreaVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamManagerVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
+import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.quizlib.prototype.event.MatchFinishEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.prototype.match.MatchStrategyType;
@@ -39,6 +40,15 @@ public class HistoryScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         super.show();
         Gdx.input.setInputProcessor(uiStage);
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
+        
+        if (pushParams.length > 0) {
+            MatchFinishHistory newHistory = (MatchFinishHistory) pushParams[0];
+            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                    "pushParams by newHistory = %s", 
+                    newHistory.toString()
+                    ));
+            addNewHistory(newHistory);
+        }
         
         uiRootTable.clear();
 
@@ -66,7 +76,7 @@ public class HistoryScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
                         @Override
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
 
-                            game.intoTeamScreen();
+                            game.getScreenManager().pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");;
                             
                         }
                         @Override
@@ -93,7 +103,7 @@ public class HistoryScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         Map<String, Integer> data;
     }
     
-    public void prepareShow(MatchFinishHistory history) {
+    private void addNewHistory(MatchFinishHistory history) {
         // TODO Auto-generated method stub
         
     }

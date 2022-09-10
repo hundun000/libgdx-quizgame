@@ -15,10 +15,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.prototype.RolePrototype;
 import hundun.quizlib.prototype.skill.SkillSlotPrototype;
@@ -52,44 +54,48 @@ public class SkillBoardVM extends Table {
     public class SkillNode extends Table {
         static final int LENGTH = 160;
         
-        final SkillButton skillButton;
+        Image backgroundImage;
+        final Label mainLabel;
+        final Label textLabel;
         
-        public SkillNode(QuizGdxGame game, int index, Drawable background) {
-            this.skillButton = new SkillButton(game, index);
-            
-            Image backgroundImage = new Image(background);
+        public SkillNode(QuizGdxGame game, int index) {
+            this.mainLabel = new Label("TEMP", game.getMainSkin());
+            this.textLabel = new Label("TEMP", game.getMainSkin());
+            this.backgroundImage = new Image();
             backgroundImage.setBounds(0, 0, SkillNode.LENGTH, SkillNode.LENGTH);
+            
             this.addActor(backgroundImage);
             
-            this.add(skillButton);
+            this.add(mainLabel);
+            this.row();
+            this.add(textLabel);
             
             this.addListener(
-                    new InputListener(){
+                    new ClickListener(){
                         @Override
-                        public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+                        public void clicked(InputEvent event, float x, float y) {
+                            super.clicked(event, x, y);
                             callerAndCallback.onChooseSkill(index);
-                        }
-                        @Override
-                        public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                            return true;
                         }
                     });
         }
-    }
-    
-    public class SkillButton extends Label {
 
-        final int index;
-        
-        public SkillButton(QuizGdxGame game, int index) {
-            super("TEMP", game.getMainSkin());
-            this.index = index;
-            this.setTouchable(Touchable.disabled);
-            
+        public void updateRuntime(int skillRemainTime) {
+            textLabel.setText(JavaFeatureForGwt.stringFormat("剩余次数：%s", skillRemainTime));
+            Drawable background;
+            if (skillRemainTime > 0) {
+                setTouchable(Touchable.enabled);
+                background = new TextureRegionDrawable(game.getTextureConfig().getSkillButtonBackground());
+            } else {
+                setTouchable(Touchable.disabled);
+                background = new TextureRegionDrawable(game.getTextureConfig().getSkillUseOutButtonBackground());
+            }
+            backgroundImage.setDrawable(background);
         }
         
-        
-        
+        public void updatePrototy(SkillSlotPrototype skillSlotPrototype) {
+            mainLabel.setText(skillSlotPrototype.getName());
+        }
     }
     
     public static interface CallerAndCallback {
@@ -107,14 +113,9 @@ public class SkillBoardVM extends Table {
         for (int i = 0; i < rolePrototype.getSkillSlotPrototypes().size(); i++) {
             SkillSlotPrototype skillSlotPrototype = rolePrototype.getSkillSlotPrototypes().get(i);
             int remainUseTime = roleRuntimeView.getSkillSlotRuntimeViews().get(i).getRemainUseTime();
-            Drawable background;
-            if (remainUseTime > 0) {
-                background = new TextureRegionDrawable(game.getTextureConfig().getSkillButtonBackground());
-            } else {
-                background = new TextureRegionDrawable(game.getTextureConfig().getSkillUseOutButtonBackground());
-            }
-            SkillNode node = new SkillNode(game, i, background);
-            node.skillButton.setText(skillSlotPrototype.getName());
+            SkillNode node = new SkillNode(game, i);
+            node.updatePrototy(skillSlotPrototype);
+            node.updateRuntime(remainUseTime);
             nodes.add(node);
             Cell<SkillNode> cell = this.add(node)
                     .padBottom(SkillNode.LENGTH / 4)
@@ -138,8 +139,7 @@ public class SkillBoardVM extends Table {
         }
     }
 
-    public void updateSkill(int index, int skillRemainTime) {
-        // TODO Auto-generated method stub
-        
+    public void updateSkillRuntime(int index, int skillRemainTime) {
+        nodes.get(index).updateRuntime(skillRemainTime);
     }
 }

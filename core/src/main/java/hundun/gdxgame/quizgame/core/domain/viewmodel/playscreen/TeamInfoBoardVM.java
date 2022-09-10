@@ -17,9 +17,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.prototype.TeamPrototype;
+import hundun.quizlib.prototype.match.MatchStrategyType;
 import hundun.quizlib.view.question.QuestionView;
+import hundun.quizlib.view.team.TeamRuntimeView;
 
 /**
  * @author hundun
@@ -29,8 +32,8 @@ public class TeamInfoBoardVM extends Table {
     
     
     QuizGdxGame game;
-    Map<TeamPrototype, TeamInfoNode> map = new HashMap<>();
-    int teamPrototypesHashCode = -1;
+    List<TeamInfoNode> nodes = new ArrayList<>();
+
     
     public TeamInfoBoardVM(
             QuizGdxGame game,
@@ -41,47 +44,85 @@ public class TeamInfoBoardVM extends Table {
     }
     
     private class TeamInfoNode extends Table {
-        final int SIGN_SIZE = 50;
+        final static int SIGN_SIZE = 50;
         final Image sign;
         final TextureRegionDrawable drawable;
-        final int NAME_WIDTH = 200;
+        final static int NAME_WIDTH = 200;
         final Label teamInfoLabel;
+        final Label teamInfoLabel2;
         
-        TeamInfoNode(TeamPrototype teamPrototype) {
-            drawable = new TextureRegionDrawable(game.getTextureConfig().getCurrentTeamSignTexture());
+        TeamInfoNode() {
+            this.drawable = new TextureRegionDrawable(game.getTextureConfig().getCurrentTeamSignTexture());
             
-            sign = new Image();
+            this.sign = new Image();
             this.add(sign).width(SIGN_SIZE).height(SIGN_SIZE).padRight(SIGN_SIZE * 0.5f);
             
-            teamInfoLabel = new Label(teamPrototype.getName(), game.getMainSkin());
+            this.teamInfoLabel = new Label("TEMP", game.getMainSkin());
             this.add(teamInfoLabel).width(NAME_WIDTH);
+            
+            this.row();
+            
+            this.teamInfoLabel2 = new Label("TEMP", game.getMainSkin());
+            this.add(teamInfoLabel2).colspan(2);
         }
         
-        void updateCurrent(boolean isCurrent) {
+        void updatePrototype(TeamPrototype teamPrototype) {
+            teamInfoLabel.setText(teamPrototype.getName());
+            
+        }
+        
+        void updateRuntime(boolean isCurrent, TeamRuntimeView runtimeView, MatchStrategyType matchStrategyType) {
             if (isCurrent) {
                 sign.setDrawable(drawable);
             } else {
                 sign.setDrawable(null);
             }
+            String healthInfoText;
+            switch (matchStrategyType) {
+                case PRE:
+                    healthInfoText = JavaFeatureForGwt.stringFormat(
+                            "剩余题数：%s  分数：%s", 
+                            runtimeView.getHealth(),
+                            runtimeView.getMatchScore()
+                            );
+                    break;
+                case MAIN:
+                    healthInfoText = JavaFeatureForGwt.stringFormat(
+                            "剩余生命：%s  分数：%s", 
+                            runtimeView.getHealth(),
+                            runtimeView.getMatchScore()
+                            );
+                    break;
+                default:
+                    healthInfoText = "";
+                    break;
+            }
+            teamInfoLabel2.setText(healthInfoText);
         }
     }
 
-    public void updateTeam(TeamPrototype currentTeamPrototype, List<TeamPrototype> teamPrototypes) {
-        
-        if (teamPrototypesHashCode != teamPrototypes.hashCode()) {
-            teamPrototypesHashCode = teamPrototypes.hashCode();
-            this.clear();
-            map.clear();
-            teamPrototypes.forEach(it -> {
-                TeamInfoNode vm = new TeamInfoNode(it);
-                map.put(it, vm);
-                TeamInfoBoardVM.this.add(vm).row();
-            });
-        }
-        
-        map.forEach((k, v) -> {
-            v.updateCurrent(k == currentTeamPrototype);
+    public void updateTeamPrototype(List<TeamPrototype> teamPrototypes) {
+
+        this.clear();
+        nodes.clear();
+        teamPrototypes.forEach(it -> {
+            TeamInfoNode vm = new TeamInfoNode();
+            vm.updatePrototype(it);
+            nodes.add(vm);
+            TeamInfoBoardVM.this.add(vm).padBottom(TeamInfoNode.SIGN_SIZE / 2).row();
         });
-        
     }
+    
+    public void updateTeamRuntime(MatchStrategyType matchStrategyType, int currentTeamIndex, List<TeamRuntimeView> teamRuntimeViews) {
+        
+
+        for (int i = 0; i < nodes.size(); i++) {
+            TeamInfoNode vm = nodes.get(i);
+            TeamRuntimeView runtimeView = teamRuntimeViews.get(i);
+            vm.updateRuntime(i == currentTeamIndex, runtimeView, matchStrategyType);
+        }
+
+    }
+    
+    
 }

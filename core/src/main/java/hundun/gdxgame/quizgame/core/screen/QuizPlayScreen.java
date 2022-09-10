@@ -58,6 +58,7 @@ import hundun.quizlib.prototype.skill.SkillSlotPrototype;
 import hundun.quizlib.service.BuiltinSkillSlotPrototypeFactory;
 import hundun.quizlib.service.GameService;
 import hundun.quizlib.view.match.MatchSituationView;
+import hundun.quizlib.view.team.TeamRuntimeView;
 import lombok.Setter;
 
 /**
@@ -298,7 +299,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             // optional more startMatchEvent handle
             teamPrototypes = startMatchEvent.getTeamPrototypes();
             
-            handleCurrentTeam();
+            handleCurrentTeam(true);
             
         } catch (QuizgameException e) {
             Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
@@ -378,6 +379,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             if (matchFinishEvent != null) {
                 animationQueueHandler.addAnimationTask(() -> notificationCallerAndCallback.callShowMatchFinishConfirm());
                 animationQueueHandler.setAfterAllAnimationDoneTask(() -> {
+                            handleCurrentTeam(false);        
                             handelExitAsFinishMatch(toHistory());
                         });
             } else {
@@ -386,9 +388,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                 }
                 animationQueueHandler.setAfterAllAnimationDoneTask(() -> {
                             // --- quiz logic ---
-                            if (switchTeamEvent != null) {
-                                handleCurrentTeam();
-                            }
+                            handleCurrentTeam(false);
                             handleNewQuestion();
                         });
             }
@@ -441,7 +441,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                     ));
             animationQueueHandler.addAnimationTask(() -> animationCallerAndCallback.callShowSkillAnimation(skillResultEvent));
             animationQueueHandler.setAfterAllAnimationDoneTask(() -> {
-                        skillBoardVM.updateSkill(index, skillResultEvent.getSkillRemainTime());
+                        skillBoardVM.updateSkillRuntime(index, skillResultEvent.getSkillRemainTime());
                         skillEffectHandler.handle(skillResultEvent);
                     });
             animationQueueHandler.checkNextAnimation();
@@ -496,12 +496,14 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
     
 
     
-    
-    
-    private void handleCurrentTeam() {
-        TeamPrototype currentTeamPrototype = teamPrototypes.get(currentMatchSituationView.getCurrentTeamIndex());
-        teamInfoBoardVM.updateTeam(currentTeamPrototype, teamPrototypes);
-        skillBoardVM.updateRole(currentTeamPrototype.getRolePrototype(), currentMatchSituationView.getCurrentTeamRuntimeInfo().getRoleRuntimeInfo());
+    private void handleCurrentTeam(boolean isNewPrototypes) {
+        
+        if (isNewPrototypes) {
+            teamInfoBoardVM.updateTeamPrototype(teamPrototypes);
+            TeamPrototype currentTeamPrototype = teamPrototypes.get(currentMatchSituationView.getCurrentTeamIndex());
+            skillBoardVM.updateRole(currentTeamPrototype.getRolePrototype(), currentMatchSituationView.getCurrentTeamRuntimeInfo().getRoleRuntimeInfo());
+        }
+        teamInfoBoardVM.updateTeamRuntime(matchConfig.getMatchStrategyType(), currentMatchSituationView.getCurrentTeamIndex(), currentMatchSituationView.getTeamRuntimeInfos());
     }
    
     private MatchFinishHistory toHistory() {

@@ -56,8 +56,8 @@ public class DesktopPreferencesSaveTool extends AbstractSaveDataSaveTool {
             QuizRootSaveData saveData = objectMapper.readValue(date, QuizRootSaveData.class);
             return saveData;
         } catch (IOException e) {
-            Gdx.app.error(getClass().getSimpleName(), "load() error", e);
-            return null;
+            Gdx.app.error(getClass().getSimpleName(), "load() error");
+            throw new RuntimeException(e);
         }
     }
 }

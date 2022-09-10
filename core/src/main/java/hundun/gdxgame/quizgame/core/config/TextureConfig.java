@@ -10,13 +10,16 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.SystemSetting;
+import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler.ISubSystemSettingHandler;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SystemBoardVM.SystemButtonType;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import lombok.Getter;
 //import lombok.Getter;
 import lombok.Setter;
 
-public class TextureConfig {
+public class TextureConfig implements ISubSystemSettingHandler {
     public static String DEFAULT_ENV = "pro";
     @Getter
     @Setter
@@ -113,7 +116,9 @@ public class TextureConfig {
     
     
     
-    public TextureConfig() {
+    public TextureConfig(QuizGdxGame game) {
+        game.getSaveHandler().registerSubHandler(this);
+        
         packageMap.put("dev", new EnvPackage("dev"));
         packageMap.put("pro", new EnvPackage("pro"));
     }
@@ -180,5 +185,15 @@ public class TextureConfig {
 
     public Texture getOptionButtonBackground() {
         return packageMap.get(currentEnv).optionButtonBackground;
+    }
+
+    @Override
+    public void applySystemSetting(SystemSetting systemSetting) {
+        this.currentEnv = systemSetting.getEnv();
+    }
+
+    @Override
+    public void currentSituationToSystemSetting(SystemSetting systemSetting) {
+        systemSetting.setEnv(currentEnv);
     }
 }

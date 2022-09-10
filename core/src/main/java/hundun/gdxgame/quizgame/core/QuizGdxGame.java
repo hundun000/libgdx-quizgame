@@ -22,7 +22,8 @@ import hundun.quizlib.prototype.match.MatchConfig;
 import lombok.Getter;
 
 public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {
-
+    public static final int constMainViewportWidth = 1600;
+    public static final int constMainViewportHeight = 900;
     public static final int LOGIC_FRAME_PER_SECOND = 20;
     
 	@Getter
@@ -32,7 +33,7 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {
 	
 	
 	public QuizGdxGame(ISaveTool<QuizRootSaveData> saveTool) {
-	    super(1600, 900, saveTool);
+	    super(constMainViewportWidth, constMainViewportHeight, saveTool);
 	    this.debugMode = true;
 	}
 	
@@ -50,13 +51,13 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {
         this.saveHandler = new QuizSaveHandler(this);
         this.mainSkinFilePath = "skins/DefaultSkinWithChineseHeiti26/uiskin.json";
         // ------ for self ------
-        this.textureConfig = new TextureConfig();
+        this.textureConfig = new TextureConfig(this);
         this.quizLibBridge = new QuizLibBridge();
     }
 
     @Override
     protected void createStage3() {
-        systemSettingLoad();
+        systemSettingLoadOrNew();
         
         this.screenManager.pushScreen(QuizMenuScreen.class.getSimpleName(), "blending_transition");
         Gdx.app.log(this.getClass().getSimpleName(), "Initialization finished.");

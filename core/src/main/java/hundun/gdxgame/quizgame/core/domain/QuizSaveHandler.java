@@ -1,5 +1,10 @@
 package hundun.gdxgame.quizgame.core.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.MyGameSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.SystemSetting;
@@ -11,23 +16,43 @@ import hundun.gdxgame.share.base.AbstractSaveHandler;
  */
 public class QuizSaveHandler extends AbstractSaveHandler<QuizRootSaveData> {
     private final QuizGdxGame game;
-     
+    boolean gameSaveInited = false;
+    boolean systemSettingInited = false;
+    List<ISubGameSaveHandler> subGameSaveHandlers = new ArrayList<>();
+    List<ISubSystemSettingHandler> subSystemSettingHandlers = new ArrayList<>();
+    
     public QuizSaveHandler(QuizGdxGame game) {
         this.game = game;
     }
 
     @Override
     protected void applySystemSetting(QuizRootSaveData rootSaveData) {
+        systemSettingInited = true;
         if (rootSaveData.getSystemSetting() != null) {
-            game.getTextureConfig().setCurrentEnv(rootSaveData.getSystemSetting().getEnv());
+            subSystemSettingHandlers.forEach(it -> it.applySystemSetting(rootSaveData.getSystemSetting()));
         }
     }
     
     @Override
     protected QuizRootSaveData currentSituationToSaveData() {
+        MyGameSaveData myGameSaveData;
+        if (gameSaveInited) {
+            myGameSaveData = new MyGameSaveData();
+            subGameSaveHandlers.forEach(it -> it.currentSituationToSaveData(myGameSaveData));
+        } else {
+            myGameSaveData = null;
+        }
+        
+        SystemSetting systemSetting;
+        if (systemSettingInited) {
+            systemSetting = new SystemSetting();
+            subSystemSettingHandlers.forEach(it -> it.currentSituationToSystemSetting(systemSetting));
+        } else {
+            systemSetting = null;
+        }
         return new QuizRootSaveData(
-                new MyGameSaveData("from current"),
-                new SystemSetting(game.getTextureConfig().getCurrentEnv()) 
+                myGameSaveData,
+                systemSetting 
                 );
     }
     
@@ -39,7 +64,30 @@ public class QuizSaveHandler extends AbstractSaveHandler<QuizRootSaveData> {
 
     @Override
     protected void applyGameSaveData(QuizRootSaveData saveData) {
-        // TODO Auto-generated method stub
+        gameSaveInited = true;
+        if (saveData.getGameSaveData() != null) {
+            subGameSaveHandlers.forEach(it -> it.applyGameSaveData(saveData.getGameSaveData()));
+        }
     }
 
+    public static interface ISubGameSaveHandler {
+        void applyGameSaveData(MyGameSaveData myGameSaveData);
+        void currentSituationToSaveData(MyGameSaveData myGameSaveData);
+    }
+    
+    public static interface ISubSystemSettingHandler {
+        void applySystemSetting(SystemSetting systemSetting);
+        void currentSituationToSystemSetting(SystemSetting systemSetting);
+    }
+    
+    public void registerSubHandler(Object object) {
+        if (object instanceof ISubGameSaveHandler) {
+            subGameSaveHandlers.add((ISubGameSaveHandler)object);
+            Gdx.app.log(this.getClass().getSimpleName(), object.getClass().getSimpleName() + " register as ISubGameSaveHandler");
+        }
+        if (object instanceof ISubSystemSettingHandler) {
+            subSystemSettingHandlers.add((ISubSystemSettingHandler)object);
+            Gdx.app.log(this.getClass().getSimpleName(), object.getClass().getSimpleName() + " register as ISubSystemSettingHandler");
+        }
+    }
 }

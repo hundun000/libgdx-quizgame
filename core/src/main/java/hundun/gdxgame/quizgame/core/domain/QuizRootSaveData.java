@@ -1,7 +1,12 @@
 package hundun.gdxgame.quizgame.core.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import hundun.gdxgame.quizgame.core.config.TextureConfig;
+import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchFinishHistory;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,14 +19,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QuizRootSaveData {
     
-    MyGameSaveData game;
+    MyGameSaveData gameSaveData;
     SystemSetting systemSetting;
     
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class MyGameSaveData {
-        String value;
+        List<MatchFinishHistory> matchFinishHistories;
     }
     
     @Data
@@ -34,7 +40,9 @@ public class QuizRootSaveData {
     public static class Factory {
         public static QuizRootSaveData newGame() {
             return new QuizRootSaveData(
-                    new MyGameSaveData("Hello world"),
+                    MyGameSaveData.builder()
+                            .matchFinishHistories(new ArrayList<>())
+                            .build(),
                     new SystemSetting(TextureConfig.DEFAULT_ENV)
                     );
         }

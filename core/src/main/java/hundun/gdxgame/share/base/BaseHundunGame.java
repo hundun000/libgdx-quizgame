@@ -42,6 +42,7 @@ public abstract class BaseHundunGame<T_SAVE> extends ManagedGame<ManagedScreen, 
     // ------ init in createStage1(), or keep null ------
     @Getter
     protected BaseViewModelContext modelContext;
+    @Getter
     protected AbstractSaveHandler<T_SAVE> saveHandler;
     protected String mainSkinFilePath;
     
@@ -77,9 +78,14 @@ public abstract class BaseHundunGame<T_SAVE> extends ManagedGame<ManagedScreen, 
 	}
 	
 	// ====== save & load ======
-	public void systemSettingLoad() {
+	public void systemSettingLoadOrNew() {
 
-        T_SAVE saveData = saveTool.readRootSaveData();
+	    T_SAVE saveData;
+        if (saveTool.hasSave()) {
+            saveData = saveTool.readRootSaveData();
+        } else {
+            saveData = saveHandler.genereateNewGameSaveData();
+        }
 
         saveHandler.applySystemSetting(saveData);
         Gdx.app.log(this.getClass().getSimpleName(), "systemSettingLoad call");
@@ -89,7 +95,7 @@ public abstract class BaseHundunGame<T_SAVE> extends ManagedGame<ManagedScreen, 
 	public void gameLoadOrNew(boolean load) {
 
 	    T_SAVE saveData;
-	    if (load) {
+	    if (load && saveTool.hasSave()) {
 	        saveData = saveTool.readRootSaveData();
 	    } else {
 	        saveData = saveHandler.genereateNewGameSaveData();

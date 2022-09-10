@@ -13,8 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.AllTeamManagerAreaVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamManagerVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.AllTeamAreaVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamNodeVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.quizlib.prototype.event.MatchFinishEvent;

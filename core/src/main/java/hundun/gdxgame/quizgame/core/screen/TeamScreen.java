@@ -12,8 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.AllTeamManagerAreaVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamManagerVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.AllTeamAreaVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.MatchStrategySelectVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamNodeVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.prototype.match.MatchStrategyType;
@@ -29,8 +30,8 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
 
     TeamService teamService;
     
-    AllTeamManagerAreaVM allTeamManagerAreaVM;
-    
+    AllTeamAreaVM allTeamManagerAreaVM;
+    MatchStrategySelectVM matchStrategySelectVM;
     public TeamScreen(QuizGdxGame game) {
         super(game);
     }
@@ -45,8 +46,12 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
     
         uiRootTable.clear();
         
-        allTeamManagerAreaVM = new AllTeamManagerAreaVM(this);
+        allTeamManagerAreaVM = new AllTeamAreaVM(this);
         uiRootTable.add(allTeamManagerAreaVM);
+        
+        matchStrategySelectVM = new MatchStrategySelectVM(game);
+        uiRootTable.row();
+        uiRootTable.add(matchStrategySelectVM);
         
         uiRootTable.row();
         uiRootTable.add(new ToPlayScreenButtonVM(game));
@@ -68,7 +73,7 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
     }
     
     
-    private static class ToPlayScreenButtonVM extends TextButton {
+    private class ToPlayScreenButtonVM extends TextButton {
 
         public ToPlayScreenButtonVM(QuizGdxGame game) {
             super("Next", game.getMainSkin());
@@ -79,12 +84,9 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
                             // TODO
                             MatchConfig matchConfig = new MatchConfig();
-                            matchConfig.setTeamNames(Arrays.asList(
-                                    BuiltinDataConfiguration.HAS_ROLE_TEAM_NAME_1,
-                                    BuiltinDataConfiguration.HAS_ROLE_TEAM_NAME_2
-                                    ));
+                            matchConfig.setTeamNames(allTeamManagerAreaVM.getSelectedTeamNames());
                             matchConfig.setQuestionPackageName(QuestionLoaderService.PRELEASE_PACKAGE_NAME);
-                            matchConfig.setMatchStrategyType(MatchStrategyType.MAIN);
+                            matchConfig.setMatchStrategyType(matchStrategySelectVM.getSelected());
                             
                             game.getScreenManager().pushScreen(QuizPlayScreen.class.getSimpleName(), 
                                     "blending_transition",

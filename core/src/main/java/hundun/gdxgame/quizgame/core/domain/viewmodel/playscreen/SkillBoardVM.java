@@ -63,7 +63,7 @@ public class SkillBoardVM extends Table {
             
             this.add(skillButton);
             
-            backgroundImage.addListener(
+            this.addListener(
                     new InputListener(){
                         @Override
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
@@ -133,5 +133,10 @@ public class SkillBoardVM extends Table {
         if (game.debugMode) {
             this.debugAll();
         }
+    }
+
+    public void updateSkill(int index, int skillRemainTime) {
+        // TODO Auto-generated method stub
+        
     }
 }

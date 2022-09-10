@@ -34,6 +34,10 @@ public class TextureConfig {
         protected Texture skillButtonBackground;
         protected Texture skillUseOutButtonBackground;
         protected Texture questionStemBackground;
+        protected Texture optionButtonCorrectMask;
+        protected Texture optionButtonWrongMask;
+        //protected Texture optionButtonHidenMask;
+        protected Texture optionButtonBackground;
         protected Map<SystemButtonType, TextureRegion> systemButtonIconMap = new HashMap<>();
 
         
@@ -48,6 +52,10 @@ public class TextureConfig {
             skillButtonBackground = textureOrDefault("skillButtonBackground.png");
             skillUseOutButtonBackground = textureOrDefault("skillUseOutButtonBackground.png");
             questionStemBackground = textureOrDefault("questionStemBackground.png");
+            optionButtonCorrectMask = textureOrDefault("optionButtonCorrectMask.png");
+            optionButtonWrongMask = textureOrDefault("optionButtonWrongMask.png");
+            //optionButtonHidenMask = textureOrDefault("optionButtonHidenMask.png");
+            optionButtonBackground = textureOrDefault("optionButtonBackground.png");
             questionResultCorrectAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
             questionResultWrongAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
             questionResultSkippedAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
@@ -81,6 +89,8 @@ public class TextureConfig {
                 return new Texture(Gdx.files.internal("badlogic.jpg"));
             }
         }
+
+        
 
     }
     
@@ -141,5 +151,20 @@ public class TextureConfig {
     public Texture getCurrentTeamSignTexture() {
         return packageMap.get(currentEnv).currentTeamSignTexture;
     }
+    
+    public Texture getOptionButtonCorrectMask() {
+        return packageMap.get(currentEnv).optionButtonCorrectMask;
+    }
 
+    public Texture getOptionButtonWrongMask() {
+        return packageMap.get(currentEnv).optionButtonWrongMask;
+    }
+    
+//    public Texture getOptionButtonHidenMask() {
+//        return packageMap.get(currentEnv).optionButtonHidenMask;
+//    }
+
+    public Texture getOptionButtonBackground() {
+        return packageMap.get(currentEnv).optionButtonBackground;
+    }
 }

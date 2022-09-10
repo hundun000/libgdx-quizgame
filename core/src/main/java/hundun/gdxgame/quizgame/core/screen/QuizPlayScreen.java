@@ -29,8 +29,11 @@ import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SkillBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.TeamInfoBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SystemBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SystemBoardVM.SystemButtonType;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.AbstractAnimationVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.GeneralDelayAnimationVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.QuestionResultAnimationVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.TeamSwitchAnimationVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.SkillAnimationVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.WaitConfirmFirstGetQuestionMaskBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.WaitConfirmMatchSituationMaskBoardVM;
 import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchFinishHistory;
@@ -44,10 +47,12 @@ import hundun.quizlib.model.domain.QuestionModel;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
 import hundun.quizlib.prototype.event.MatchFinishEvent;
+import hundun.quizlib.prototype.event.SkillResultEvent;
 import hundun.quizlib.prototype.event.StartMatchEvent;
 import hundun.quizlib.prototype.event.SwitchQuestionEvent;
 import hundun.quizlib.prototype.event.SwitchTeamEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
+import hundun.quizlib.prototype.skill.SkillSlotPrototype;
 import hundun.quizlib.service.GameService;
 import hundun.quizlib.view.match.MatchSituationView;
 
@@ -64,11 +69,14 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         SystemBoardVM.CallerAndCallback,
         SkillBoardVM.CallerAndCallback,
         QuestionResultAnimationVM.CallerAndCallback,
-        TeamSwitchAnimationVM.CallerAndCallback
+        TeamSwitchAnimationVM.CallerAndCallback,
+        SkillAnimationVM.CallerAndCallback,
+        GeneralDelayAnimationVM.CallerAndCallback
 {
     
 
     private final GameService quizLib;
+    private final SkillEffectHandler skillEffectHandler = new SkillEffectHandler();
     
     MatchConfig matchConfig;
     // --- quizLib quick access cache ---
@@ -80,6 +88,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     List<Runnable> blockingAnimationTaskQueue = new LinkedList<>();
     Runnable afterAllAnimationDoneTask;
     Runnable afterComfirmTask;
+    AbstractAnimationVM currentAnimationVM;
     
     // ====== onShowLazyInit ======
     Image backImage;
@@ -97,6 +106,8 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     WaitConfirmMatchFinishMaskBoardVM waitConfirmMatchFinishMaskBoardVM;
     QuestionResultAnimationVM questionResultAnimationVM;
     TeamSwitchAnimationVM teamSwitchAnimationVM;
+    SkillAnimationVM skillAnimationVM;
+    GeneralDelayAnimationVM generalDelayAnimationVM;
     
     public QuizPlayScreen(QuizGdxGame game) {
         super(game);
@@ -126,6 +137,155 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         
         handleCreateAndStartMatch();
     }
+    
+    @Override
+    protected void create() {
+    
+    }
+    
+    private void rebuildUI() {
+        
+        backUiStage.clear();
+        uiRootTable.clear();
+        popupRootTable.clear();
+        
+        backImage = new Image(game.getTextureConfig().getPlayScreenBackground());
+        backImage.setBounds(0, 0, game.getWidth(), game.getHeight());
+        backUiStage.addActor(backImage);
+        
+        
+        countdownClockVM = new CountdownClockVM(
+                game,
+                this,
+                this.logicFrameHelper,
+                new TextureRegionDrawable(game.getTextureConfig().getCountdownClockTexture())
+                );
+        countdownClockVM.setBounds(10, 650, 150, 150);
+        uiRootTable.addActor(countdownClockVM);
+//        uiRootTable.add(countdownClockVM)
+//                .center()
+//                .colspan(1)
+//                .expand()
+//                ;
+     
+        questionStemVM = new QuestionStemVM(
+                game,
+                new TextureRegionDrawable(game.getTextureConfig().getQuestionStemBackground())
+                );
+        questionStemVM.setBounds(230, 600, 830, 280);
+        uiRootTable.addActor(questionStemVM);
+//        uiRootTable.add(questionStemVM)
+//                .center()
+//                .colspan(3)
+//                .expand()
+//                .width(730)
+//                .height(300)
+//                ;
+        
+        teamInfoBoardVM = new TeamInfoBoardVM(
+                game,
+                DrawableFactory.getSimpleBoardBackground()
+                );
+        teamInfoBoardVM.setBounds(1100, 600, 350, 280);
+        uiRootTable.addActor(teamInfoBoardVM);
+//        uiRootTable.add(teamInfoBoardVM)
+//                .center()
+//                .colspan(2)
+//                .expand()
+//                ;
+        
+        
+        systemBoardVM = new SystemBoardVM(
+                game,
+                this,
+                DrawableFactory.getSimpleBoardBackground()
+                );
+        systemBoardVM.setBounds(1500, 600, 100, 280);
+        uiRootTable.addActor(systemBoardVM);
+
+        
+        imageAreaVM = new ImageAreaVM(
+                game,
+                DrawableFactory.getSimpleBoardBackground()
+                );
+        imageAreaVM.setBounds(0, 0, 400, 600);
+        uiRootTable.addActor(imageAreaVM);
+//        uiRootTable.add(imageAreaVM)
+//                .center()
+//                .colspan(2)
+//                .expand()
+//                ;
+        
+        questionOptionAreaVM = new QuestionOptionAreaVM(
+                game, 
+                this,
+                new TextureRegionDrawable(game.getTextureConfig().getOptionButtonBackground())
+                );
+        questionOptionAreaVM.setBounds(450, 50, 500, 500);
+        uiRootTable.addActor(questionOptionAreaVM);
+//        uiRootTable.add(questionOptionAreaVM)
+//                .center()
+//                .colspan(3)
+//                .expand()
+//                ;
+
+        skillBoardVM = new SkillBoardVM(
+                game, 
+                this,
+                DrawableFactory.getSimpleBoardBackground()
+                );
+        skillBoardVM.setBounds(1000, 50, 500, 500);
+        uiRootTable.addActor(skillBoardVM);
+//        uiRootTable.add(skillBoardVM)
+//                .center()
+//                .colspan(1)
+//                .expand()
+//                ;
+        
+//        Button showMatchSituationButton = new TextButton("showMatchSituation", game.getMainSkin());
+//        showMatchSituationButton.addListener(
+//                new InputListener(){
+//                    @Override
+//                    public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+//                        callShowMatchSituationConfirm();
+//                    }
+//                    @Override
+//                    public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+//                        return true;
+//                    }
+//                }
+//        );
+//        uiRootTable1.add(showMatchSituationButton).expand().left().top();
+        
+        // --- lazy add to stage ---
+        double maskBoardScale = 0.8;
+        
+        waitConfirmFirstGetQuestionMaskBoardVM = new WaitConfirmFirstGetQuestionMaskBoardVM(
+                game, 
+                this, 
+                DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
+                );
+        waitConfirmMatchSituationMaskBoardVM = new WaitConfirmMatchSituationMaskBoardVM(
+                game, 
+                this, 
+                DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
+                );
+        waitConfirmMatchFinishMaskBoardVM = new WaitConfirmMatchFinishMaskBoardVM(
+                game, 
+                this, 
+                DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
+                );
+        questionResultAnimationVM = new QuestionResultAnimationVM(game, this);
+        teamSwitchAnimationVM = new TeamSwitchAnimationVM(game, this);
+        skillAnimationVM = new SkillAnimationVM(game, this);
+        generalDelayAnimationVM = new GeneralDelayAnimationVM(game, this);
+        
+        if (game.debugMode) {
+            uiStage.setDebugAll(true);
+        }
+        
+    }
+
     
     private void handleCreateAndStartMatch() {
         
@@ -258,7 +418,10 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
             MatchFinishEvent matchFinishEvent = currentMatchSituationView.getFinishEvent();
             // --- post ---
             countdownClockVM.clearCountdown();
+            questionOptionAreaVM.showAllOption();
+            
             blockingAnimationTaskQueue.add(() -> callShowQuestionResultAnimation(answerResultEvent));
+            blockingAnimationTaskQueue.add(() -> callShowGeneralDelayAnimation(3.0f));
             
             if (matchFinishEvent != null) {
                 blockingAnimationTaskQueue.add(() -> callShowMatchFinishConfirm());
@@ -272,6 +435,9 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
                 
                 afterAllAnimationDoneTask = () -> {
                     // --- quiz logic ---
+                    if (switchTeamEvent != null) {
+                        handleCurrentTeam();
+                    }
                     handleNewQuestion();
                 };
             }
@@ -306,151 +472,6 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     }
 
 
-    @Override
-    protected void create() {
-    
-    }
-    
-    private void rebuildUI() {
-        
-        backUiStage.clear();
-        uiRootTable.clear();
-        popupRootTable.clear();
-        
-        backImage = new Image(game.getTextureConfig().getPlayScreenBackground());
-        backImage.setBounds(0, 0, game.getWidth(), game.getHeight());
-        backUiStage.addActor(backImage);
-        
-        
-        countdownClockVM = new CountdownClockVM(
-                game,
-                this,
-                this.logicFrameHelper,
-                new TextureRegionDrawable(game.getTextureConfig().getCountdownClockTexture())
-                );
-        countdownClockVM.setBounds(10, 650, 150, 150);
-        uiRootTable.addActor(countdownClockVM);
-//        uiRootTable.add(countdownClockVM)
-//                .center()
-//                .colspan(1)
-//                .expand()
-//                ;
-     
-        questionStemVM = new QuestionStemVM(
-                game,
-                new TextureRegionDrawable(game.getTextureConfig().getQuestionStemBackground())
-                );
-        questionStemVM.setBounds(230, 600, 830, 280);
-        uiRootTable.addActor(questionStemVM);
-//        uiRootTable.add(questionStemVM)
-//                .center()
-//                .colspan(3)
-//                .expand()
-//                .width(730)
-//                .height(300)
-//                ;
-        
-        teamInfoBoardVM = new TeamInfoBoardVM(
-                game,
-                DrawableFactory.getSimpleBoardBackground()
-                );
-        teamInfoBoardVM.setBounds(1100, 600, 350, 280);
-        uiRootTable.addActor(teamInfoBoardVM);
-//        uiRootTable.add(teamInfoBoardVM)
-//                .center()
-//                .colspan(2)
-//                .expand()
-//                ;
-        
-        
-        systemBoardVM = new SystemBoardVM(
-                game,
-                this,
-                DrawableFactory.getSimpleBoardBackground()
-                );
-        systemBoardVM.setBounds(1500, 600, 100, 280);
-        uiRootTable.addActor(systemBoardVM);
-
-        
-        imageAreaVM = new ImageAreaVM(
-                game,
-                DrawableFactory.getSimpleBoardBackground()
-                );
-        imageAreaVM.setBounds(0, 0, 400, 600);
-        uiRootTable.addActor(imageAreaVM);
-//        uiRootTable.add(imageAreaVM)
-//                .center()
-//                .colspan(2)
-//                .expand()
-//                ;
-        
-        questionOptionAreaVM = new QuestionOptionAreaVM(
-                game, 
-                this,
-                DrawableFactory.getSimpleBoardBackground()
-                );
-        questionOptionAreaVM.setBounds(450, 50, 500, 500);
-        uiRootTable.addActor(questionOptionAreaVM);
-//        uiRootTable.add(questionOptionAreaVM)
-//                .center()
-//                .colspan(3)
-//                .expand()
-//                ;
-
-        skillBoardVM = new SkillBoardVM(
-                game, 
-                this,
-                DrawableFactory.getSimpleBoardBackground()
-                );
-        skillBoardVM.setBounds(1000, 50, 500, 500);
-        uiRootTable.addActor(skillBoardVM);
-//        uiRootTable.add(skillBoardVM)
-//                .center()
-//                .colspan(1)
-//                .expand()
-//                ;
-        
-//        Button showMatchSituationButton = new TextButton("showMatchSituation", game.getMainSkin());
-//        showMatchSituationButton.addListener(
-//                new InputListener(){
-//                    @Override
-//                    public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-//                        callShowMatchSituationConfirm();
-//                    }
-//                    @Override
-//                    public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-//                        return true;
-//                    }
-//                }
-//        );
-//        uiRootTable1.add(showMatchSituationButton).expand().left().top();
-        
-        // --- lazy add to stage ---
-        double maskBoardScale = 0.8;
-        
-        waitConfirmFirstGetQuestionMaskBoardVM = new WaitConfirmFirstGetQuestionMaskBoardVM(
-                game, 
-                this, 
-                DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
-                );
-        waitConfirmMatchSituationMaskBoardVM = new WaitConfirmMatchSituationMaskBoardVM(
-                game, 
-                this, 
-                DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
-                );
-        waitConfirmMatchFinishMaskBoardVM = new WaitConfirmMatchFinishMaskBoardVM(
-                game, 
-                this, 
-                DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
-                );
-        questionResultAnimationVM = new QuestionResultAnimationVM(game, this);
-        teamSwitchAnimationVM = new TeamSwitchAnimationVM(game, this);
-        
-        if (game.debugMode) {
-            uiStage.setDebugAll(true);
-        }
-        
-    }
 
 
     private void checkBlockingAnimationTaskQueue() {
@@ -466,6 +487,34 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     @Override
     public void onChooseSkill(int index) {
         Gdx.app.log(this.getClass().getSimpleName(), "onChooseSkill called");
+        TeamPrototype currentTeamPrototype = teamPrototypes.get(currentMatchSituationView.getCurrentTeamIndex());
+        SkillSlotPrototype skillSlotPrototype = currentTeamPrototype.getRolePrototype().getSkillSlotPrototypes().get(index);
+        try {
+            currentMatchSituationView = quizLib.teamUseSkill(currentMatchSituationView.getId(), skillSlotPrototype.getName());
+            SkillResultEvent skillResultEvent = JavaFeatureForGwt.requireNonNull(currentMatchSituationView.getSkillResultEvent());
+            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                    "skillResultEvent by Type = %s", 
+                    skillResultEvent.getType()
+                    ));
+            blockingAnimationTaskQueue.add(() -> callShowSkillAnimation(skillResultEvent));
+            afterAllAnimationDoneTask = () -> {
+                skillBoardVM.updateSkill(index, skillResultEvent.getSkillRemainTime());
+                switch (skillResultEvent.getRoleName()) {
+                    case "5050":
+                        skillEffectHandler.handle5050(skillResultEvent.getArgs()); 
+                        break;
+    
+                    default:
+                        break;
+                }
+            };
+            checkBlockingAnimationTaskQueue();
+            
+        } catch (QuizgameException e) {
+            Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+        
+        
         
     }
 
@@ -514,13 +563,10 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     }
     @Override
     protected void renderPopupAnimations(float delta, SpriteBatch spriteBatch) {
-        if (questionResultAnimationVM.isRunningState()) {
-            questionResultAnimationVM.updateBackground(delta, spriteBatch);
+        if (currentAnimationVM != null) {
+            currentAnimationVM.updateBackground(delta, spriteBatch);
         }
-        
-        if (teamSwitchAnimationVM.isRunningState()) {
-            teamSwitchAnimationVM.updateBackground(delta, spriteBatch);
-        }
+
     }
 
     @Override
@@ -529,6 +575,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         // --- ui ---
         popupRootTable.add(questionResultAnimationVM);
         // --- logic ---
+        currentAnimationVM = questionResultAnimationVM;
         questionResultAnimationVM.callShow(answerResultEvent);
         Gdx.input.setInputProcessor(popupUiStage);
         //logicFrameHelper.setLogicFramePause(true);
@@ -541,6 +588,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         popupRootTable.clear();
         // --- logic ---
         Gdx.input.setInputProcessor(uiStage);
+        currentAnimationVM = null;
         
         checkBlockingAnimationTaskQueue();
     }
@@ -549,12 +597,9 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     public void callShowTeamSwitchAnimation(SwitchTeamEvent switchTeamEvent) {
         Gdx.app.log(this.getClass().getSimpleName(), "callShowTeamSwitchAnimation called");
         // --- ui ---
-        
         popupRootTable.add(teamSwitchAnimationVM);
-        // --- quiz logic ---
-        handleCurrentTeam();
-        
         // --- screen logic ---
+        currentAnimationVM = teamSwitchAnimationVM;
         teamSwitchAnimationVM.callShow(switchTeamEvent);
         Gdx.input.setInputProcessor(popupUiStage);
     }
@@ -595,6 +640,38 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
                 );
         return history;
     }
+
+    @Override
+    public void callShowSkillAnimation(SkillResultEvent skillResultEvent) {
+        Gdx.app.log(this.getClass().getSimpleName(), "callShowSkillAnimation called");
+        // --- ui ---
+        popupRootTable.add(skillAnimationVM);
+        // --- logic ---
+        currentAnimationVM = skillAnimationVM;
+        skillAnimationVM.callShow(skillResultEvent);
+        Gdx.input.setInputProcessor(popupUiStage);
+    }
+    
+    @Override
+    public void callShowGeneralDelayAnimation(float second) {
+        Gdx.app.log(this.getClass().getSimpleName(), "callShowGeneralDelayAnimation called");
+        // --- ui ---
+        popupRootTable.add(generalDelayAnimationVM);
+        // --- screen logic ---
+        currentAnimationVM = generalDelayAnimationVM;
+        generalDelayAnimationVM.callShow(second);
+        Gdx.input.setInputProcessor(popupUiStage);
+    }
+    
+    class SkillEffectHandler {
+
+        public void handle5050(List<String> args) {
+            int showOptionAmout = Integer.valueOf(args.get(0));
+            questionOptionAreaVM.showRandomOption(showOptionAmout);
+        }
+        
+    }
+
     
 
 }

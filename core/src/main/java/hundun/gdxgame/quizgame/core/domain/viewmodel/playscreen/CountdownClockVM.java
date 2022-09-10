@@ -58,7 +58,7 @@ public class CountdownClockVM extends Table {
             callerAndCallback.onCountdownZero();
         }
     }
-    
+     
     public void resetCountdown(double second) {
         this.isCountdownState = true;
         this.currentCountdownFrame = logicFrameHelper.secondToFrameNum(second);

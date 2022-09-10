@@ -74,7 +74,9 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
             }
         }
         
-        //uiStage.act();
+        backUiStage.act();
+        uiStage.act();
+        popupUiStage.act();
         
         // ====== be careful of draw order ======
         backUiStage.draw();

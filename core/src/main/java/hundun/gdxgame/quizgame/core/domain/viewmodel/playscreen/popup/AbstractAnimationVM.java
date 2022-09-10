@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;

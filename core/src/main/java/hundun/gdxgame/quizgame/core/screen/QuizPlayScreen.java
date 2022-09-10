@@ -29,15 +29,15 @@ import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SkillBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.TeamInfoBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SystemBoardVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SystemBoardVM.SystemButtonType;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.AbstractAnimationVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.GeneralDelayAnimationVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.QuestionResultAnimationVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.TeamSwitchAnimationVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.SkillAnimationVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.WaitConfirmFirstGetQuestionMaskBoardVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.WaitConfirmMatchSituationMaskBoardVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.AbstractAnimationVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.GeneralDelayAnimationVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.QuestionResultAnimationVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.SkillAnimationVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.TeamSwitchAnimationVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.FirstGetQuestionNotificationBoardVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.MatchFinishNotificationBoardVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup.MatchSituationNotificationBoardVM;
 import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchFinishHistory;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask.WaitConfirmMatchFinishMaskBoardVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
 import hundun.gdxgame.share.base.LogicFrameHelper;
 import hundun.gdxgame.share.base.util.DrawableFactory;
@@ -61,9 +61,9 @@ import hundun.quizlib.view.match.MatchSituationView;
  * Created on 2022/08/30
  */
 public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
-implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
-        WaitConfirmMatchSituationMaskBoardVM.CallerAndCallback, 
-        WaitConfirmMatchFinishMaskBoardVM.CallerAndCallback,
+implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
+        MatchSituationNotificationBoardVM.CallerAndCallback, 
+        MatchFinishNotificationBoardVM.CallerAndCallback,
         CountdownClockVM.CallerAndCallback, 
         QuestionOptionAreaVM.CallerAndCallback, 
         SystemBoardVM.CallerAndCallback,
@@ -101,9 +101,9 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     SkillBoardVM skillBoardVM;
     
     // --- lazy add to stage ---
-    WaitConfirmFirstGetQuestionMaskBoardVM waitConfirmFirstGetQuestionMaskBoardVM;
-    WaitConfirmMatchSituationMaskBoardVM waitConfirmMatchSituationMaskBoardVM;
-    WaitConfirmMatchFinishMaskBoardVM waitConfirmMatchFinishMaskBoardVM;
+    FirstGetQuestionNotificationBoardVM waitConfirmFirstGetQuestionMaskBoardVM;
+    MatchSituationNotificationBoardVM waitConfirmMatchSituationMaskBoardVM;
+    MatchFinishNotificationBoardVM waitConfirmMatchFinishMaskBoardVM;
     QuestionResultAnimationVM questionResultAnimationVM;
     TeamSwitchAnimationVM teamSwitchAnimationVM;
     SkillAnimationVM skillAnimationVM;
@@ -260,17 +260,17 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
         // --- lazy add to stage ---
         double maskBoardScale = 0.8;
         
-        waitConfirmFirstGetQuestionMaskBoardVM = new WaitConfirmFirstGetQuestionMaskBoardVM(
+        waitConfirmFirstGetQuestionMaskBoardVM = new FirstGetQuestionNotificationBoardVM(
                 game, 
                 this, 
                 DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
                 );
-        waitConfirmMatchSituationMaskBoardVM = new WaitConfirmMatchSituationMaskBoardVM(
+        waitConfirmMatchSituationMaskBoardVM = new MatchSituationNotificationBoardVM(
                 game, 
                 this, 
                 DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
                 );
-        waitConfirmMatchFinishMaskBoardVM = new WaitConfirmMatchFinishMaskBoardVM(
+        waitConfirmMatchFinishMaskBoardVM = new MatchFinishNotificationBoardVM(
                 game, 
                 this, 
                 DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
@@ -324,7 +324,7 @@ implements WaitConfirmFirstGetQuestionMaskBoardVM.CallerAndCallback,
     }
 
     @Override
-    public void onConfirmed() {
+    public void onNotificationConfirmed() {
         Gdx.app.log(this.getClass().getSimpleName(), "onConfirmed called");
         // --- ui ---
         popupRootTable.clear();

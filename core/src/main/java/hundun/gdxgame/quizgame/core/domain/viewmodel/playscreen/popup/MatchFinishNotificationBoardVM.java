@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -22,13 +22,13 @@ import hundun.quizlib.view.match.MatchSituationView;
  * @author hundun
  * Created on 2021/11/12
  */
-public class WaitConfirmMatchFinishMaskBoardVM extends AbstractWaitConfirmMaskBoardVM {
+public class MatchFinishNotificationBoardVM extends AbstractNotificationBoardVM {
 
     MatchFinishHistory data;
 
     MatchFinishHistoryVM vm;
     
-    public WaitConfirmMatchFinishMaskBoardVM(
+    public MatchFinishNotificationBoardVM(
             QuizGdxGame game,
             CallerAndCallback callback,
             Drawable background
@@ -54,14 +54,14 @@ public class WaitConfirmMatchFinishMaskBoardVM extends AbstractWaitConfirmMaskBo
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //WaitConfirmMatchConfigMaskBoardVM.this.setVisible(false);
-                WaitConfirmMatchFinishMaskBoardVM.this.callback.onConfirmed();
+                MatchFinishNotificationBoardVM.this.callback.onNotificationConfirmed();
             }
         });
         this.add(textButton);
     }
     
     
-    public static interface CallerAndCallback extends IWaitConfirmCallback {
+    public static interface CallerAndCallback extends IWaitConfirmNotificationCallback {
         void callShowMatchFinishConfirm();
     }
 }

@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -19,14 +19,14 @@ import hundun.quizlib.view.match.MatchSituationView;
  * @author hundun
  * Created on 2021/11/12
  */
-public abstract class AbstractWaitConfirmMaskBoardVM extends Table {
+public abstract class AbstractNotificationBoardVM extends Table {
     protected final QuizGdxGame game;
     
-    protected final IWaitConfirmCallback callback;
+    protected final IWaitConfirmNotificationCallback callback;
     
-    public AbstractWaitConfirmMaskBoardVM(
+    public AbstractNotificationBoardVM(
             QuizGdxGame game,
-            IWaitConfirmCallback callback,
+            IWaitConfirmNotificationCallback callback,
             Drawable background
             ) {
         this.game = game;
@@ -40,7 +40,7 @@ public abstract class AbstractWaitConfirmMaskBoardVM extends Table {
 
     }
 
-    public static void simpleFill(AbstractWaitConfirmMaskBoardVM boardVM) {
+    public static void simpleFill(AbstractNotificationBoardVM boardVM) {
         boardVM.clear();
         
         Label label = new Label("TEMP", boardVM.game.getMainSkin());
@@ -51,13 +51,13 @@ public abstract class AbstractWaitConfirmMaskBoardVM extends Table {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //WaitConfirmMatchConfigMaskBoardVM.this.setVisible(false);
-                boardVM.callback.onConfirmed();
+                boardVM.callback.onNotificationConfirmed();
             }
         });
         boardVM.add(textButton).center();
     }
 
-    public static interface IWaitConfirmCallback {
-        void onConfirmed();
+    public static interface IWaitConfirmNotificationCallback {
+        void onNotificationConfirmed();
     }
 }

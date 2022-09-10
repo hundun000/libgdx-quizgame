@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -13,38 +13,38 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.quizlib.prototype.match.MatchConfig;
-import hundun.quizlib.view.match.MatchSituationView;
 
 /**
  * @author hundun
  * Created on 2021/11/12
  */
-public class WaitConfirmMatchSituationMaskBoardVM extends AbstractWaitConfirmMaskBoardVM {
+public class FirstGetQuestionNotificationBoardVM extends AbstractNotificationBoardVM {
 
-    MatchSituationView data;
+    MatchConfig data;
 
-
-    public WaitConfirmMatchSituationMaskBoardVM(
+    
+    
+    public FirstGetQuestionNotificationBoardVM(
             QuizGdxGame game,
             CallerAndCallback callback,
             Drawable background
             ) {
         super(game, callback, background);
-
+        
     }
     
     
-    public void onCallShow(MatchSituationView data) {
+    public void onCallShow(MatchConfig data) {
         //this.setVisible(true);
         this.data = data;
         
         // --- render data ---
-        
+        simpleFill(this);
         
     }
     
     
-    public static interface CallerAndCallback extends IWaitConfirmCallback {
-        void callShowMatchSituationConfirm();
+    public static interface CallerAndCallback extends IWaitConfirmNotificationCallback{
+        void callShowFirstGetQuestionConfirm();
     }
 }

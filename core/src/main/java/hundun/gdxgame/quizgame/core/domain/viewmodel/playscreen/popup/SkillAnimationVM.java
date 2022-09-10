@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
+import hundun.quizlib.prototype.event.SkillResultEvent;
 import hundun.quizlib.prototype.event.SwitchTeamEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.view.match.MatchSituationView;
@@ -28,7 +29,7 @@ import lombok.Getter;
  * @author hundun
  * Created on 2021/11/12
  */
-public class TeamSwitchAnimationVM extends AbstractAnimationVM {
+public class SkillAnimationVM extends AbstractAnimationVM {
 
 
     CallerAndCallback callerAndCallback;
@@ -41,7 +42,7 @@ public class TeamSwitchAnimationVM extends AbstractAnimationVM {
 
     
     
-    public TeamSwitchAnimationVM(
+    public SkillAnimationVM(
             QuizGdxGame game,
             CallerAndCallback callerAndCallback
             ) {
@@ -54,21 +55,21 @@ public class TeamSwitchAnimationVM extends AbstractAnimationVM {
     }
     
     
-    public void callShow(SwitchTeamEvent switchTeamEvent) {
+    public void callShow(SkillResultEvent skillResultEvent) {
 
         // Initialize the Animation with the frame interval and array of frames
         setAnimation(new Animation<>(0.025f, aminationFactory(
                 game.getTextureConfig().getQuestionResultCorrectAnimationSheet(), 
                 FRAME_COLS, FRAME_ROWS
                 )));
-        resultLable.setText(switchTeamEvent.getToTeamName());
+        resultLable.setText(skillResultEvent.getSkillName() + "\n" + skillResultEvent.getSkillDesc());
         
         super.resetBackground();
     }
     
     
     public static interface CallerAndCallback extends IAnimationCallback {
-        void callShowTeamSwitchAnimation(SwitchTeamEvent switchTeamEvent);
+        void callShowSkillAnimation(SkillResultEvent skillResultEvent);
     }
 
 

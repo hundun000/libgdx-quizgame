@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.mask;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,8 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
-import hundun.quizlib.prototype.event.SkillResultEvent;
-import hundun.quizlib.prototype.event.SwitchTeamEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.view.match.MatchSituationView;
 import lombok.Getter;
@@ -29,7 +27,7 @@ import lombok.Getter;
  * @author hundun
  * Created on 2021/11/12
  */
-public class SkillAnimationVM extends AbstractAnimationVM {
+public class QuestionResultAnimationVM extends AbstractAnimationVM {
 
 
     CallerAndCallback callerAndCallback;
@@ -42,34 +40,32 @@ public class SkillAnimationVM extends AbstractAnimationVM {
 
     
     
-    public SkillAnimationVM(
+    public QuestionResultAnimationVM(
             QuizGdxGame game,
             CallerAndCallback callerAndCallback
             ) {
         super(game, callerAndCallback);
         this.callerAndCallback = callerAndCallback;
 
-        
         resultLable = new Label("TEMP", game.getMainSkin());
         this.add(resultLable);
     }
     
     
-    public void callShow(SkillResultEvent skillResultEvent) {
-
-        // Initialize the Animation with the frame interval and array of frames
+    public void callShow(AnswerResultEvent answerResultEvent) {
+        
         setAnimation(new Animation<>(0.025f, aminationFactory(
                 game.getTextureConfig().getQuestionResultCorrectAnimationSheet(), 
                 FRAME_COLS, FRAME_ROWS
                 )));
-        resultLable.setText(skillResultEvent.getSkillName() + "\n" + skillResultEvent.getSkillDesc());
+        resultLable.setText(answerResultEvent.getResult().name());
         
         super.resetBackground();
     }
     
     
     public static interface CallerAndCallback extends IAnimationCallback {
-        void callShowSkillAnimation(SkillResultEvent skillResultEvent);
+        void callShowQuestionResultAnimation(AnswerResultEvent answerResultEvent);
     }
 
 

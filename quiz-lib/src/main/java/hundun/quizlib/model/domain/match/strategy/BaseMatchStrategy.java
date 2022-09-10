@@ -165,13 +165,14 @@ public abstract class BaseMatchStrategy {
         boolean success = skillSlotRuntimeModel.useOnce(skillName);
         if (success) {
             newEvents = MatchEventFactory.getTypeSkillSuccess(team.getName(), team.getRoleName(), skillSlotRuntimeModel);
-                    
-            for (AddBuffSkillEffect skillEffect : skillSlotRuntimeModel.getPrototype().getBackendEffects()) {
-                AddBuffSkillEffect addBuffSkillEffect = skillEffect;
-                BuffRuntimeModel buff = buffService.generateRunTimeBuff(addBuffSkillEffect.getBuffName(), addBuffSkillEffect.getDuration());
-                parent.getCurrentTeam().addBuff(buff);
-            }
             
+            if (skillSlotRuntimeModel.getPrototype().getBackendEffects() != null) {
+                for (AddBuffSkillEffect skillEffect : skillSlotRuntimeModel.getPrototype().getBackendEffects()) {
+                    AddBuffSkillEffect addBuffSkillEffect = skillEffect;
+                    BuffRuntimeModel buff = buffService.generateRunTimeBuff(addBuffSkillEffect.getBuffName(), addBuffSkillEffect.getDuration());
+                    parent.getCurrentTeam().addBuff(buff);
+                }
+            }
         } else {
             newEvents = MatchEventFactory.getTypeSkillUseOut(team.getName(), team.getRoleName(), skillSlotRuntimeModel);
         }

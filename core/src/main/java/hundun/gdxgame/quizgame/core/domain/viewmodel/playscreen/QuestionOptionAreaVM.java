@@ -167,6 +167,7 @@ public class QuestionOptionAreaVM extends Table {
     public void showRandomOption(int showOptionAmout) {
         List<Integer> showIndexs = IntStream.range(0, SIZE)
             .boxed()
+            .filter(index -> nodes.get(index).showState == OptionButtonShowState.HIDE_WRONG)
             .collect(Collectors.toList())
             ;
         Collections.shuffle(showIndexs);

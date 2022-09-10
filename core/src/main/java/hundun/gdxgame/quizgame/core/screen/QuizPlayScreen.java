@@ -499,12 +499,16 @@ implements FirstGetQuestionNotificationBoardVM.CallerAndCallback,
             blockingAnimationTaskQueue.add(() -> callShowSkillAnimation(skillResultEvent));
             afterAllAnimationDoneTask = () -> {
                 skillBoardVM.updateSkill(index, skillResultEvent.getSkillRemainTime());
-                switch (skillResultEvent.getRoleName()) {
+                switch (skillResultEvent.getSkillName()) {
                     case "5050":
                         skillEffectHandler.handle5050(skillResultEvent.getArgs()); 
                         break;
     
                     default:
+                        Gdx.app.error(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                                "unhandle SkillName = %s", 
+                                skillResultEvent.getSkillName()
+                                ));
                         break;
                 }
             };

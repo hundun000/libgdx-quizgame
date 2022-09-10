@@ -99,6 +99,9 @@ public class SkillBoardVM extends Table {
     public void updateRole(RolePrototype rolePrototype, RoleRuntimeView roleRuntimeView) {
         nodes.clear();
         this.clear();
+        if (rolePrototype == null) {
+            return;
+        }
         
         int newLineIndex = (rolePrototype.getSkillSlotPrototypes().size() - 1) / 2;
         for (int i = 0; i < rolePrototype.getSkillSlotPrototypes().size(); i++) {

@@ -1,7 +1,9 @@
 package hundun.gdxgame.quizgame.core.config;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -9,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.SystemBoardVM.SystemButtonType;
+import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import lombok.Getter;
 //import lombok.Getter;
 import lombok.Setter;
@@ -46,7 +49,7 @@ public class TextureConfig {
             
             
             menuTexture = textureOrDefault("menu.png");
-            playScreenBackground = textureOrDefault("playScreen.png");
+            playScreenBackground = textureOrDefault("playscreen.png");
             countdownClockTexture = textureOrDefault("countdownClock.png");
             currentTeamSignTexture = textureOrDefault("currentTeamSignTexture.png");
             skillButtonBackground = textureOrDefault("skillButtonBackground.png");
@@ -86,11 +89,22 @@ public class TextureConfig {
             try {
                 return new Texture(Gdx.files.internal("ui/" + ENV + "/" + subName));
             } catch (Exception e) {
+                if (!textureOrDefaultFailHistory.contains(subName)) {
+                    textureOrDefaultFailHistory.add(subName);
+                    Gdx.app.error(this.getClass().getSimpleName(), 
+                            JavaFeatureForGwt.stringFormat(
+                                    "env = %s, subName = %s, fail: %s", 
+                                    ENV,
+                                    subName,
+                                    e.getMessage()
+                                    )
+                            );
+                }
                 return new Texture(Gdx.files.internal("badlogic.jpg"));
             }
         }
 
-        
+        Set<String> textureOrDefaultFailHistory = new HashSet<>();
 
     }
     

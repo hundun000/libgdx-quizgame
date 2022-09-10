@@ -1,36 +1,103 @@
 package hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.share.base.util.DrawableFactory;
+import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.match.MatchStrategyType;
+import lombok.Getter;
 
 /**
  * @author hundun
  * Created on 2022/09/14
  */
 public class MatchStrategySelectVM extends Table {
+    QuizGdxGame game;
+    ICallerAndCallback callerAndCallback;
+    @Getter
+    MatchStrategyType currenType;
+    List<TeamSlotVM> teamSlotVMs = new ArrayList<>();
+    
     CheckBox preCheckBox;
     CheckBox mainCheckBox;
     ButtonGroup<CheckBox> buttonGroup;
-    public MatchStrategySelectVM(QuizGdxGame game) {
+    public MatchStrategySelectVM(QuizGdxGame game, ICallerAndCallback callerAndCallback) {
+        this.game = game;
+        this.callerAndCallback = callerAndCallback;
+        this.setBackground(DrawableFactory.getSimpleBoardBackground());
+        
         this.preCheckBox = new CheckBox("PRE", game.getMainSkin());
         this.mainCheckBox = new CheckBox("MAIN", game.getMainSkin());
         this.buttonGroup = new ButtonGroup<>(preCheckBox, mainCheckBox);
         
-        this.add(preCheckBox).padRight(50);
-        this.add(mainCheckBox).padRight(50);
+        ClickListener changeListener = new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                checkSlotNum();
+            };
+        };
+        preCheckBox.addListener(changeListener);
+        mainCheckBox.addListener(changeListener);
+        
+        checkSlotNum();
     }
     
-    public MatchStrategyType getSelected() {
+    
+    
+    void checkSlotNum() {
+        int targetSlotNum;
+        MatchStrategyType newType;
         if (preCheckBox.isChecked()) {
-            return MatchStrategyType.PRE;
+            newType = MatchStrategyType.PRE;
+            targetSlotNum = 1;
+        } else if (mainCheckBox.isChecked()) {
+            newType = MatchStrategyType.MAIN;
+            targetSlotNum = 2;
+        } else {
+            preCheckBox.setChecked(true);
+            newType = MatchStrategyType.PRE;
+            targetSlotNum = 1;
         }
-        if (mainCheckBox.isChecked()) {
-            return MatchStrategyType.MAIN;
+        
+        if (currenType != newType) {
+            currenType = newType;
+            this.clear();
+            teamSlotVMs.clear();
+            for (int i = 0; i < targetSlotNum; i++) {
+                TeamSlotVM teamSlotVM = new TeamSlotVM(game);
+                teamSlotVM.updateData(null);
+                teamSlotVM.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        callerAndCallback.onSlotWantChange(teamSlotVM);
+                    }
+                });
+                teamSlotVMs.add(teamSlotVM);
+                this.add(teamSlotVM).padRight(50);
+            }
+            
+            this.row();
+            this.add(preCheckBox).padRight(50);
+            this.add(mainCheckBox).padRight(50);
         }
-        return null;
     }
+    
+    public static interface ICallerAndCallback {
+        void onSlotWantChange(TeamSlotVM teamSlotVM);
+    }
+
+    public List<String> getSelectedTeamNames() {
+        return teamSlotVMs.stream().map(it -> it.getData().getName()).collect(Collectors.toList());
+    }
+
 }

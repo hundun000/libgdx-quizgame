@@ -31,7 +31,7 @@ public class QuestionService implements IQuizComponent {
 	private Random insertQuestionRandom = new Random(1);
 	
 	
-	private Set<String> tags = new HashSet<>();
+	//private Set<String> tags = new HashSet<>();
 	
 	Map<String, List<QuestionModel>> questionPackages = new HashMap<>();
 	Map<String, QuestionModel> questionPool = new HashMap<>();
@@ -154,16 +154,16 @@ public class QuestionService implements IQuizComponent {
         return tags;
     }
     
-    public void addTag(String tag) {
-        tags.add(tag);
-    }
-    
-    public Set<String> getTags() {
-        return tags;
-    }
-    
-    public boolean tagExsist(String tag) {
-        return tags.contains(tag);
-    }
+//    public void addTag(String tag) {
+//        tags.add(tag);
+//    }
+//    
+//    public Set<String> getTags() {
+//        return tags;
+//    }
+//    
+//    public boolean tagExsist(String tag) {
+//        return tags.contains(tag);
+//    }
 
 }

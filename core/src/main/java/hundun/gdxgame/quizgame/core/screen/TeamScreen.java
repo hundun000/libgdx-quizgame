@@ -1,6 +1,7 @@
 package hundun.gdxgame.quizgame.core.screen;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,15 +16,18 @@ import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.MatchStrategySelectVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.MatchStrategySelectVM.ICallerAndCallback;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamNodeVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamSlotVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamManageSlotVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.popup.TagSelectPopoupVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.popup.TeamSelectPopoupVM;
 import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.popup.TeamSelectPopoupVM.IWaitTeamSelectCallback;
 import hundun.gdxgame.share.base.BaseHundunScreen;
+import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.prototype.match.MatchStrategyType;
 import hundun.quizlib.service.BuiltinDataConfiguration;
 import hundun.quizlib.service.QuestionLoaderService;
+import hundun.quizlib.service.QuestionService;
 import hundun.quizlib.service.TeamService;
 
 /**
@@ -31,16 +35,20 @@ import hundun.quizlib.service.TeamService;
  * Created on 2022/08/30
  */
 public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> implements 
-        IWaitTeamSelectCallback, 
-        MatchStrategySelectVM.ICallerAndCallback 
+        TeamSelectPopoupVM.IWaitTeamSelectCallback, 
+        TagSelectPopoupVM.IWaitTagSelectCallback, 
+        MatchStrategySelectVM.ICallerAndCallback
         {
 
     TeamService teamService;
+    QuestionService questionService;
     
     TeamSelectPopoupVM teamSelectPopoupVM;
+    TagSelectPopoupVM tagSelectPopoupVM;
     MatchStrategySelectVM matchStrategySelectVM;
     
-    TeamSlotVM waitChangeTeamSlotVM;
+    String currentQuestionPackageName;
+    TeamManageSlotVM waiChangeDoneTeamManageSlotVM;
     
     public TeamScreen(QuizGdxGame game) {
         super(game);
@@ -52,11 +60,13 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         Gdx.input.setInputProcessor(uiStage);
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
         
-        this.teamService = game.getQuizLibBridge().getQuizComponentContext().getTeamService();
-    
-        uiRootTable.clear();
         
         this.teamSelectPopoupVM = TeamSelectPopoupVM.Factory.build(game, this);
+        this.tagSelectPopoupVM = TagSelectPopoupVM.Factory.build(game, this);
+        
+        uiRootTable.clear();
+        
+        
 //        uiRootTable.add(teamSelectPopoupVM);
         
         matchStrategySelectVM = new MatchStrategySelectVM(game, this);
@@ -89,7 +99,7 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
                             MatchConfig matchConfig = new MatchConfig();
                             matchConfig.setTeamNames(matchStrategySelectVM.getSelectedTeamNames());
-                            matchConfig.setQuestionPackageName(QuestionLoaderService.PRELEASE_PACKAGE_NAME);
+                            matchConfig.setQuestionPackageName(currentQuestionPackageName);
                             matchConfig.setMatchStrategyType(matchStrategySelectVM.getCurrenType());
                             
                             game.getScreenManager().pushScreen(QuizPlayScreen.class.getSimpleName(), 
@@ -113,25 +123,35 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
 
     @Override
     protected void create() {
-        // TODO Auto-generated method stub
+        this.teamService = game.getQuizLibBridge().getQuizComponentContext().getTeamService();
+        this.questionService = game.getQuizLibBridge().getQuizComponentContext().getQuestionService();
         
+        this.currentQuestionPackageName = QuestionLoaderService.PRELEASE_PACKAGE_NAME;
     }
 
     @Override
-    public void onTeamSelected(TeamPrototype teamPrototype) {
+    public void onTeamSelectDone(TeamPrototype teamPrototype) {
         Gdx.app.log(this.getClass().getSimpleName(), "onTeamSelected called");
         // --- ui ---
         popupRootTable.clear();
         Gdx.input.setInputProcessor(uiStage);
         // --- logic ---
-        waitChangeTeamSlotVM.updateData(teamPrototype);
-        this.waitChangeTeamSlotVM = null;
+        waiChangeDoneTeamManageSlotVM.updateData(teamPrototype);
+        this.waiChangeDoneTeamManageSlotVM = null;
     }
 
     @Override
-    public void onSlotWantChange(TeamSlotVM teamSlotVM) {
-        this.waitChangeTeamSlotVM = teamSlotVM;
+    public void onTeamWantChange(TeamManageSlotVM teamSlotVM) {
+        this.waiChangeDoneTeamManageSlotVM = teamSlotVM;
         callShowTeamSelectPopoup();
+    }
+    @Override
+    public void onTeamWantModify(TeamManageSlotVM teamSlotVM) {
+        try {
+            callShowTagSelectPopoup(teamSlotVM.getData(), questionService.getTags(currentQuestionPackageName));
+        } catch (QuizgameException e) {
+            Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
     }
 
     @Override
@@ -143,5 +163,27 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         // --- logic ---
         teamSelectPopoupVM.callShow(teamService.listTeams());
     }
+
+    @Override
+    public void callShowTagSelectPopoup(TeamPrototype currenTeamPrototype, Set<String> allTags) {
+        Gdx.app.log(this.getClass().getSimpleName(), "callShowTagSelectPopoup called");
+        // --- ui ---
+        popupRootTable.add(tagSelectPopoupVM);
+        Gdx.input.setInputProcessor(popupUiStage);
+        // --- logic ---
+        tagSelectPopoupVM.callShow(currenTeamPrototype, allTags);
+    }
+
+    @Override
+    public void onTagSelectDone() {
+        Gdx.app.log(this.getClass().getSimpleName(), "onTagSelectDone called");
+        // --- ui ---
+        popupRootTable.clear();
+        Gdx.input.setInputProcessor(uiStage);
+        // --- logic ---
+        // do nothing
+    }
+
+    
 
 }

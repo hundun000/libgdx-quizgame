@@ -25,7 +25,7 @@ public class MatchStrategySelectVM extends Table {
     ICallerAndCallback callerAndCallback;
     @Getter
     MatchStrategyType currenType;
-    List<TeamSlotVM> teamSlotVMs = new ArrayList<>();
+    List<TeamManageSlotVM> teamSlotVMs = new ArrayList<>();
     
     CheckBox preCheckBox;
     CheckBox mainCheckBox;
@@ -73,15 +73,8 @@ public class MatchStrategySelectVM extends Table {
             this.clear();
             teamSlotVMs.clear();
             for (int i = 0; i < targetSlotNum; i++) {
-                TeamSlotVM teamSlotVM = new TeamSlotVM(game);
+                TeamManageSlotVM teamSlotVM = new TeamManageSlotVM(game, callerAndCallback);
                 teamSlotVM.updateData(null);
-                teamSlotVM.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        super.clicked(event, x, y);
-                        callerAndCallback.onSlotWantChange(teamSlotVM);
-                    }
-                });
                 teamSlotVMs.add(teamSlotVM);
                 this.add(teamSlotVM).padRight(50);
             }
@@ -93,7 +86,8 @@ public class MatchStrategySelectVM extends Table {
     }
     
     public static interface ICallerAndCallback {
-        void onSlotWantChange(TeamSlotVM teamSlotVM);
+        void onTeamWantChange(TeamManageSlotVM teamSlotVM);
+        void onTeamWantModify(TeamManageSlotVM teamSlotVM);
     }
 
     public List<String> getSelectedTeamNames() {

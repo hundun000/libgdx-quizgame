@@ -27,6 +27,8 @@ public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
             ) {
         super(game, background);
         this.callback = callback;
+        
+        
     }
     
     public static class Factory {
@@ -49,13 +51,13 @@ public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
         @Override
         public void clicked(InputEvent event, float x, float y) {
             super.clicked(event, x, y);
-            callback.onTeamSelected(teamNodeVM.getData());
+            callback.onTeamSelectDone(teamNodeVM.getData());
         }
     }
     
     public static interface IWaitTeamSelectCallback {
         void callShowTeamSelectPopoup();
-        void onTeamSelected(TeamPrototype teamPrototype);
+        void onTeamSelectDone(TeamPrototype teamPrototype);
     }
 
     public void callShow(List<TeamPrototype> teamPrototypes) {

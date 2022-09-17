@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import hundun.quizlib.context.IFrontEnd;
 import hundun.quizlib.context.IQuizComponent;
@@ -44,10 +46,10 @@ public class QuestionLoaderService implements IQuizComponent {
 //        this.RESOURCE_ICON_FOLDER = RESOURCE_ICON_FOLDER;
 //    }
 	
-	private List<QuestionModel> loadQuestionsFromFile(String fileContent, String fileName, Set<String> tagNames) throws QuestionFormatException {
+	private List<QuestionModel> loadQuestionsFromFile(String fileContent, String fileName) throws QuestionFormatException {
         List<String> lines = Arrays.asList(fileContent.split("\r?\n|\r"));  
         try {
-        	return parseTextToQuestions(lines, tagNames);
+        	return parseTextToQuestions(lines);
 		} catch (QuestionFormatException e) {
 			throw new QuestionFormatException(e, fileName);
 		}
@@ -123,10 +125,8 @@ public class QuestionLoaderService implements IQuizComponent {
 		List<QuestionModel> questions = new ArrayList<>();
 		
 		for (String chileName : chileNames) {
-			Set<String> tagNames = new HashSet<>();
-			// TODO 计算TagNames
 			String fileContent = frontEnd.fileGetContent(PACKAGE_FOLDER + packageName + File.separator + chileName);
-			questions.addAll(loadQuestionsFromFile(fileContent, chileName, tagNames));
+			questions.addAll(loadQuestionsFromFile(fileContent, chileName));
 		}
 		return questions;
 	}
@@ -149,26 +149,51 @@ public class QuestionLoaderService implements IQuizComponent {
 	 * @return
 	 * @throws QuestionFormatException
 	 */
-	private List<QuestionModel> parseTextToQuestions(List<String> lines, Set<String> tagNames) throws QuestionFormatException { int size = lines.size();
-		String numText = lines.get(0);
+	private List<QuestionModel> parseTextToQuestions(List<String> lines) throws QuestionFormatException { 
+	    
+		int currentLine = 0;
 		
+	    String numText = lines.get(currentLine++);
 		if (numText.startsWith(UTF8_BOM)) {
 		    numText = numText.substring(1);
 		}
+		
+		String tagsText = lines.get(currentLine++);
+		Set<String> tagNames;
+		if (tagsText.trim().length() != 0) {
+		    tagNames = Stream.of(tagsText.split(","))
+	                .map(it -> it.trim())
+	                .collect(Collectors.toSet())
+	                ;
+		    currentLine++;
+		} else {
+		    tagNames = new HashSet<>(0);
+		}
+		
+		
 		int num = Integer.valueOf(numText);
 		List<QuestionModel> questions = new ArrayList<>(num);
 		
-		for (int i = 2; i < size; ) {
-			int i0 = i;
+		while (currentLine < lines.size()) {
+			int i0 = currentLine;
 			try {
 				
-				String stem = lines.get(i++);
-				String optionA = lines.get(i++);
-				String optionB = lines.get(i++);
-				String optionC = lines.get(i++);
-				String optionD = lines.get(i++);
-				String answer = lines.get(i++);
-				String resourceText = lines.get(i++);
+				String stem = lines.get(currentLine++);
+				String optionA = lines.get(currentLine++);
+				String optionB = lines.get(currentLine++);
+				String optionC = lines.get(currentLine++);
+				String optionD = lines.get(currentLine++);
+				String answer = lines.get(currentLine++);
+				String resourceText = lines.get(currentLine++);
+				
+				while (currentLine < lines.size()) {
+				    String next = lines.get(currentLine);
+				    if (next.trim().length() == 0) {
+				        currentLine++;
+				    } else {
+				        break;
+				    }
+				}
 				
 				boolean elementLost = stem.length() == 0 
 						|| optionA.length() == 0
@@ -179,21 +204,8 @@ public class QuestionLoaderService implements IQuizComponent {
 						|| resourceText.length() == 0
 						;
 				if(elementLost) {
-					throw new QuestionFormatException(i0, i+1, questions.size() + 1, "题目组成");
+					throw new QuestionFormatException(i0, currentLine, questions.size() + 1, "题目组成");
 				}
-				
-				int numBlankLine;
-				for (numBlankLine = 0; i + numBlankLine < size; numBlankLine++) {
-					String line = lines.get(i + numBlankLine);
-					if (line.length() != 0) {
-						break;
-					}
-				}
-				
-				if (numBlankLine == 0 && i + numBlankLine < size) {
-					throw new QuestionFormatException(i + 1, i + 1, questions.size() + 1, "空行");
-				}
-				i += numBlankLine;
 				
 				QuestionModel question = new QuestionModel(stem, optionA, optionB, optionC, optionD, answer, resourceText, tagNames);
 				
@@ -208,7 +220,7 @@ public class QuestionLoaderService implements IQuizComponent {
 				
 				questions.add(question);
 			} catch (IndexOutOfBoundsException e) {
-				throw new QuestionFormatException(i + 1, i + 1, questions.size() + 1, "题目组成");
+				throw new QuestionFormatException(currentLine, currentLine, questions.size() + 1, "下标不应越界");
 			}
 			
 		}

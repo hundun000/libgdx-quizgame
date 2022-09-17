@@ -8,6 +8,7 @@ import java.util.Set;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
@@ -20,7 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class TextureConfig implements ISubSystemSettingHandler {
-    public static String DEFAULT_ENV = "pro";
+    public static String DEFAULT_ENV = "dev";
     @Getter
     @Setter
     private String currentEnv = DEFAULT_ENV;
@@ -44,6 +45,7 @@ public class TextureConfig implements ISubSystemSettingHandler {
         protected Texture optionButtonWrongMask;
         //protected Texture optionButtonHidenMask;
         protected Texture optionButtonBackground;
+        protected TextureAtlas animationsTextureAtlas;
         protected Map<SystemButtonType, TextureRegion> systemButtonIconMap = new HashMap<>();
 
         
@@ -77,8 +79,10 @@ public class TextureConfig implements ISubSystemSettingHandler {
 //                systemButtonIconMap.put(ConstructionId.WOOD_KEEPING, regions[0][4]);
             }
             
-            
+            animationsTextureAtlas = new TextureAtlas(fileOrDefault("quiz-animations.atlas"));
         }
+        
+        
         
         private Texture textureOrDefault(FileHandle file) {
             try {
@@ -89,8 +93,12 @@ public class TextureConfig implements ISubSystemSettingHandler {
         }
         
         private Texture textureOrDefault(String subName) {
+            return new Texture(fileOrDefault(subName));
+        }
+        
+        private FileHandle fileOrDefault(String subName) {
             try {
-                return new Texture(Gdx.files.internal("ui/" + ENV + "/" + subName));
+                return Gdx.files.internal("ui/" + ENV + "/" + subName);
             } catch (Exception e) {
                 if (!textureOrDefaultFailHistory.contains(subName)) {
                     textureOrDefaultFailHistory.add(subName);
@@ -103,7 +111,7 @@ public class TextureConfig implements ISubSystemSettingHandler {
                                     )
                             );
                 }
-                return new Texture(Gdx.files.internal("badlogic.jpg"));
+                return Gdx.files.internal("badlogic.jpg");
             }
         }
 
@@ -120,7 +128,7 @@ public class TextureConfig implements ISubSystemSettingHandler {
         game.getSaveHandler().registerSubHandler(this);
         
         packageMap.put("dev", new EnvPackage("dev"));
-        packageMap.put("pro", new EnvPackage("pro"));
+        //packageMap.put("pro", new EnvPackage("pro"));
     }
     
     public Texture getMenuTexture() {
@@ -195,5 +203,9 @@ public class TextureConfig implements ISubSystemSettingHandler {
     @Override
     public void currentSituationToSystemSetting(SystemSetting systemSetting) {
         systemSetting.setEnv(currentEnv);
+    }
+    
+    public TextureAtlas getAnimationsTextureAtlas() {
+        return packageMap.get(currentEnv).animationsTextureAtlas;
     }
 }

@@ -3,12 +3,16 @@ package hundun.gdxgame.quizgame.core.domain.viewmodel.playscreen.popup;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
@@ -22,7 +26,7 @@ import lombok.Setter;
  * Created on 2022/09/07
  * @param <T>
  */
-public abstract class AbstractAnimationVM<T> extends Table {
+public abstract class AbstractAnimationVM<T_CALL_ARG> extends Table {
     private final IAnimationCallback callback;
     
     protected final QuizGdxGame game;
@@ -42,7 +46,7 @@ public abstract class AbstractAnimationVM<T> extends Table {
         this.callback = callback;
     }
     
-    public abstract void callShow(T arg);
+    public abstract void callShow(T_CALL_ARG arg);
     
     public void resetFrame() {
         // Instantiate a SpriteBatch for drawing and reset the elapsed animation
@@ -64,6 +68,15 @@ public abstract class AbstractAnimationVM<T> extends Table {
             callback.onAnimationDone();
         }
 
+    }
+    
+    public static Animation<Drawable> aminationFactory(TextureAtlas atlas, String id, float frameDuration, PlayMode playMode) {
+        Array<AtlasRegion> regionArray = atlas.findRegions(id);
+        Array<Drawable> drawableArray = new Array<>(regionArray.size);
+        for (int i = 0; i < regionArray.size; i++) {
+            drawableArray.add(new TextureRegionDrawable(regionArray.get(i)));
+        }
+        return new Animation<Drawable>(frameDuration, drawableArray, playMode);
     }
     
     public static Drawable[] aminationFactory(Texture sheet, int FRAME_COLS, int FRAME_ROWS) {

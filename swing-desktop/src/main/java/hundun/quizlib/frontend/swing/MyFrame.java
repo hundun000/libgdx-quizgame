@@ -303,7 +303,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver, IFrontEnd {
         File file = new File(actualPath);
         Path path = Paths.get(file.getPath());
         try {
-            String result = Files.readString(path);
+            String result = new String(Files.readAllBytes(path));
             System.out.println("fileGetContent result.length = " + result.length());
             return result;
         } catch (IOException e) {

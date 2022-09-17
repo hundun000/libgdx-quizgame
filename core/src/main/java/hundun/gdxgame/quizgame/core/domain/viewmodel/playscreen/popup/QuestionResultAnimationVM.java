@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -19,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
+import hundun.quizlib.prototype.match.AnswerType;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.view.match.MatchSituationView;
 import lombok.Getter;
@@ -31,7 +34,6 @@ public class QuestionResultAnimationVM extends AbstractAnimationVM<AnswerResultE
 
 
     CallerAndCallback callerAndCallback;
-    Label resultLable;
     
     
     // Constant rows and columns of the sprite sheet
@@ -46,19 +48,26 @@ public class QuestionResultAnimationVM extends AbstractAnimationVM<AnswerResultE
             ) {
         super(game, callerAndCallback);
         this.callerAndCallback = callerAndCallback;
-
-        resultLable = new Label("TEMP", game.getMainSkin());
-        this.add(resultLable);
+        
     }
     
     @Override
     public void callShow(AnswerResultEvent answerResultEvent) {
         
-        setAnimation(new Animation<>(0.025f, aminationFactory(
-                game.getTextureConfig().getQuestionResultCorrectAnimationSheet(), 
-                FRAME_COLS, FRAME_ROWS
-                )));
-        resultLable.setText(answerResultEvent.getResult().name());
+        Animation<Drawable> animation;
+        if (answerResultEvent.getResult() == AnswerType.CORRECT) {
+            animation = aminationFactory(
+                    game.getTextureConfig().getAnimationsTextureAtlas(), 
+                    "break", 0.25f, PlayMode.REVERSED
+                    ); 
+        } else {
+            animation = aminationFactory(
+                    game.getTextureConfig().getAnimationsTextureAtlas(), 
+                    "continue", 0.25f, PlayMode.REVERSED
+                    );
+        }
+        
+        setAnimation(animation);
         
         super.resetFrame();
     }

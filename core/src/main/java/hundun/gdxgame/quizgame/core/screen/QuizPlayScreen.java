@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -690,12 +691,12 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         
         @Override
         public void callShowGeneralDelayAnimation(float second) {
-            generalCallShowAnimation(generalDelayAnimationVM, second);
+            generalCallShowAnimation(generalDelayAnimationVM, second, false);
         }
 
         @Override
         public void callShowQuestionResultAnimation(AnswerResultEvent answerResultEvent) {
-            generalCallShowAnimation(questionResultAnimationVM, answerResultEvent);
+            generalCallShowAnimation(questionResultAnimationVM, answerResultEvent, true);
         }
 
         @Override
@@ -712,16 +713,26 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         
         @Override
         public void callShowSkillAnimation(SkillResultEvent skillResultEvent) {
-            generalCallShowAnimation(skillAnimationVM, skillResultEvent);
+            generalCallShowAnimation(skillAnimationVM, skillResultEvent, false);
         }
         
-        private <T> void generalCallShowAnimation(AbstractAnimationVM<T> animationVM, T arg) {
+        /**
+         * popupRootTable-cell always expand(), fill is optional by argument.
+         */
+        private <T> void generalCallShowAnimation(AbstractAnimationVM<T> animationVM, T arg, boolean fill) {
             Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
                     "generalCallShowAnimation called, animationVM = %s", 
                     animationVM.getClass().getSimpleName()
                     ));
             // --- for screen ---
-            popupRootTable.add(animationVM);
+            Cell<?> cell = popupRootTable.add(animationVM).expand();
+
+            if (fill) {
+                cell.fill();
+            }
+            if (game.debugMode) {
+                popupRootTable.debugTable();
+            }
             Gdx.input.setInputProcessor(popupUiStage);
             logicFrameHelper.setLogicFramePause(true);
             // --- for animationVM ---
@@ -731,7 +742,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         
         @Override
         public void callShowTeamSwitchAnimation(SwitchTeamEvent switchTeamEvent) {
-            generalCallShowAnimation(teamSwitchAnimationVM, switchTeamEvent);
+            generalCallShowAnimation(teamSwitchAnimationVM, switchTeamEvent, true);
         }
     }
     

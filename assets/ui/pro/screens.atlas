@@ -1,0 +1,20 @@
+
+screens.png
+size: 2048, 2048
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+menu
+  rotate: false
+  xy: 2, 804
+  size: 1600, 900
+  orig: 1600, 900
+  offset: 0, 0
+  index: -1
+playscreen
+  rotate: false
+  xy: 2, 2
+  size: 1600, 800
+  orig: 1600, 800
+  offset: 0, 0
+  index: -1

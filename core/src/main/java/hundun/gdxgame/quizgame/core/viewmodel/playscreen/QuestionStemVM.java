@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -13,8 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.view.question.QuestionView;
 
@@ -32,10 +35,10 @@ public class QuestionStemVM extends Table {
     public QuestionStemVM(
             QuizGdxGame game,
 
-            Drawable background
+            TextureAtlas textureAtlas
             ) {
-
-        setBackground(background);
+        
+        setBackground(new TextureRegionDrawable(textureAtlas.findRegion(TextureAtlasKeys.PLAYSCREEN_QUESTIONSTEMBACKGROUND)));
         
         stemPart = new Label("TEMP", game.getMainSkin());
         this.add(stemPart);

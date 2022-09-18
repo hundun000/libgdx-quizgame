@@ -1,10 +1,16 @@
 package hundun.gdxgame.quizgame.core.viewmodel.playscreen;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
 import hundun.gdxgame.share.base.LogicFrameHelper;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import lombok.Getter;
@@ -20,30 +26,50 @@ public class CountdownClockVM extends Table {
     private final LogicFrameHelper logicFrameHelper;
     
     private static final String WORD = "Time: ";
-    Label wordPart;
-    Label countdownPart;
+    private final Image image;
+    Table textAreaTable;
+    private final Label wordPart;
+    private final Label countdownPart;
     
-    NumberFormat format;
+    private final NumberFormat format;
     
     int currentCountdownFrame;
     @Getter
     boolean isCountdownState;
+    Drawable[] clockDrawables;
     
     public CountdownClockVM(
             QuizGdxGame game,
             CallerAndCallback callerAndCallback,
             LogicFrameHelper logicFrameHelper,
-            Drawable background
+            TextureAtlas atlas
             ) {
         this.callerAndCallback = callerAndCallback;
         this.logicFrameHelper = logicFrameHelper;
         this.format = NumberFormat.getFormat(1, 1);
-        setBackground(background);
+        //setBackground(background);
         
-        wordPart = new Label("TEMP", game.getMainSkin());
-        this.add(wordPart);
-        countdownPart = new Label("TEMP", game.getMainSkin());
-        this.add(countdownPart);
+        this.clockDrawables = new Drawable[TextureAtlasKeys.PLAYSCREEN_CLOCK_SIZE];
+        for (int i = 0; i < TextureAtlasKeys.PLAYSCREEN_CLOCK_SIZE; i++) {
+            clockDrawables[i] = new TextureRegionDrawable(
+                    atlas.findRegion(TextureAtlasKeys.PLAYSCREEN_CLOCK, i)
+                    );
+        }
+        
+        this.wordPart = new Label(WORD, game.getMainSkin());
+        this.countdownPart = new Label("TEMP", game.getMainSkin());
+        this.image = new Image();
+        this.textAreaTable = new Table();
+        
+        textAreaTable.add(wordPart);
+        textAreaTable.add(countdownPart);
+        textAreaTable.setBackground(new TextureRegionDrawable(
+                atlas.findRegion(TextureAtlasKeys.PLAYSCREEN_CLOCKTEXT)
+                ));
+        
+        this.add(image);
+        this.row();
+        this.add(textAreaTable);
         
         clearCountdown();
     }
@@ -51,8 +77,11 @@ public class CountdownClockVM extends Table {
     public void updateCoutdownSecond(int countdownModify) {
         currentCountdownFrame += countdownModify;
         double second = logicFrameHelper.frameNumToSecond(currentCountdownFrame);
-
+        
         countdownPart.setText(format.format(second));
+        int clockImageIndex = ((int)second) % clockDrawables.length;
+        image.setDrawable(clockDrawables[clockImageIndex]);
+        
         if (second < 0.0000001) {
             clearCountdown();
             callerAndCallback.onCountdownZero();
@@ -62,15 +91,14 @@ public class CountdownClockVM extends Table {
     public void resetCountdown(double second) {
         this.isCountdownState = true;
         this.currentCountdownFrame = logicFrameHelper.secondToFrameNum(second);
-        wordPart.setText(WORD);
+        textAreaTable.setVisible(true);
         updateCoutdownSecond(0);
     }
     
     public void clearCountdown() {
         this.isCountdownState = false;
         this.currentCountdownFrame = 0;
-        wordPart.setText("CLEARED: ");
-        countdownPart.setText("CLEARED");
+        textAreaTable.setVisible(false);
     }
 
     public static interface CallerAndCallback {

@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
@@ -31,56 +32,51 @@ public class TextureConfig implements ISubSystemSettingHandler {
         private final String ENV;
         Set<String> textureOrDefaultFailHistory = new HashSet<>();
         
-        protected Texture menuTexture;
-        protected Texture playScreenBackground;
-        protected Texture countdownClockTexture;
-        protected Texture currentTeamSignTexture;
-        protected Texture questionResultCorrectAnimationSheet;
-        protected Texture questionResultWrongAnimationSheet;
-        protected Texture questionResultSkippedAnimationSheet;
-        protected Texture questionResultTineoutAnimationSheet;
-        protected Texture skillButtonBackground;
-        protected Texture skillUseOutButtonBackground;
-        protected Texture questionStemBackground;
-        protected Texture optionButtonCorrectMask;
-        protected Texture optionButtonWrongMask;
-        //protected Texture optionButtonHidenMask;
-        protected Texture optionButtonBackground;
-        protected TextureAtlas animationsTextureAtlas;
-        protected Map<SystemButtonType, TextureRegion> systemButtonIconMap = new HashMap<>();
+        protected final AtlasRegion menuTexture;
+        protected final AtlasRegion playScreenBackground;
+        
+        protected final Texture questionResultCorrectAnimationSheet;
+        protected final Texture questionResultWrongAnimationSheet;
+        protected final Texture questionResultSkippedAnimationSheet;
+        protected final Texture questionResultTineoutAnimationSheet;
+
+        protected final Texture optionButtonCorrectMask;
+        protected final Texture optionButtonWrongMask;
+
+        protected final TextureAtlas animationsTextureAtlas;
+        protected final TextureAtlas playScreenUITextureAtlas;
+        protected final Map<SystemButtonType, AtlasRegion> systemButtonIconMap = new HashMap<>();
 
         
         EnvPackage(String ENV) {
             this.ENV = ENV;
             
-            
-            menuTexture = textureOrDefault("menu.png");
-            playScreenBackground = textureOrDefault("playscreen.png");
-            countdownClockTexture = textureOrDefault("countdownClock.png");
-            currentTeamSignTexture = textureOrDefault("currentTeamSignTexture.png");
-            skillButtonBackground = textureOrDefault("skillButtonBackground.png");
-            skillUseOutButtonBackground = textureOrDefault("skillUseOutButtonBackground.png");
-            questionStemBackground = textureOrDefault("questionStemBackground.png");
+
             optionButtonCorrectMask = textureOrDefault("optionButtonCorrectMask.png");
             optionButtonWrongMask = textureOrDefault("optionButtonWrongMask.png");
-            //optionButtonHidenMask = textureOrDefault("optionButtonHidenMask.png");
-            optionButtonBackground = textureOrDefault("optionButtonBackground.png");
+
             questionResultCorrectAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
             questionResultWrongAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
             questionResultSkippedAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
             questionResultTineoutAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
         
+            animationsTextureAtlas = new TextureAtlas(fileOrDefault("quiz-animations.atlas"));
+            playScreenUITextureAtlas = new TextureAtlas(fileOrDefault("playScreenUI.atlas"));
+            
+            TextureAtlas screensTextureAtlas = new TextureAtlas(fileOrDefault("screens.atlas"));
+            menuTexture = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_MEMU);
+            playScreenBackground = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_MEMU);
+            
             {
-                Texture texture = textureOrDefault("systemButton.png");
-                TextureRegion[][] regions = TextureRegion.split(texture, 32, 32);
-                systemButtonIconMap.put(SystemButtonType.SHOW_MATCH_SITUATION, regions[0][0]);
-                systemButtonIconMap.put(SystemButtonType.EXIT_AS_DISCARD_MATCH, regions[0][1]);
-                systemButtonIconMap.put(SystemButtonType.EXIT_AS_FINISH_MATCH, regions[0][2]);
+                AtlasRegion texture = playScreenUITextureAtlas.findRegion(TextureAtlasKeys.PLAYSCREEN_SYSTEMBUTTON);
+                systemButtonIconMap.put(SystemButtonType.SHOW_MATCH_SITUATION, texture);
+                systemButtonIconMap.put(SystemButtonType.EXIT_AS_DISCARD_MATCH, texture);
+                systemButtonIconMap.put(SystemButtonType.EXIT_AS_FINISH_MATCH, texture);
 //                systemButtonIconMap.put(ConstructionId.QUEEN_BEEHIVE, regions[0][3]);
 //                systemButtonIconMap.put(ConstructionId.WOOD_KEEPING, regions[0][4]);
             }
             
-            animationsTextureAtlas = new TextureAtlas(fileOrDefault("quiz-animations.atlas"));
+            
         }
         
         
@@ -133,21 +129,17 @@ public class TextureConfig implements ISubSystemSettingHandler {
         game.getSaveHandler().registerSubHandler(this);
         
         packageMap.put("dev", new EnvPackage("dev"));
-        //packageMap.put("pro", new EnvPackage("pro"));
+        packageMap.put("pro", new EnvPackage("pro"));
     }
     
-    public Texture getMenuTexture() {
+    public AtlasRegion getMenuTexture() {
         return packageMap.get(currentEnv).menuTexture;
     }
 
-    public Texture getPlayScreenBackground() {
+    public AtlasRegion getPlayScreenBackground() {
         return packageMap.get(currentEnv).playScreenBackground;
     }
-
-    public Texture getCountdownClockTexture() {
-        return packageMap.get(currentEnv).countdownClockTexture;
-    }
-
+    
     public Texture getQuestionResultCorrectAnimationSheet() {
         return packageMap.get(currentEnv).questionResultCorrectAnimationSheet;
     }
@@ -164,25 +156,10 @@ public class TextureConfig implements ISubSystemSettingHandler {
         return packageMap.get(currentEnv).questionResultTineoutAnimationSheet;
     }
 
-    public Texture getSkillButtonBackground() {
-        return packageMap.get(currentEnv).skillButtonBackground;
-    }
-
-    public Texture getSkillUseOutButtonBackground() {
-        return packageMap.get(currentEnv).skillUseOutButtonBackground;
-    }
-
-    public Texture getQuestionStemBackground() {
-        return packageMap.get(currentEnv).questionStemBackground;
-    }
-
-    public Map<SystemButtonType, TextureRegion> getSystemButtonIconMap() {
+    public Map<SystemButtonType, AtlasRegion> getSystemButtonIconMap() {
         return packageMap.get(currentEnv).systemButtonIconMap;
     }
-    
-    public Texture getCurrentTeamSignTexture() {
-        return packageMap.get(currentEnv).currentTeamSignTexture;
-    }
+
     
     public Texture getOptionButtonCorrectMask() {
         return packageMap.get(currentEnv).optionButtonCorrectMask;
@@ -192,14 +169,6 @@ public class TextureConfig implements ISubSystemSettingHandler {
         return packageMap.get(currentEnv).optionButtonWrongMask;
     }
     
-//    public Texture getOptionButtonHidenMask() {
-//        return packageMap.get(currentEnv).optionButtonHidenMask;
-//    }
-
-    public Texture getOptionButtonBackground() {
-        return packageMap.get(currentEnv).optionButtonBackground;
-    }
-
     @Override
     public void applySystemSetting(SystemSetting systemSetting) {
         // FIXME temp disable when develop
@@ -208,10 +177,15 @@ public class TextureConfig implements ISubSystemSettingHandler {
 
     @Override
     public void currentSituationToSystemSetting(SystemSetting systemSetting) {
-        systemSetting.setEnv(currentEnv);
+        // FIXME temp disable when develop
+        //systemSetting.setEnv(currentEnv);
     }
     
     public TextureAtlas getAnimationsTextureAtlas() {
         return packageMap.get(currentEnv).animationsTextureAtlas;
+    }
+    
+    public TextureAtlas getPlayScreenUITextureAtlas() {
+        return packageMap.get(currentEnv).playScreenUITextureAtlas;
     }
 }

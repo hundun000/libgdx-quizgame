@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.prototype.TeamPrototype;
@@ -52,7 +53,7 @@ public class TeamInfoBoardVM extends Table {
         final Label teamInfoLabel2;
         
         TeamInfoNode() {
-            this.drawable = new TextureRegionDrawable(game.getTextureConfig().getCurrentTeamSignTexture());
+            this.drawable = new TextureRegionDrawable(game.getTextureConfig().getPlayScreenUITextureAtlas().findRegion(TextureAtlasKeys.PLAYSCREEN_CURRENTTEAMSIGN));
             
             this.sign = new Image();
             this.add(sign).width(SIGN_SIZE).height(SIGN_SIZE).padRight(SIGN_SIZE * 0.5f);

@@ -26,6 +26,7 @@ public class QuizLibBridge implements IFrontEnd {
 
         try {
             this.quizComponentContext = QuizComponentContext.Factory.create(this);
+            quizComponentContext.getBuiltinDataConfiguration().register1();
         } catch (QuizgameException e) {
             Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
         }

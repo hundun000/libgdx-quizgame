@@ -13,6 +13,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -27,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
 import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.view.question.QuestionView;
@@ -43,23 +46,30 @@ public class QuestionOptionAreaVM extends Table {
     List<OptionNode> nodes = new ArrayList<>();
 
     static final int SIZE = 4;
+    
+    final int NODE_WIDTH;
+    final int NODE_HEIGHT;
+    
+    
     public QuestionOptionAreaVM(
             QuizGdxGame game,
             CallerAndCallback callerAndCallback,
-            Drawable background
+            TextureAtlas textureAtlas
             ) {
         this.game = game;
         this.callerAndCallback = callerAndCallback;
         //setBackground(background);
+        this.NODE_WIDTH = 500;
+        this.NODE_HEIGHT = 100;
         
         OptionNode optionButton;
         for (int i = 0; i < SIZE; i++) {
-            optionButton = new OptionNode(game, i, background);
+            optionButton = new OptionNode(game, i, textureAtlas);
             nodes.add(optionButton);
             this.add(optionButton)
-                    .height((float) (game.getHeight() * 0.08))
-                    .width((float) (game.getWidth()* 0.3))
-                    .pad((float) (game.getHeight() * 0.01))
+                    .height(NODE_HEIGHT)
+                    .width(NODE_WIDTH)
+                    .padBottom(25)
                     ;
             this.row();
         }
@@ -87,7 +97,9 @@ public class QuestionOptionAreaVM extends Table {
 //        @Setter
 //        Drawable mask;
         Label textButton;
-//        Image maskActor;
+        Drawable selectedAtlasRegion;
+        Drawable unSelectedAtlasRegion;
+        Image maskActor;
 //        protected void drawMask (Batch batch, float parentAlpha, float x, float y) {
 //            if (mask == null) return;
 //            Color color = getColor();
@@ -103,23 +115,30 @@ public class QuestionOptionAreaVM extends Table {
 //            resetTransform(batch);
 //        }
         
-        public OptionNode(QuizGdxGame game, int index, Drawable background) {
+        public OptionNode(QuizGdxGame game, int index, TextureAtlas textureAtlas) {
             this.index = index;
-            
-            this.textButton = new Label("TEMP", game.getMainSkin());
+            this.selectedAtlasRegion = new TextureRegionDrawable(
+                    textureAtlas.findRegion(TextureAtlasKeys.PLAYSCREEN_OPTIONBUTTON, 0)
+                    );
+            this.unSelectedAtlasRegion = new TextureRegionDrawable(
+                    textureAtlas.findRegion(TextureAtlasKeys.PLAYSCREEN_OPTIONBUTTON, 1)
+                    );
+                    
+            this.textButton = new Label("TEMP", game.getMainSkin(), "whiteType");
             this.add(textButton)
                     .expand()
                     //.fill()
                     ;
             
-//            this.maskActor = new Image();
-//            maskActor.setPosition(0, 0);
-//            this.addActor(maskActor);
+            this.maskActor = new Image();
+            maskActor.setBounds(0, 0, NODE_WIDTH, NODE_HEIGHT);
+            this.addActor(maskActor);
             
             this.addListener(
                     new InputListener(){
                         @Override
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+                            OptionNode.this.setBackground(selectedAtlasRegion);
                             callerAndCallback.onChooseOption(index);
                         }
                         @Override
@@ -133,15 +152,16 @@ public class QuestionOptionAreaVM extends Table {
         
         public void updateForNewQuestion(String optiontext, boolean isCorrect) {
             this.textButton.setText(optiontext);
-            Texture texture = game.getTextureConfig().getOptionButtonBackground();
+            
 //            this.maskActor.setDrawable(null);
 //            this.setMask(null);
-            this.setBackground(new TextureRegionDrawable(texture));
+            this.setBackground(unSelectedAtlasRegion);
             if (isCorrect) {
                 this.showState = OptionButtonShowState.HIDE_CORRECT;
             } else {
                 this.showState = OptionButtonShowState.HIDE_WRONG;
             }
+            this.maskActor.setDrawable(null);
         }
         
         public void updateShowStateToShow() {
@@ -154,8 +174,10 @@ public class QuestionOptionAreaVM extends Table {
                 texture = game.getTextureConfig().getOptionButtonWrongMask();
             }
             //this.setMask(new TextureRegionDrawable(texture));
-            //this.maskActor.setDrawable(new TextureRegionDrawable(texture));
-            this.setBackground(new TextureRegionDrawable(texture));
+            
+            this.maskActor.setDrawable(new TextureRegionDrawable(texture));
+            
+            //this.setBackground(new TextureRegionDrawable(texture));
         }
 
     }

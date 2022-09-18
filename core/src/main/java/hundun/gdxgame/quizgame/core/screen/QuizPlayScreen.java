@@ -56,7 +56,8 @@ import hundun.quizlib.prototype.event.SwitchQuestionEvent;
 import hundun.quizlib.prototype.event.SwitchTeamEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.prototype.skill.SkillSlotPrototype;
-import hundun.quizlib.service.BuiltinSkillSlotPrototypeFactory;
+import hundun.quizlib.service.BuiltinDataConfiguration;
+import hundun.quizlib.service.BuiltinDataConfiguration.BuiltinSkill;
 import hundun.quizlib.service.GameService;
 import hundun.quizlib.view.match.MatchSituationView;
 import hundun.quizlib.view.team.TeamRuntimeView;
@@ -315,7 +316,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                     game,
                     quizInputHandler,
                     logicFrameHelper,
-                    new TextureRegionDrawable(game.getTextureConfig().getCountdownClockTexture())
+                    game.getTextureConfig().getPlayScreenUITextureAtlas()
                     );
             countdownClockVM.setBounds(10, 650, 150, 150);
             uiRootTable.addActor(countdownClockVM);
@@ -327,7 +328,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
          
             questionStemVM = new QuestionStemVM(
                     game,
-                    new TextureRegionDrawable(game.getTextureConfig().getQuestionStemBackground())
+                    game.getTextureConfig().getPlayScreenUITextureAtlas()
                     );
             questionStemVM.setBounds(230, 600, 830, 280);
             uiRootTable.addActor(questionStemVM);
@@ -379,7 +380,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             questionOptionAreaVM = new QuestionOptionAreaVM(
                     game, 
                     quizInputHandler,
-                    new TextureRegionDrawable(game.getTextureConfig().getOptionButtonBackground())
+                    game.getTextureConfig().getPlayScreenUITextureAtlas()
                     );
             questionOptionAreaVM.setBounds(450, 50, 500, 500);
             uiRootTable.addActor(questionOptionAreaVM);
@@ -532,23 +533,19 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
     class SkillEffectHandler {
 
         public void handle(SkillResultEvent skillResultEvent) {
-            switch (skillResultEvent.getSkillName()) {
-                case BuiltinSkillSlotPrototypeFactory.SKILL_NAME_SKIP:
-                    this.handleSkip(skillResultEvent.getArgs()); 
-                    break;
-                case BuiltinSkillSlotPrototypeFactory.SKILL_NAME_5050:
-                    this.handle5050(skillResultEvent.getArgs()); 
-                    break;
-                case BuiltinSkillSlotPrototypeFactory.SKILL_NAME_HELP_1:
-                case BuiltinSkillSlotPrototypeFactory.SKILL_NAME_HELP_2:
-                    this.handleHelp(skillResultEvent.getArgs()); 
-                    break;
-                default:
-                    Gdx.app.error(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
-                            "unhandle SkillName = %s", 
-                            skillResultEvent.getSkillName()
-                            ));
-                break;
+            if (skillResultEvent.getSkillName() == BuiltinSkill.SKILL_5050.name()) {
+                this.handle5050(skillResultEvent.getArgs()); 
+            } else if (skillResultEvent.getSkillName() == BuiltinSkill.SKILL_SKIP.name()) {
+                this.handleSkip(skillResultEvent.getArgs()); 
+            } else if (skillResultEvent.getSkillName() == BuiltinSkill.SKILL_HELP_1.name()) {
+                this.handleHelp(skillResultEvent.getArgs()); 
+            } else if (skillResultEvent.getSkillName() == BuiltinSkill.SKILL_HELP_2.name()) {
+                this.handleHelp(skillResultEvent.getArgs()); 
+            } else {
+                Gdx.app.error(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                        "unhandle SkillName = %s", 
+                        skillResultEvent.getSkillName()
+                        ));
             }
         }
         

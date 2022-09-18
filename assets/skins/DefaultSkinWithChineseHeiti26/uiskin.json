@@ -73,7 +73,11 @@
 	"default": {
 		"font": "heiti26white",
 		"fontColor": "black"
-	}
+	},
+	"whiteType": {
+        "font": "heiti26white",
+        "fontColor": "white"
+    }
 },
 "com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
 	"default": {

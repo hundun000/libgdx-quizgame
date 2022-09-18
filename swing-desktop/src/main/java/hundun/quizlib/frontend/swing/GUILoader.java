@@ -22,6 +22,7 @@ public class GUILoader {
         QuizComponentContext quizComponentContext;
         try {
             quizComponentContext = QuizComponentContext.Factory.create(frame);
+            quizComponentContext.getBuiltinDataConfiguration().register2();
         } catch (QuizgameException e) {
             e.printStackTrace();
             return;

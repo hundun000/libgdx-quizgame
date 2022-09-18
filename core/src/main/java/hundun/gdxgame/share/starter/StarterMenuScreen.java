@@ -3,6 +3,7 @@ package hundun.gdxgame.share.starter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -39,7 +40,7 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
                 StarterMenuScreen<T_GAME, T_SAVE> target,
                 T_GAME game, 
                 String titleText,
-                Texture backTexture,
+                AtlasRegion backTexture,
                 InputListener buttonContinueGameInputListener, 
                 InputListener buttonNewGameInputListener
                 ) {
@@ -68,7 +69,7 @@ extends BaseHundunScreen<T_GAME, T_SAVE> {
         public static <T_GAME extends BaseHundunGame<T_SAVE>, T_SAVE> StarterMenuScreen<T_GAME, T_SAVE> simpleBuild(
                 T_GAME game, 
                 String titleText,
-                Texture backTexture,
+                AtlasRegion backTexture,
                 InputListener buttonContinueGameInputListener, 
                 InputListener buttonNewGameInputListener
                 ) {

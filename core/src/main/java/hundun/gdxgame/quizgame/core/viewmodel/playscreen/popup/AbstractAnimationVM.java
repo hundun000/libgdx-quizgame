@@ -58,7 +58,7 @@ public abstract class AbstractAnimationVM<T_CALL_ARG> extends Table {
     }
     
     public void updateFrame(float delta, SpriteBatch spriteBatch) {
-        stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
+        stateTime += delta; // Accumulate elapsed animation time
 
         if (!animation.isAnimationFinished(stateTime)) {
             Drawable currentFrame = animation.getKeyFrame(stateTime);

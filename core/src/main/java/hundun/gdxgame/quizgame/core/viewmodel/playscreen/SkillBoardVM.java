@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.prototype.RolePrototype;
@@ -57,13 +58,13 @@ public class SkillBoardVM extends Table {
         Image backgroundImage;
         final Label mainLabel;
         final Label textLabel;
-        
+        Drawable normalBackground;
+        Drawable useOutBackground;
         public SkillNode(QuizGdxGame game, int index) {
             this.mainLabel = new Label("TEMP", game.getMainSkin());
             this.textLabel = new Label("TEMP", game.getMainSkin());
             this.backgroundImage = new Image();
             backgroundImage.setBounds(0, 0, SkillNode.LENGTH, SkillNode.LENGTH);
-            
             this.addActor(backgroundImage);
             
             this.add(mainLabel);
@@ -85,16 +86,25 @@ public class SkillBoardVM extends Table {
             Drawable background;
             if (skillRemainTime > 0) {
                 setTouchable(Touchable.enabled);
-                background = new TextureRegionDrawable(game.getTextureConfig().getSkillButtonBackground());
+                background = normalBackground;
             } else {
                 setTouchable(Touchable.disabled);
-                background = new TextureRegionDrawable(game.getTextureConfig().getSkillUseOutButtonBackground());
+                background = useOutBackground;
             }
             backgroundImage.setDrawable(background);
         }
         
         public void updatePrototy(SkillSlotPrototype skillSlotPrototype) {
-            mainLabel.setText(skillSlotPrototype.getName());
+            mainLabel.setText(skillSlotPrototype.getShowName());
+            String regionId = JavaFeatureForGwt.stringFormat(
+                    TextureAtlasKeys.PLAYSCREEN_SKILLBUTTON_TEMPLATE, 
+                    skillSlotPrototype.getName());
+            normalBackground = new TextureRegionDrawable(
+                    game.getTextureConfig().getPlayScreenUITextureAtlas().findRegion(regionId)
+                    );
+            useOutBackground = new TextureRegionDrawable(
+                    game.getTextureConfig().getPlayScreenUITextureAtlas().findRegion(TextureAtlasKeys.PLAYSCREEN_SKILLBUTTONUSEOUT)
+                    );
         }
     }
     

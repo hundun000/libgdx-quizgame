@@ -16,7 +16,7 @@ import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.MyGameSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler.ISubGameSaveHandler;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamNodeVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TeamNodeVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.quizlib.prototype.event.MatchFinishEvent;
@@ -87,7 +87,7 @@ public class HistoryScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
                         @Override
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
 
-                            game.getScreenManager().pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");;
+                            game.getScreenManager().pushScreen(PrepareScreen.class.getSimpleName(), "blending_transition");;
                             
                         }
                         @Override

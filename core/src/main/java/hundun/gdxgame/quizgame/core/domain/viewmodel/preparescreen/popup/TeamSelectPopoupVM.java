@@ -1,15 +1,18 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.popup;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.popup;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamNodeVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TagNodeVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TeamNodeVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.popup.AbstractSelectPopoupVM.LayoutConfig;
 import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.quizlib.prototype.TeamPrototype;
 
@@ -25,7 +28,7 @@ public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
             IWaitTeamSelectCallback callback,
             Drawable background
             ) {
-        super(game, background);
+        super(game, background, new LayoutConfig(TeamNodeVM.NODE_WIDTH, TeamNodeVM.NODE_HEIGHT, 2.5f, false));
         this.callback = callback;
         
         
@@ -36,7 +39,7 @@ public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
             
             return new TeamSelectPopoupVM(game, 
                     callback,
-                    DrawableFactory.getSimpleBoardBackground()
+                    DrawableFactory.getViewportBasedBoard(game.getWidth(), game.getHeight(), 0.8f)
                     );
         }
     }
@@ -63,9 +66,9 @@ public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
     public void callShow(List<TeamPrototype> teamPrototypes) {
         List<TeamNodeVM> candidateVMs = teamPrototypes.stream()
                 .map(teamPrototype -> {
-                    TeamNodeVM teamNodeVM = new TeamNodeVM(game);
-                    teamNodeVM.updateData(teamPrototype);
+                    TeamNodeVM teamNodeVM = new TeamNodeVM(game, teamPrototype);
                     teamNodeVM.addListener(new TeamSelectClickListener(callback, teamNodeVM));
+                    teamNodeVM.setTouchable(Touchable.enabled);
                     return teamNodeVM;
                 })
                 .collect(Collectors.toList())

@@ -1,33 +1,41 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen;
 /**
  * @author hundun
  * Created on 2022/08/30
  */
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.MatchStrategySelectVM.ICallerAndCallback;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TeamManageAreaVM.ICallerAndCallback;
+import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.quizlib.prototype.TeamPrototype;
 import lombok.Getter;
 
 public class TeamManageSlotVM extends Table {
+    QuizGdxGame game;
     @Getter
     TeamPrototype data;
     
-    Label label;
+    Label noTeamLabel;
+    Container<Actor> teamNodeAreaContainer;
+    
     Button changeTeamButton;
     Button modifyTeamButton;
     
     public TeamManageSlotVM(QuizGdxGame game, ICallerAndCallback callerAndCallback) {
-        this.label = new Label("TEMP", game.getMainSkin());
+        this.game = game;
+        this.noTeamLabel = new Label("待选择", game.getMainSkin());
+        this.teamNodeAreaContainer = new Container<>();
         this.changeTeamButton = new TextButton("change", game.getMainSkin());
         this.modifyTeamButton = new TextButton("modify", game.getMainSkin());
         
@@ -46,21 +54,24 @@ public class TeamManageSlotVM extends Table {
             }
         });
         
-        this.add(label).colspan(2);
-        this.row();
-        this.add(changeTeamButton);
+        this.add(teamNodeAreaContainer).width(TeamNodeVM.NODE_WIDTH).height(TeamNodeVM.NODE_HEIGHT).padRight(50);
+        this.add(changeTeamButton).padRight(50);
         this.add(modifyTeamButton);
+        
+        this.setBackground(DrawableFactory.getSimpleBoardBackground());
     }
     
     public void updateData(TeamPrototype data) {
         this.data = data;
         if (data != null) {
-            label.setText(data.getName());
+            teamNodeAreaContainer.setActor(new TeamNodeVM(game, data));
             modifyTeamButton.setTouchable(Touchable.enabled);
         } else {
-            label.setText("待选择");
+            teamNodeAreaContainer.setActor(noTeamLabel);
             modifyTeamButton.setTouchable(Touchable.disabled);
         }
     }
+    
+    
 
 }

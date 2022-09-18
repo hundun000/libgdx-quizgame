@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.popup;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.popup;
 
 import java.util.List;
 import java.util.Set;
@@ -12,7 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamNodeVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TagManageSlotVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TagNodeVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TeamNodeVM;
 import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.quizlib.prototype.TeamPrototype;
 
@@ -20,7 +22,7 @@ import hundun.quizlib.prototype.TeamPrototype;
  * @author hundun
  * Created on 2022/09/14
  */
-public class TagSelectPopoupVM extends AbstractSelectPopoupVM<TagNodeVM> {
+public class TagSelectPopoupVM extends AbstractSelectPopoupVM<TagManageSlotVM> {
 
     
     Button tagSelectDoneButton;
@@ -30,7 +32,10 @@ public class TagSelectPopoupVM extends AbstractSelectPopoupVM<TagNodeVM> {
             IWaitTagSelectCallback callback,
             Drawable background
             ) {
-        super(game, background);
+        super(game, 
+                background, 
+                new LayoutConfig(TagNodeVM.NODE_WIDTH, TagNodeVM.NODE_HEIGHT, 2.5f, false)
+                );
         this.tagSelectDoneButton = new TextButton("done", game.getMainSkin());
         
         tagSelectDoneButton.addListener(new TagSelectDoneClickListener(callback));
@@ -44,7 +49,7 @@ public class TagSelectPopoupVM extends AbstractSelectPopoupVM<TagNodeVM> {
             
             return new TagSelectPopoupVM(game, 
                     callback,
-                    DrawableFactory.getSimpleBoardBackground()
+                    DrawableFactory.getViewportBasedBoard(game.getWidth(), game.getHeight(), 0.8f)
                     );
         }
     }
@@ -68,9 +73,9 @@ public class TagSelectPopoupVM extends AbstractSelectPopoupVM<TagNodeVM> {
     }
 
     public void callShow(TeamPrototype currenTeamPrototype, Set<String> allTags) {
-        List<TagNodeVM> candidateVMs = allTags.stream()
+        List<TagManageSlotVM> candidateVMs = allTags.stream()
                 .map(tag -> {
-                    TagNodeVM tagNodeVM = new TagNodeVM(game);
+                    TagManageSlotVM tagNodeVM = new TagManageSlotVM(game);
                     tagNodeVM.updateData(tag, currenTeamPrototype);
                     return tagNodeVM;
                 })

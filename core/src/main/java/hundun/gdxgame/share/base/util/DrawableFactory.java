@@ -28,4 +28,8 @@ public class DrawableFactory {
     public static Drawable getSimpleBoardBackground(int width, int height) {
         return createBorderBoard(width, height, 0.8f, 1);
     }
+    
+    public static Drawable getViewportBasedBoard(int viewportWidth, int viewportHeight, float rate) {
+        return createBorderBoard((int)(viewportWidth * rate), (int)(viewportHeight * rate), 0.8f, 1);
+    }
 }

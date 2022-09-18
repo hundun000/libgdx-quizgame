@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.popup;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen;
 /**
  * @author hundun
  * Created on 2022/08/30
@@ -15,7 +15,7 @@ import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.quizlib.prototype.TeamPrototype;
 import lombok.Getter;
 
-public class TagNodeVM extends Table {
+public class TagManageSlotVM extends Table {
    
     String tag;
     TeamPrototype currenTeamPrototype;
@@ -27,7 +27,7 @@ public class TagNodeVM extends Table {
     CheckBox bannedCheckBox;
     ButtonGroup<CheckBox> buttonGroup;
     
-    public TagNodeVM(QuizGdxGame game) {
+    public TagManageSlotVM(QuizGdxGame game) {
         this.label = new Label("TEMP", game.getMainSkin());
         this.normalCheckBox = new CheckBox("normal", game.getMainSkin());
         this.pickedCheckBox = new CheckBox("picked", game.getMainSkin());

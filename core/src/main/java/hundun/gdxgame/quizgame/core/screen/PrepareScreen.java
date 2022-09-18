@@ -13,13 +13,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.MatchStrategySelectVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.MatchStrategySelectVM.ICallerAndCallback;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamNodeVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.TeamManageSlotVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.popup.TagSelectPopoupVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.popup.TeamSelectPopoupVM;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen.popup.TeamSelectPopoupVM.IWaitTeamSelectCallback;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.MatchStrategySelectVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TeamManageAreaVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TeamManageSlotVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TeamNodeVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.popup.TagSelectPopoupVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.popup.TeamSelectPopoupVM;
+import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.popup.TeamSelectPopoupVM.IWaitTeamSelectCallback;
 import hundun.gdxgame.share.base.BaseHundunScreen;
 import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.prototype.TeamPrototype;
@@ -34,10 +34,10 @@ import hundun.quizlib.service.TeamService;
  * @author hundun
  * Created on 2022/08/30
  */
-public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> implements 
+public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> implements 
         TeamSelectPopoupVM.IWaitTeamSelectCallback, 
         TagSelectPopoupVM.IWaitTagSelectCallback, 
-        MatchStrategySelectVM.ICallerAndCallback
+        TeamManageAreaVM.ICallerAndCallback
         {
 
     TeamService teamService;
@@ -46,11 +46,12 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
     TeamSelectPopoupVM teamSelectPopoupVM;
     TagSelectPopoupVM tagSelectPopoupVM;
     MatchStrategySelectVM matchStrategySelectVM;
+    TeamManageAreaVM teamManageAreaVM;
     
     String currentQuestionPackageName;
     TeamManageSlotVM waiChangeDoneTeamManageSlotVM;
     
-    public TeamScreen(QuizGdxGame game) {
+    public PrepareScreen(QuizGdxGame game) {
         super(game);
     }
 
@@ -63,13 +64,15 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         
         this.teamSelectPopoupVM = TeamSelectPopoupVM.Factory.build(game, this);
         this.tagSelectPopoupVM = TagSelectPopoupVM.Factory.build(game, this);
+        this.teamManageAreaVM = new TeamManageAreaVM(game, this);
+        this.matchStrategySelectVM = new MatchStrategySelectVM(game, teamManageAreaVM);
         
         uiRootTable.clear();
         
         
 //        uiRootTable.add(teamSelectPopoupVM);
+        uiRootTable.add(teamManageAreaVM);
         
-        matchStrategySelectVM = new MatchStrategySelectVM(game, this);
         uiRootTable.row();
         uiRootTable.add(matchStrategySelectVM);
         
@@ -98,7 +101,7 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
                         @Override
                         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
                             MatchConfig matchConfig = new MatchConfig();
-                            matchConfig.setTeamNames(matchStrategySelectVM.getSelectedTeamNames());
+                            matchConfig.setTeamNames(teamManageAreaVM.getSelectedTeamNames());
                             matchConfig.setQuestionPackageName(currentQuestionPackageName);
                             matchConfig.setMatchStrategyType(matchStrategySelectVM.getCurrenType());
                             
@@ -159,6 +162,7 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         Gdx.app.log(this.getClass().getSimpleName(), "callShowTeamSelectPopoup called");
         // --- ui ---
         popupRootTable.add(teamSelectPopoupVM);
+        popupUiStage.setScrollFocus(teamSelectPopoupVM.getScrollPane());
         Gdx.input.setInputProcessor(popupUiStage);
         // --- logic ---
         teamSelectPopoupVM.callShow(teamService.listTeams());
@@ -169,6 +173,7 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         Gdx.app.log(this.getClass().getSimpleName(), "callShowTagSelectPopoup called");
         // --- ui ---
         popupRootTable.add(tagSelectPopoupVM);
+        popupUiStage.setScrollFocus(tagSelectPopoupVM.getScrollPane());
         Gdx.input.setInputProcessor(popupUiStage);
         // --- logic ---
         tagSelectPopoupVM.callShow(currenTeamPrototype, allTags);
@@ -183,6 +188,8 @@ public class TeamScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> 
         // --- logic ---
         // do nothing
     }
+
+
 
     
 

@@ -10,7 +10,7 @@ import hundun.gdxgame.quizgame.core.domain.QuizViewModelContext;
 import hundun.gdxgame.quizgame.core.screen.HistoryScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizMenuScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizPlayScreen;
-import hundun.gdxgame.quizgame.core.screen.TeamScreen;
+import hundun.gdxgame.quizgame.core.screen.PrepareScreen;
 import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchFinishHistory;
 import hundun.gdxgame.share.base.BaseHundunGame;
 import hundun.gdxgame.share.base.BaseViewModelContext;

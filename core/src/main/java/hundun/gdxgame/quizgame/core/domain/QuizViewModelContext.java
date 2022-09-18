@@ -8,7 +8,7 @@ import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.screen.HistoryScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizMenuScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizPlayScreen;
-import hundun.gdxgame.quizgame.core.screen.TeamScreen;
+import hundun.gdxgame.quizgame.core.screen.PrepareScreen;
 import hundun.gdxgame.share.base.BaseHundunGame;
 import hundun.gdxgame.share.base.BaseHundunScreen;
 import hundun.gdxgame.share.base.BaseViewModelContext;
@@ -36,7 +36,7 @@ public class QuizViewModelContext extends BaseViewModelContext {
         screen = new QuizMenuScreen(game);
         game.getScreenManager().addScreen(screen.getClass().getSimpleName(), screen);
         
-        screen = new TeamScreen(game);
+        screen = new PrepareScreen(game);
         game.getScreenManager().addScreen(screen.getClass().getSimpleName(), screen);
         
         screen = new QuizPlayScreen(game);

@@ -1,4 +1,4 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen;
 /**
  * @author hundun
  * Created on 2022/08/30
@@ -13,30 +13,31 @@ import hundun.quizlib.prototype.TeamPrototype;
 import lombok.Getter;
 
 public class TeamNodeVM extends Table {
+    
+    public static final int NODE_WIDTH = 600;
+    public static final int NODE_HEIGHT = 100;
+    
     @Getter
     TeamPrototype data;
     
     Label label;
-    CheckBox checkBox;
+
     
-    public TeamNodeVM(QuizGdxGame game) {
+    public TeamNodeVM(QuizGdxGame game, TeamPrototype teamPrototype) {
         this.label = new Label("TEMP", game.getMainSkin());
-        this.checkBox = new CheckBox("", game.getMainSkin());
+
         
         this.add(label);
-        this.row();
-        this.add(checkBox);
+
+        
+        updateData(teamPrototype);
     }
     
-    public void updateData(TeamPrototype data) {
+    private void updateData(TeamPrototype data) {
         this.data = data;
         
         label.setText(data.getName());
-        checkBox.setChecked(false);
     }
-    
-    public boolean isSelected() {
-        return checkBox.isChecked();
-    }
+
 
 }

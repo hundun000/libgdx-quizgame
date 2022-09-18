@@ -285,7 +285,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         
         private void handelExitAsDiscardMatch() {
             exitClear();
-            game.getScreenManager().pushScreen(TeamScreen.class.getSimpleName(), "blending_transition");
+            game.getScreenManager().pushScreen(PrepareScreen.class.getSimpleName(), "blending_transition");
         }
 
         private void handelExitAsFinishMatch(MatchFinishHistory history) {
@@ -581,22 +581,22 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         MatchFinishNotificationBoardVM waitConfirmMatchFinishMaskBoardVM;
         
         public NotificationCallerAndCallbackDelegation() {
-            double maskBoardScale = 0.8;
+            float maskBoardScale = 0.8f;
             
             waitConfirmFirstGetQuestionMaskBoardVM = new FirstGetQuestionNotificationBoardVM(
                     game, 
                     this, 
-                    DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
+                    DrawableFactory.getViewportBasedBoard(game.getWidth(), game.getHeight(), maskBoardScale)
                     );
             waitConfirmMatchSituationMaskBoardVM = new MatchSituationNotificationBoardVM(
                     game, 
                     this, 
-                    DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
+                    DrawableFactory.getViewportBasedBoard(game.getWidth(), game.getHeight(), maskBoardScale)
                     );
             waitConfirmMatchFinishMaskBoardVM = new MatchFinishNotificationBoardVM(
                     game, 
                     this, 
-                    DrawableFactory.getSimpleBoardBackground((int) (game.getWidth() * maskBoardScale), (int) (game.getHeight() * maskBoardScale))
+                    DrawableFactory.getViewportBasedBoard(game.getWidth(), game.getHeight(), maskBoardScale)
                     );
         }
         

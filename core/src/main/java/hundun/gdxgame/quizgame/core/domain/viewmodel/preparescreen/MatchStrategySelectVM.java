@@ -1,16 +1,19 @@
-package hundun.gdxgame.quizgame.core.domain.viewmodel.teamscreen;
+package hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.screen.PrepareScreen;
 import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.match.MatchStrategyType;
@@ -22,17 +25,18 @@ import lombok.Getter;
  */
 public class MatchStrategySelectVM extends Table {
     QuizGdxGame game;
-    ICallerAndCallback callerAndCallback;
     @Getter
     MatchStrategyType currenType;
-    List<TeamManageSlotVM> teamSlotVMs = new ArrayList<>();
     
     CheckBox preCheckBox;
     CheckBox mainCheckBox;
     ButtonGroup<CheckBox> buttonGroup;
-    public MatchStrategySelectVM(QuizGdxGame game, ICallerAndCallback callerAndCallback) {
+    
+    ISlotNumListener slotNumListener;
+    
+    public MatchStrategySelectVM(QuizGdxGame game, ISlotNumListener slotNumListener) {
         this.game = game;
-        this.callerAndCallback = callerAndCallback;
+        this.slotNumListener = slotNumListener;
         this.setBackground(DrawableFactory.getSimpleBoardBackground());
         
         this.preCheckBox = new CheckBox("PRE", game.getMainSkin());
@@ -48,10 +52,15 @@ public class MatchStrategySelectVM extends Table {
         preCheckBox.addListener(changeListener);
         mainCheckBox.addListener(changeListener);
         
+        this.add(preCheckBox).padRight(50);
+        this.add(mainCheckBox).padRight(50);
+        
+        if (game.debugMode) {
+            this.debugCell();
+        }
+        
         checkSlotNum();
     }
-    
-    
     
     void checkSlotNum() {
         int targetSlotNum;
@@ -70,28 +79,13 @@ public class MatchStrategySelectVM extends Table {
         
         if (currenType != newType) {
             currenType = newType;
-            this.clear();
-            teamSlotVMs.clear();
-            for (int i = 0; i < targetSlotNum; i++) {
-                TeamManageSlotVM teamSlotVM = new TeamManageSlotVM(game, callerAndCallback);
-                teamSlotVM.updateData(null);
-                teamSlotVMs.add(teamSlotVM);
-                this.add(teamSlotVM).padRight(50);
-            }
-            
-            this.row();
-            this.add(preCheckBox).padRight(50);
-            this.add(mainCheckBox).padRight(50);
+            slotNumListener.updateSlotNum(targetSlotNum);
         }
+        
     }
+
     
-    public static interface ICallerAndCallback {
-        void onTeamWantChange(TeamManageSlotVM teamSlotVM);
-        void onTeamWantModify(TeamManageSlotVM teamSlotVM);
+    public interface ISlotNumListener {
+        void updateSlotNum(int targetSlotNum);
     }
-
-    public List<String> getSelectedTeamNames() {
-        return teamSlotVMs.stream().map(it -> it.getData().getName()).collect(Collectors.toList());
-    }
-
 }

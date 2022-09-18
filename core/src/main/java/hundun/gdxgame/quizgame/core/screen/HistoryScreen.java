@@ -16,7 +16,7 @@ import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.MyGameSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler.ISubGameSaveHandler;
-import hundun.gdxgame.quizgame.core.domain.viewmodel.preparescreen.TeamNodeVM;
+import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamNodeVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.quizlib.prototype.event.MatchFinishEvent;

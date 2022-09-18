@@ -170,6 +170,9 @@ public class QuestionOptionAreaVM extends Table {
             .filter(index -> nodes.get(index).showState == OptionButtonShowState.HIDE_WRONG)
             .collect(Collectors.toList())
             ;
+        if (showIndexs.size() < showOptionAmout) {
+            return;
+        }
         Collections.shuffle(showIndexs);
         showIndexs = showIndexs.subList(0, showOptionAmout);
         

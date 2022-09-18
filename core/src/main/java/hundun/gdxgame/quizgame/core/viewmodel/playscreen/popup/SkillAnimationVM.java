@@ -1,5 +1,7 @@
 package hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -16,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
@@ -52,16 +55,17 @@ public class SkillAnimationVM extends AbstractAnimationVM<SkillResultEvent> {
         
         resultLable = new Label("TEMP", game.getMainSkin());
         this.add(resultLable);
+        this.setTransform(true);
     }
     
     @Override
     public void callShow(SkillResultEvent skillResultEvent) {
 
         // Initialize the Animation with the frame interval and array of frames
-        setAnimation(new Animation<>(0.025f, aminationFactory(
+        setAnimation(aminationFactory(0.025f, 
                 game.getTextureConfig().getQuestionResultCorrectAnimationSheet(), 
                 FRAME_COLS, FRAME_ROWS
-                )));
+                ));
         resultLable.setText(skillResultEvent.getSkillName() + "\n" + skillResultEvent.getSkillDesc());
         
         super.resetFrame();

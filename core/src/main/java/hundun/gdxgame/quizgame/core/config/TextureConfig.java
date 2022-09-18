@@ -22,14 +22,15 @@ import lombok.Setter;
 
 public class TextureConfig implements ISubSystemSettingHandler {
     public static String DEFAULT_ENV = "dev";
-    @Getter
-    @Setter
+
     private String currentEnv = DEFAULT_ENV;
     Map<String, EnvPackage> packageMap = new HashMap<>();
     
     private static class EnvPackage {
         
         private final String ENV;
+        Set<String> textureOrDefaultFailHistory = new HashSet<>();
+        
         protected Texture menuTexture;
         protected Texture playScreenBackground;
         protected Texture countdownClockTexture;
@@ -96,9 +97,13 @@ public class TextureConfig implements ISubSystemSettingHandler {
             return new Texture(fileOrDefault(subName));
         }
         
+        private FileHandle envfile(String subName) {
+            return Gdx.files.internal("ui/" + ENV + "/" + subName);
+        }
+        
         private FileHandle fileOrDefault(String subName) {
             try {
-                return Gdx.files.internal("ui/" + ENV + "/" + subName);
+                return envfile(subName);
             } catch (Exception e) {
                 if (!textureOrDefaultFailHistory.contains(subName)) {
                     textureOrDefaultFailHistory.add(subName);
@@ -115,7 +120,7 @@ public class TextureConfig implements ISubSystemSettingHandler {
             }
         }
 
-        Set<String> textureOrDefaultFailHistory = new HashSet<>();
+        
 
     }
     
@@ -197,7 +202,8 @@ public class TextureConfig implements ISubSystemSettingHandler {
 
     @Override
     public void applySystemSetting(SystemSetting systemSetting) {
-        this.currentEnv = systemSetting.getEnv();
+        // FIXME temp disable when develop
+        //this.currentEnv = systemSetting.getEnv();
     }
 
     @Override

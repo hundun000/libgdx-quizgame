@@ -62,7 +62,9 @@ public abstract class AbstractAnimationVM<T_CALL_ARG> extends Table {
 
         if (!animation.isAnimationFinished(stateTime)) {
             Drawable currentFrame = animation.getKeyFrame(stateTime);
+            float rate = 1.0f * animation.getKeyFrameIndex(stateTime) / animation.getKeyFrames().length;
             this.setBackground(currentFrame);
+            this.setScale(1.0f + 1.0f * rate);
         } else {
             runningState = false;
             callback.onAnimationDone();
@@ -72,14 +74,14 @@ public abstract class AbstractAnimationVM<T_CALL_ARG> extends Table {
     
     public static Animation<Drawable> aminationFactory(TextureAtlas atlas, String id, float frameDuration, PlayMode playMode) {
         Array<AtlasRegion> regionArray = atlas.findRegions(id);
-        Array<Drawable> drawableArray = new Array<>(regionArray.size);
+        Array<Drawable> drawableArray = new Array<>(true, regionArray.size, Drawable.class);
         for (int i = 0; i < regionArray.size; i++) {
             drawableArray.add(new TextureRegionDrawable(regionArray.get(i)));
         }
         return new Animation<Drawable>(frameDuration, drawableArray, playMode);
     }
     
-    public static Drawable[] aminationFactory(Texture sheet, int FRAME_COLS, int FRAME_ROWS) {
+    public static Animation<Drawable> aminationFactory(float frameDuration, Texture sheet, int FRAME_COLS, int FRAME_ROWS) {
         
         // Use the split utility method to create a 2D array of TextureRegions. This is
         // possible because this sprite sheet contains frames of equal size and they are
@@ -90,14 +92,14 @@ public abstract class AbstractAnimationVM<T_CALL_ARG> extends Table {
 
         // Place the regions into a 1D array in the correct order, starting from the top
         // left, going across first. The Animation constructor requires a 1D array.
-        Drawable[] walkFrames = new Drawable[FRAME_COLS * FRAME_ROWS];
-        int index = 0;
+        Array<Drawable> drawableArray = new Array<>(true, FRAME_COLS * FRAME_ROWS, Drawable.class);
+        
         for (int i = 0; i < FRAME_ROWS; i++) {
             for (int j = 0; j < FRAME_COLS; j++) {
-                walkFrames[index++] = new TextureRegionDrawable(tmp[i][j]);
+                drawableArray.add(new TextureRegionDrawable(tmp[i][j]));
             }
         }
-        return walkFrames;
+        return new Animation<Drawable>(frameDuration, drawableArray, PlayMode.NORMAL);
     }
     
     public static interface IAnimationCallback {

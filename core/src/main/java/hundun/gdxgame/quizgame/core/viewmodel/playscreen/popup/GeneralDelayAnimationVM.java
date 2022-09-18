@@ -59,10 +59,11 @@ public class GeneralDelayAnimationVM extends AbstractAnimationVM<Float> {
 
         // Initialize the Animation with the frame interval and array of frames
         float duration = second / (FRAME_COLS * FRAME_ROWS);
-        setAnimation(new Animation<>(duration, aminationFactory(
+        setAnimation(aminationFactory(
+                duration,
                 game.getTextureConfig().getQuestionResultCorrectAnimationSheet(), 
                 FRAME_COLS, FRAME_ROWS
-                )));
+                ));
         resultLable.setText("GeneralDelay " + second + " second(s)");
         
         super.resetFrame();

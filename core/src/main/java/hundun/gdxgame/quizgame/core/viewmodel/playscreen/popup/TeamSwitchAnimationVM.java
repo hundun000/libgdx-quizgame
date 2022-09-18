@@ -57,10 +57,10 @@ public class TeamSwitchAnimationVM extends AbstractAnimationVM<SwitchTeamEvent> 
     public void callShow(SwitchTeamEvent switchTeamEvent) {
 
         // Initialize the Animation with the frame interval and array of frames
-        setAnimation(new Animation<>(0.025f, aminationFactory(
+        setAnimation(aminationFactory(0.025f, 
                 game.getTextureConfig().getQuestionResultCorrectAnimationSheet(), 
                 FRAME_COLS, FRAME_ROWS
-                )));
+                ));
         resultLable.setText(switchTeamEvent.getToTeamName());
         
         super.resetFrame();

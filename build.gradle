@@ -22,6 +22,9 @@ allprojects {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
     ext {
         appName = 'libgdx-quizgame'
         gwtFrameworkVersion = '2.8.2'

@@ -6,10 +6,8 @@ package hundun.quizlib.prototype.skill;
 
 import java.util.List;
 
-import hundun.quizlib.prototype.RolePrototype;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor

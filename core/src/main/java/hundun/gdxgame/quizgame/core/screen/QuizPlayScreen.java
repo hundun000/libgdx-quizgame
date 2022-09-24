@@ -229,7 +229,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                 handleCurrentTeam(true);
                 quizInputHandler.handleNewQuestion();
             } catch (QuizgameException e) {
-                Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
+                Gdx.app.error(this.getClass().getSimpleName(), "QuizgameException", e);
             }
             
             
@@ -280,7 +280,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                 
                 
             } catch (QuizgameException e) {
-                Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
+                Gdx.app.error(this.getClass().getSimpleName(), "QuizgameException", e);
             }
         }
         
@@ -417,7 +417,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             try {
                 currentMatchSituationView = quizLib.nextQustion(currentMatchSituationView.getId());
             } catch (QuizgameException e) {
-                Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
+                Gdx.app.error(this.getClass().getSimpleName(), "QuizgameException", e);
                 return;
             }
             SwitchQuestionEvent switchQuestionEvent = JavaFeatureForGwt.requireNonNull(currentMatchSituationView.getSwitchQuestionEvent());
@@ -488,7 +488,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                 animationQueueHandler.checkNextAnimation();
                 
             } catch (QuizgameException e) {
-                Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
+                Gdx.app.error(this.getClass().getSimpleName(), "QuizgameException", e);
             }
             
             
@@ -501,6 +501,9 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             switch (type) {
                 case PAUSE:
                     notificationCallerAndCallback.callShowPauseConfirm();
+                    break;
+                case EXIT:
+                    notificationCallerAndCallback.callShowMatchFinishConfirm();
                     break;
                 default:
                     break;

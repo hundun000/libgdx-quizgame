@@ -1,5 +1,6 @@
 package hundun.gdxgame.quizgame.core.screen;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class HistoryScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
 
     @Getter
     @Setter
-    List<MatchFinishHistory> histories;
+    List<MatchFinishHistory> histories = new ArrayList<>();
     
     public HistoryScreen(QuizGdxGame game) {
         super(game);

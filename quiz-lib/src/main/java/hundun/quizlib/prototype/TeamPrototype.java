@@ -1,13 +1,9 @@
 package hundun.quizlib.prototype;
 
 import java.util.List;
-import java.util.Set;
-
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author hundun

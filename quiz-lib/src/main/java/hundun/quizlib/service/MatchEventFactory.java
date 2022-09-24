@@ -7,7 +7,6 @@ import java.util.Map;
 
 import hundun.quizlib.model.domain.SkillSlotRuntimeModel;
 import hundun.quizlib.model.domain.TeamRuntimeModel;
-import hundun.quizlib.prototype.RolePrototype;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.event.AnswerResultEvent;
 import hundun.quizlib.prototype.event.EventType;

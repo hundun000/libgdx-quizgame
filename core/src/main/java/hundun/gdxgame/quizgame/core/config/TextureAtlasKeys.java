@@ -25,5 +25,6 @@ public class TextureAtlasKeys {
     public static String PLAYSCREEN_AUDIO = "audio";
     public static String PLAYSCREEN_CURRENTTEAMSIGN = "currentTeamSign";
     public static String PLAYSCREEN_PAUSEBUTTON = "pause";
+    public static String PLAYSCREEN_EXITBUTTON = "systemButton";
     public static String PLAYSCREEN_POPUP_PLAY = "play";
 }

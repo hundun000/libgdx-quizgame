@@ -10,7 +10,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,9 +19,7 @@ import hundun.quizlib.context.IFrontEnd;
 import hundun.quizlib.context.IQuizComponent;
 import hundun.quizlib.context.QuizComponentContext;
 import hundun.quizlib.exception.QuestionFormatException;
-import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.model.domain.QuestionModel;
-import hundun.quizlib.prototype.question.ResourceType;
 
 public class QuestionLoaderService implements IQuizComponent {
 	
@@ -33,6 +30,8 @@ public class QuestionLoaderService implements IQuizComponent {
 	public static String PRELEASE_PACKAGE_NAME = "questions_small";
 	public static String TEST_PACKAGE_NAME = "questions_test";
 	public static String TEST_SMALL_PACKAGE_NAME = "questions_test_small";
+	
+	public static final String TAGS_SPLIT = ";";
 	
 	IFrontEnd frontEnd;
 	
@@ -46,7 +45,7 @@ public class QuestionLoaderService implements IQuizComponent {
 //        this.RESOURCE_ICON_FOLDER = RESOURCE_ICON_FOLDER;
 //    }
 	
-	private List<QuestionModel> loadQuestionsFromFile(String fileContent, String fileName) throws QuestionFormatException {
+	public static List<QuestionModel> loadQuestionsFromFile(String fileContent, String fileName) throws QuestionFormatException {
         List<String> lines = Arrays.asList(fileContent.split("\r?\n|\r"));  
         try {
         	return parseTextToQuestions(lines);
@@ -149,7 +148,7 @@ public class QuestionLoaderService implements IQuizComponent {
 	 * @return
 	 * @throws QuestionFormatException
 	 */
-	private List<QuestionModel> parseTextToQuestions(List<String> lines) throws QuestionFormatException { 
+	private static List<QuestionModel> parseTextToQuestions(List<String> lines) throws QuestionFormatException { 
 	    
 		int currentLine = 0;
 		
@@ -161,7 +160,7 @@ public class QuestionLoaderService implements IQuizComponent {
 		String tagsText = lines.get(currentLine++);
 		Set<String> tagNames;
 		if (tagsText.trim().length() != 0) {
-		    tagNames = Stream.of(tagsText.split(","))
+		    tagNames = Stream.of(tagsText.split(TAGS_SPLIT))
 	                .map(it -> it.trim())
 	                .collect(Collectors.toSet())
 	                ;

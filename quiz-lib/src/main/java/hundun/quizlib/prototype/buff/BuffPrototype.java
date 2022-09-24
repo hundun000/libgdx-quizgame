@@ -1,8 +1,5 @@
 package hundun.quizlib.prototype.buff;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -52,6 +52,9 @@ public class SystemBoardVM extends Table {
                 case PAUSE:
                     buttonAtlasRegion = textureAtlas.findRegion(TextureAtlasKeys.PLAYSCREEN_PAUSEBUTTON);
                     break;
+                case EXIT:
+                    buttonAtlasRegion = textureAtlas.findRegion(TextureAtlasKeys.PLAYSCREEN_EXITBUTTON);
+                    break;
                 default:
                     buttonAtlasRegion = null;
                     break;
@@ -70,11 +73,12 @@ public class SystemBoardVM extends Table {
     
     public enum SystemButtonType {
         PAUSE,
-
+        EXIT,
         ;
         
         static SystemButtonType[] types = new SystemButtonType[] {
-                PAUSE
+                PAUSE,
+                EXIT
         };
     }
     

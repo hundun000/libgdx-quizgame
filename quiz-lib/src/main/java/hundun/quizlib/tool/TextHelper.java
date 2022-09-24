@@ -2,7 +2,6 @@ package hundun.quizlib.tool;
 
 import java.util.List;
 
-import hundun.quizlib.model.domain.SkillSlotRuntimeModel;
 import hundun.quizlib.prototype.RolePrototype;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.match.MatchStrategyType;

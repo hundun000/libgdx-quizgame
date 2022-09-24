@@ -2,7 +2,6 @@ package hundun.quizlib.view.role;
 
 import java.util.List;
 
-import hundun.quizlib.model.domain.SkillSlotRuntimeModel;
 import hundun.quizlib.view.skill.SkillSlotRuntimeView;
 import lombok.Data;
 

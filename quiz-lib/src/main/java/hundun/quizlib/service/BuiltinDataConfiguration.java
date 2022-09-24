@@ -7,14 +7,11 @@ import java.util.List;
 import hundun.quizlib.context.IQuizComponent;
 import hundun.quizlib.context.QuizComponentContext;
 import hundun.quizlib.exception.QuizgameException;
-import hundun.quizlib.model.domain.buff.CombBuffStrategy;
 import hundun.quizlib.prototype.RolePrototype;
 import hundun.quizlib.prototype.buff.BuffPrototype;
 import hundun.quizlib.prototype.buff.BuffStrategyType;
 import hundun.quizlib.prototype.skill.AddBuffSkillEffect;
 import hundun.quizlib.prototype.skill.SkillSlotPrototype;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author hundun

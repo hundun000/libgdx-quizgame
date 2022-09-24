@@ -14,7 +14,6 @@ import hundun.quizlib.model.SessionDataPackage;
 import hundun.quizlib.model.domain.QuestionModel;
 import hundun.quizlib.model.domain.TeamRuntimeModel;
 import hundun.quizlib.prototype.question.ResourceType;
-import lombok.extern.slf4j.Slf4j;
 
 public class QuestionService implements IQuizComponent {
     

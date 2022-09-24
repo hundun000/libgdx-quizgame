@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TagManageSlotVM;
-import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TagNodeVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamNodeVM;
 import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.quizlib.prototype.TeamPrototype;
@@ -25,36 +24,27 @@ import hundun.quizlib.prototype.TeamPrototype;
 public class TagSelectPopoupVM extends AbstractSelectPopoupVM<TagManageSlotVM> {
 
     
-    Button tagSelectDoneButton;
+    Button doneButton;
+    TeamPrototype currenTeamPrototype;
     
     public TagSelectPopoupVM(
             QuizGdxGame game, 
-            IWaitTagSelectCallback callback,
-            Drawable background
+            IWaitTagSelectCallback callback
             ) {
         super(game, 
-                background, 
-                new LayoutConfig(TagNodeVM.NODE_WIDTH, TagNodeVM.NODE_HEIGHT, 2.5f, false)
+                DrawableFactory.getViewportBasedAlphaBoard(game.getWidth(), game.getHeight()), 
+                new LayoutConfig(TagManageSlotVM.NODE_WIDTH, TagManageSlotVM.NODE_HEIGHT, 8.0f, false)
                 );
-        this.tagSelectDoneButton = new TextButton("done", game.getMainSkin());
+        this.doneButton = new TextButton("返回", game.getMainSkin());
         
-        tagSelectDoneButton.addListener(new TagSelectDoneClickListener(callback));
+        doneButton.addListener(new TagSelectDoneClickListener(callback));
         
         this.row();
-        this.add(tagSelectDoneButton);
+        this.add(doneButton);
     }
+
     
-    public static class Factory {
-        public static TagSelectPopoupVM build(QuizGdxGame game, IWaitTagSelectCallback callback) {
-            
-            return new TagSelectPopoupVM(game, 
-                    callback,
-                    DrawableFactory.getViewportBasedBoard(game.getWidth(), game.getHeight(), 0.8f)
-                    );
-        }
-    }
-    
-    public static class TagSelectDoneClickListener extends ClickListener {
+    public class TagSelectDoneClickListener extends ClickListener {
         IWaitTagSelectCallback callback;
         
         TagSelectDoneClickListener(IWaitTagSelectCallback callback) {
@@ -63,16 +53,17 @@ public class TagSelectPopoupVM extends AbstractSelectPopoupVM<TagManageSlotVM> {
         @Override
         public void clicked(InputEvent event, float x, float y) {
             super.clicked(event, x, y);
-            callback.onTagSelectDone();
+            callback.onTagSelectDone(currenTeamPrototype);
         }
     }
     
     public static interface IWaitTagSelectCallback {
         void callShowTagSelectPopoup(TeamPrototype currenTeamPrototype, Set<String> allTags);
-        void onTagSelectDone();
+        void onTagSelectDone(TeamPrototype currenTeamPrototype);
     }
 
     public void callShow(TeamPrototype currenTeamPrototype, Set<String> allTags) {
+        this.currenTeamPrototype = currenTeamPrototype;
         List<TagManageSlotVM> candidateVMs = allTags.stream()
                 .map(tag -> {
                     TagManageSlotVM tagNodeVM = new TagManageSlotVM(game);

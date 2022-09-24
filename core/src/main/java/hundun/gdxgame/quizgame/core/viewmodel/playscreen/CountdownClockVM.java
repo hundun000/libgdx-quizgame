@@ -61,13 +61,13 @@ public class CountdownClockVM extends Table {
         this.image = new Image();
         this.textAreaTable = new Table();
         
-        textAreaTable.add(wordPart);
-        textAreaTable.add(countdownPart);
+        textAreaTable.add(wordPart).padLeft(25);
+        textAreaTable.add(countdownPart).expandX().fillX().left();
         textAreaTable.setBackground(new TextureRegionDrawable(
                 atlas.findRegion(TextureAtlasKeys.PLAYSCREEN_CLOCKTEXT)
                 ));
         
-        this.add(image);
+        this.add(image).width(200).height(200);
         this.row();
         this.add(textAreaTable);
         

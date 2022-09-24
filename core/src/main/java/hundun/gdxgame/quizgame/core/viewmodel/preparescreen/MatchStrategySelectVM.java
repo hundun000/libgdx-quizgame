@@ -6,17 +6,28 @@ import java.util.stream.Collectors;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
 import hundun.gdxgame.quizgame.core.screen.PrepareScreen;
+import hundun.gdxgame.quizgame.core.viewmodel.playscreen.TeamInfoBoardVM;
 import hundun.gdxgame.share.base.util.DrawableFactory;
+import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.match.MatchStrategyType;
+import hundun.quizlib.view.team.TeamRuntimeView;
 import lombok.Getter;
 
 /**
@@ -25,67 +36,95 @@ import lombok.Getter;
  */
 public class MatchStrategySelectVM extends Table {
     QuizGdxGame game;
-    @Getter
-    MatchStrategyType currenType;
     
-    CheckBox preCheckBox;
-    CheckBox mainCheckBox;
-    ButtonGroup<CheckBox> buttonGroup;
+    MatchStrategyType currentType;
+    List<MatchStrategyNode> nodes = new ArrayList<>();
+
     
-    ISlotNumListener slotNumListener;
+    IMatchStrategyChangeListener slotNumListener;
     
-    public MatchStrategySelectVM(QuizGdxGame game, ISlotNumListener slotNumListener) {
+    public MatchStrategySelectVM(QuizGdxGame game, IMatchStrategyChangeListener slotNumListener) {
         this.game = game;
         this.slotNumListener = slotNumListener;
         this.setBackground(DrawableFactory.getSimpleBoardBackground());
-        
-        this.preCheckBox = new CheckBox("PRE", game.getMainSkin());
-        this.mainCheckBox = new CheckBox("MAIN", game.getMainSkin());
-        this.buttonGroup = new ButtonGroup<>(preCheckBox, mainCheckBox);
-        
-        ClickListener changeListener = new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                checkSlotNum();
-            };
-        };
-        preCheckBox.addListener(changeListener);
-        mainCheckBox.addListener(changeListener);
-        
-        this.add(preCheckBox).padRight(50);
-        this.add(mainCheckBox).padRight(50);
+
+        initUI(JavaFeatureForGwt.arraysAsList(MatchStrategyType.PRE, MatchStrategyType.MAIN));
         
         if (game.debugMode) {
             this.debugCell();
         }
         
-        checkSlotNum();
     }
     
-    void checkSlotNum() {
-        int targetSlotNum;
-        MatchStrategyType newType;
-        if (preCheckBox.isChecked()) {
-            newType = MatchStrategyType.PRE;
-            targetSlotNum = 1;
-        } else if (mainCheckBox.isChecked()) {
-            newType = MatchStrategyType.MAIN;
-            targetSlotNum = 2;
-        } else {
-            preCheckBox.setChecked(true);
-            newType = MatchStrategyType.PRE;
-            targetSlotNum = 1;
+    public void checkSlotNum(MatchStrategyType newType) {
+
+        if (currentType != newType) {
+            currentType = newType;
+            slotNumListener.onMatchStrategyChange(newType);
         }
-        
-        if (currenType != newType) {
-            currenType = newType;
-            slotNumListener.updateSlotNum(targetSlotNum);
+        for (int i = 0; i < nodes.size(); i++) {
+            MatchStrategyNode vm = nodes.get(i);
+            vm.updateRuntime(vm.type == currentType);
         }
-        
     }
 
     
-    public interface ISlotNumListener {
-        void updateSlotNum(int targetSlotNum);
+    public interface IMatchStrategyChangeListener {
+        void onMatchStrategyChange(MatchStrategyType newType);
+    }
+    
+    private void initUI(List<MatchStrategyType> teamPrototypes) {
+        
+        this.clear();
+        nodes.clear();
+        teamPrototypes.forEach(it -> {
+            MatchStrategyNode vm = new MatchStrategyNode();
+            vm.updatePrototype(it);
+            nodes.add(vm);
+            MatchStrategySelectVM.this.add(vm).padBottom(MatchStrategyNode.SIGN_SIZE / 2).row();
+        });
+    }
+
+    
+    private class MatchStrategyNode extends Table {
+        final static int SIGN_SIZE = 50;
+        final Image signSlotImage;
+        final Drawable signDrawable;
+        final static int NAME_WIDTH = 200;
+        final TextButton nameLabel;
+        
+        MatchStrategyType type;
+        
+        MatchStrategyNode() {
+            this.signDrawable = new TextureRegionDrawable(game.getTextureConfig().getPlayScreenUITextureAtlas().findRegion(TextureAtlasKeys.PLAYSCREEN_CURRENTTEAMSIGN));
+            
+            this.signSlotImage = new Image();
+            this.add(signSlotImage).width(SIGN_SIZE).height(SIGN_SIZE).padRight(SIGN_SIZE * 0.5f);
+            
+            this.nameLabel = new TextButton("TEMP", game.getMainSkin());
+            this.add(nameLabel).width(NAME_WIDTH);
+            
+            this.setTouchable(Touchable.enabled);
+            this.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    checkSlotNum(MatchStrategyNode.this.type);
+                }
+            });
+        }
+        
+        void updatePrototype(MatchStrategyType type) {
+            this.type = type;
+            nameLabel.setText(type.name());
+        }
+        
+        void updateRuntime(boolean isCurrent) {
+            if (isCurrent) {
+                signSlotImage.setDrawable(signDrawable);
+            } else {
+                signSlotImage.setDrawable(null);
+            }
+        }
     }
 }

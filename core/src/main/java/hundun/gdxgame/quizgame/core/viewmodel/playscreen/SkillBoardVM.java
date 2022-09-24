@@ -64,9 +64,10 @@ public class SkillBoardVM extends Table {
             this.mainLabel = new Label("TEMP", game.getMainSkin());
             this.textLabel = new Label("TEMP", game.getMainSkin());
             this.backgroundImage = new Image();
-            backgroundImage.setBounds(0, 0, SkillNode.LENGTH, SkillNode.LENGTH);
-            this.addActor(backgroundImage);
             
+            //backgroundImage.setBounds(0, 0, SkillNode.LENGTH, SkillNode.LENGTH);
+            this.add(backgroundImage).width(SkillNode.LENGTH).height(SkillNode.LENGTH);
+            this.row();
             this.add(mainLabel);
             this.row();
             this.add(textLabel);
@@ -128,9 +129,9 @@ public class SkillBoardVM extends Table {
             node.updateRuntime(remainUseTime);
             nodes.add(node);
             Cell<SkillNode> cell = this.add(node)
-                    .padBottom(SkillNode.LENGTH / 4)
+                    //.padBottom(SkillNode.LENGTH / 2)
                     .width(SkillNode.LENGTH)
-                    .height(SkillNode.LENGTH)
+                    .height(SkillNode.LENGTH * 1.5f)
                     ;
             
             

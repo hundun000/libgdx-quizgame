@@ -13,9 +13,9 @@ public class SkillSlotRuntimeModel {
     private SkillSlotPrototype prototype;
     private int remainUseTime;  
     
-    public SkillSlotRuntimeModel(SkillSlotPrototype prototype) {
+    public SkillSlotRuntimeModel(SkillSlotPrototype prototype, int startUseTime) {
         this.prototype = prototype;
-        this.remainUseTime = prototype.getFullUseTime();
+        this.remainUseTime = startUseTime;
     }
 
     public boolean canUseOnce(String skillName) {

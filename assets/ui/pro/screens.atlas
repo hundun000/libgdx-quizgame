@@ -4,14 +4,27 @@ size: 2048, 2048
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-menu
+menuScreen
   rotate: false
   xy: 2, 804
   size: 1600, 900
   orig: 1600, 900
   offset: 0, 0
   index: -1
-playscreen
+playScreen
+  rotate: false
+  xy: 2, 2
+  size: 1600, 800
+  orig: 1600, 800
+  offset: 0, 0
+  index: -1
+
+screens2.png
+size: 2048, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+prepareScreen
   rotate: false
   xy: 2, 2
   size: 1600, 800

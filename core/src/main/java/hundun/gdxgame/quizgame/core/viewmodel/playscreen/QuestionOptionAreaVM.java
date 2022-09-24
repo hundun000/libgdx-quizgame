@@ -54,7 +54,8 @@ public class QuestionOptionAreaVM extends Table {
     public QuestionOptionAreaVM(
             QuizGdxGame game,
             CallerAndCallback callerAndCallback,
-            TextureAtlas textureAtlas
+            TextureAtlas textureAtlas,
+            TextureAtlas maskTextureAtlas
             ) {
         this.game = game;
         this.callerAndCallback = callerAndCallback;
@@ -64,7 +65,7 @@ public class QuestionOptionAreaVM extends Table {
         
         OptionNode optionButton;
         for (int i = 0; i < SIZE; i++) {
-            optionButton = new OptionNode(game, i, textureAtlas);
+            optionButton = new OptionNode(game, i, textureAtlas, maskTextureAtlas);
             nodes.add(optionButton);
             this.add(optionButton)
                     .height(NODE_HEIGHT)
@@ -94,6 +95,8 @@ public class QuestionOptionAreaVM extends Table {
     public class OptionNode extends Table {
         OptionButtonShowState showState;
         final int index;
+        final Drawable correctMask;
+        final Drawable wrongMask;
 //        @Setter
 //        Drawable mask;
         Label textButton;
@@ -115,13 +118,19 @@ public class QuestionOptionAreaVM extends Table {
 //            resetTransform(batch);
 //        }
         
-        public OptionNode(QuizGdxGame game, int index, TextureAtlas textureAtlas) {
+        public OptionNode(QuizGdxGame game, int index, TextureAtlas textureAtlas, TextureAtlas maskTextureAtlas) {
             this.index = index;
             this.selectedAtlasRegion = new TextureRegionDrawable(
                     textureAtlas.findRegion(TextureAtlasKeys.PLAYSCREEN_OPTIONBUTTON, 0)
                     );
             this.unSelectedAtlasRegion = new TextureRegionDrawable(
                     textureAtlas.findRegion(TextureAtlasKeys.PLAYSCREEN_OPTIONBUTTON, 1)
+                    );
+            this.correctMask = new TextureRegionDrawable(
+                    maskTextureAtlas.findRegion(TextureAtlasKeys.MASK_CORRECTOPTION)
+                    );
+            this.wrongMask = new TextureRegionDrawable(
+                    maskTextureAtlas.findRegion(TextureAtlasKeys.MASK_WRONGOPTION)
                     );
                     
             this.textButton = new Label("TEMP", game.getMainSkin(), "whiteType");
@@ -165,17 +174,17 @@ public class QuestionOptionAreaVM extends Table {
         }
         
         public void updateShowStateToShow() {
-            Texture texture;
+            Drawable mask;
             if (this.showState == OptionButtonShowState.HIDE_CORRECT) {
                 this.showState = OptionButtonShowState.SHOW_CORRECT;
-                texture = game.getTextureConfig().getOptionButtonCorrectMask();
+                mask = correctMask;
             } else {
                 this.showState = OptionButtonShowState.SHOW_WRONG;
-                texture = game.getTextureConfig().getOptionButtonWrongMask();
+                mask = wrongMask;
             }
             //this.setMask(new TextureRegionDrawable(texture));
             
-            this.maskActor.setDrawable(new TextureRegionDrawable(texture));
+            this.maskActor.setDrawable(mask);
             
             //this.setBackground(new TextureRegionDrawable(texture));
         }

@@ -1,0 +1,20 @@
+
+maskUI.png
+size: 2048, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+optionButtonCorrectMask
+  rotate: false
+  xy: 1004, 2
+  size: 1000, 139
+  orig: 1000, 139
+  offset: 0, 0
+  index: -1
+optionButtonWrongMask
+  rotate: false
+  xy: 2, 2
+  size: 1000, 139
+  orig: 1000, 139
+  offset: 0, 0
+  index: -1

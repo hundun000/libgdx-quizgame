@@ -1,22 +1,30 @@
 package hundun.gdxgame.quizgame.core.screen;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
+import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.MatchStrategyInfoVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.MatchStrategySelectVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamManageAreaVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamManageSlotVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamNodeVM;
+import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.MatchStrategySelectVM.IMatchStrategyChangeListener;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.TagSelectPopoupVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.TeamSelectPopoupVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.TeamSelectPopoupVM.IWaitTeamSelectCallback;
@@ -37,19 +45,28 @@ import hundun.quizlib.service.TeamService;
 public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveData> implements 
         TeamSelectPopoupVM.IWaitTeamSelectCallback, 
         TagSelectPopoupVM.IWaitTagSelectCallback, 
-        TeamManageAreaVM.ICallerAndCallback
+        TeamManageAreaVM.ICallerAndCallback,
+        IMatchStrategyChangeListener
         {
 
+    public static final int MATCHSTRATEGYINFOVM_WIDTH = 400;
+    
     TeamService teamService;
     QuestionService questionService;
+    
+    MatchStrategyType currenType;
+    int targetTeamNum;
+    String currentQuestionPackageName;
+    List<String> selectedTeamNames;
     
     TeamSelectPopoupVM teamSelectPopoupVM;
     TagSelectPopoupVM tagSelectPopoupVM;
     MatchStrategySelectVM matchStrategySelectVM;
     TeamManageAreaVM teamManageAreaVM;
+    MatchStrategyInfoVM matchStrategyInfoVM;
+    ToPlayScreenButtonVM toPlayScreenButtonVM;
     
-    String currentQuestionPackageName;
-    TeamManageSlotVM waiChangeDoneTeamManageSlotVM;
+    Image backImage;
     
     public PrepareScreen(QuizGdxGame game) {
         super(game);
@@ -62,61 +79,76 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
         
         
-        this.teamSelectPopoupVM = TeamSelectPopoupVM.Factory.build(game, this);
-        this.tagSelectPopoupVM = TagSelectPopoupVM.Factory.build(game, this);
-        this.teamManageAreaVM = new TeamManageAreaVM(game, this);
-        this.matchStrategySelectVM = new MatchStrategySelectVM(game, teamManageAreaVM);
+        this.teamSelectPopoupVM = new TeamSelectPopoupVM(game, this);
+        this.tagSelectPopoupVM = new TagSelectPopoupVM(game, this);
         
+        this.teamManageAreaVM = new TeamManageAreaVM(game, this);
+        this.matchStrategySelectVM = new MatchStrategySelectVM(game, this);
+        this.toPlayScreenButtonVM = new ToPlayScreenButtonVM(game);
+        this.matchStrategyInfoVM = new MatchStrategyInfoVM(game);
+        this.backImage = new Image(game.getTextureConfig().getPrepareScreenBackground());
+        
+        backUiStage.clear();
         uiRootTable.clear();
+        popupRootTable.clear();
+        
+        backImage.setBounds(0, 0, game.getWidth(), game.getHeight());
+        backUiStage.addActor(backImage);
         
         
 //        uiRootTable.add(teamSelectPopoupVM);
-        uiRootTable.add(teamManageAreaVM);
+        teamManageAreaVM.setBounds(50, 300, 900, 500);
+        uiRootTable.addActor(teamManageAreaVM);
         
-        uiRootTable.row();
-        uiRootTable.add(matchStrategySelectVM);
+        matchStrategySelectVM.setBounds(50, 50, 900, 200);
+        uiRootTable.addActor(matchStrategySelectVM);
         
-        uiRootTable.row();
-        uiRootTable.add(new ToPlayScreenButtonVM(game));
+        matchStrategyInfoVM.setBounds(1100, 500, MATCHSTRATEGYINFOVM_WIDTH, 350);
+        uiRootTable.addActor(matchStrategyInfoVM);
+        
+        toPlayScreenButtonVM.setBounds(1100, 50, 400, 350);
+        uiRootTable.addActor(toPlayScreenButtonVM);
         
         if (game.debugMode) {
-            uiRootTable.debugCell();
+            uiRootTable.debugAll();
         }
 
+        // ------ post vm init ------ 
+        matchStrategySelectVM.checkSlotNum(MatchStrategyType.PRE);
+        validateMatchConfig();
     }
 
     @Override
     public void dispose() {
     }
 
-    
+    private void validateMatchConfig() {
+        if (selectedTeamNames != null && selectedTeamNames.size() == targetTeamNum) {
+            toPlayScreenButtonVM.setTouchable(Touchable.enabled);
+        } else {
+            toPlayScreenButtonVM.setTouchable(Touchable.disabled);
+        }
+    }
     
     private class ToPlayScreenButtonVM extends TextButton {
 
         public ToPlayScreenButtonVM(QuizGdxGame game) {
             super("Next", game.getMainSkin());
             
-            this.addListener(
-                    new InputListener(){
+            this.addListener(new ChangeListener() {
                         @Override
-                        public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+                        public void changed(ChangeEvent event, Actor actor) {
                             MatchConfig matchConfig = new MatchConfig();
-                            matchConfig.setTeamNames(teamManageAreaVM.getSelectedTeamNames());
+                            matchConfig.setTeamNames(selectedTeamNames);
                             matchConfig.setQuestionPackageName(currentQuestionPackageName);
-                            matchConfig.setMatchStrategyType(matchStrategySelectVM.getCurrenType());
+                            matchConfig.setMatchStrategyType(currenType);
                             
                             game.getScreenManager().pushScreen(QuizPlayScreen.class.getSimpleName(), 
                                     "blending_transition",
                                     matchConfig
                                     );
-                            //TextUmaGame.this.getAudioPlayManager().intoScreen(ScreenId.PLAY);
                         }
-                        @Override
-                        public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                            return true;
-                        }
-                    }
-            );
+                    });
         }
         
         
@@ -139,13 +171,15 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         popupRootTable.clear();
         Gdx.input.setInputProcessor(uiStage);
         // --- logic ---
-        waiChangeDoneTeamManageSlotVM.updateData(teamPrototype);
-        this.waiChangeDoneTeamManageSlotVM = null;
+        if (teamPrototype != null) {
+            selectedTeamNames = teamManageAreaVM.updateWaitChangeDone(teamPrototype);
+            validateMatchConfig();
+        }
     }
 
     @Override
     public void onTeamWantChange(TeamManageSlotVM teamSlotVM) {
-        this.waiChangeDoneTeamManageSlotVM = teamSlotVM;
+        teamManageAreaVM.onTeamWantChange(teamSlotVM);
         callShowTeamSelectPopoup();
     }
     @Override
@@ -180,13 +214,30 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
     }
 
     @Override
-    public void onTagSelectDone() {
+    public void onTagSelectDone(TeamPrototype currenTeamPrototype) {
         Gdx.app.log(this.getClass().getSimpleName(), "onTagSelectDone called");
         // --- ui ---
         popupRootTable.clear();
         Gdx.input.setInputProcessor(uiStage);
         // --- logic ---
         // do nothing
+        teamManageAreaVM.updateWaitChangeDone(currenTeamPrototype);
+    }
+
+    @Override
+    public void onMatchStrategyChange(MatchStrategyType currenType) {
+        this.currenType = currenType;
+        
+        if (currenType == MatchStrategyType.PRE) {
+            targetTeamNum = 1;
+        } else if (currenType == MatchStrategyType.MAIN) {
+            targetTeamNum = 2;
+        } else {
+            Gdx.app.error(this.getClass().getSimpleName(), "onChange cannot handle type: " + currenType);
+        }
+        
+        matchStrategyInfoVM.updateStrategy(currenType);
+        teamManageAreaVM.updateSlotNum(targetTeamNum);
     }
 
 

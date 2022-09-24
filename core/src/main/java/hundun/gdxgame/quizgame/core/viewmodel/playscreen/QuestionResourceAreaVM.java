@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Music.OnCompletionListener;
@@ -11,6 +14,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -24,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.prototype.question.ResourceType;
@@ -48,20 +54,26 @@ public class QuestionResourceAreaVM extends Table {
     public QuestionResourceAreaVM(
             QuizGdxGame game,
             IAudioCallback callback,
-            Drawable noneResourceBackground,
-            Drawable imageResourceBackground,
-            Drawable audioResourceBackground
+            TextureAtlas alAtlasRegion
             ) {
         this.game = game;
         this.callback = callback;
         
-        backgroundMap.put(ResourceType.NONE, noneResourceBackground);
-        backgroundMap.put(ResourceType.IMAGE, imageResourceBackground);
-        backgroundMap.put(ResourceType.VOICE, audioResourceBackground);
+        Drawable background = new TextureRegionDrawable(alAtlasRegion.findRegion(
+                TextureAtlasKeys.PLAYSCREEN_ZACAMUSUME_Q
+                ));
+        backgroundMap.put(ResourceType.NONE, background);
+        backgroundMap.put(ResourceType.IMAGE, background);
+        backgroundMap.put(ResourceType.VOICE, background);
         
         imageResourceNode = new ImageResourceNode();
         audioResourceNode = new AudioResourceNode(game, callback);
         
+    }
+    
+    public void stopAudio() {
+        audioResourceNode.stopAudio();
+        this.clear();
     }
     
     public void updateQuestion(QuestionView questionView) {
@@ -91,18 +103,38 @@ public class QuestionResourceAreaVM extends Table {
         int playCount;
         Label timeLabel;
         Button playButton;
+        Image animationImage;
+        List<TextureRegionDrawable> animations;
+        
+        private final NumberFormat format;
         
         private FileHandle getFile(String key) {
             String path = "quiz/audios/" + key;
             return Gdx.files.internal(path);
         }
         
+        public void stopAudio() {
+            if (music != null) {
+                music.stop();
+                music.dispose();
+            }
+            music = null;
+            playCount = 0;
+        }
+
         public AudioResourceNode(
                 QuizGdxGame game, 
                 IAudioCallback callback
                 ) {
+            this.format = NumberFormat.getFormat(1, 1);
             this.timeLabel = new Label("TEMP", game.getMainSkin());
             this.playButton = new TextButton("play", game.getMainSkin());
+            this.animationImage = new Image();
+            AtlasRegion[] animationAtlasRegions = game.getTextureConfig().getPlayScreenUITextureAtlas().findRegions(TextureAtlasKeys.PLAYSCREEN_AUDIO).items;
+            this.animations = Stream.of(animationAtlasRegions)
+                    .filter(it -> it != null)
+                    .map(it -> new TextureRegionDrawable(it))
+                    .collect(Collectors.toList());
             
             playButton.addListener(new ClickListener() {
                 @Override
@@ -123,6 +155,8 @@ public class QuestionResourceAreaVM extends Table {
                 }
             };
             
+            this.add(animationImage);
+            this.row();
             this.add(timeLabel);
             this.row();
             this.add(playButton);
@@ -132,11 +166,11 @@ public class QuestionResourceAreaVM extends Table {
             String text;
             if (!music.isPlaying()) {
                 text = "wait play";
+                animationImage.setDrawable(animations.get(0));
             } else {
-                text = JavaFeatureForGwt.stringFormat(
-                        "Position: %s", 
-                        music.getPosition()
-                        );
+                text = format.format(music.getPosition());
+                int imageIndex = ((int)music.getPosition()) % animations.size();
+                animationImage.setDrawable(animations.get(imageIndex));
             }
             timeLabel.setText(text);
         }
@@ -147,12 +181,10 @@ public class QuestionResourceAreaVM extends Table {
             super.draw(batch, parentAlpha);
         }
         
+        
         public void updateResource(String data) {
-            if (music != null) {
-                music.dispose();
-            }
+            stopAudio();
             music = Gdx.audio.newMusic(getFile(data));
-            playCount = 0;
             music.setOnCompletionListener(onCompletionListener);
         } 
     }

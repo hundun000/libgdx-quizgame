@@ -60,15 +60,22 @@ public class QuestionResultAnimationVM extends AbstractAnimationVM<AnswerResultE
                     game.getTextureConfig().getAnimationsTextureAtlas(), 
                     "break", 0.25f, PlayMode.REVERSED
                     ); 
-        } else {
+        } else if (answerResultEvent.getResult() == AnswerType.WRONG 
+                || answerResultEvent.getResult() == AnswerType.SKIPPED) {
             animation = aminationFactory(
                     game.getTextureConfig().getAnimationsTextureAtlas(), 
                     "continue", 0.25f, PlayMode.REVERSED
                     );
+        } else if (answerResultEvent.getResult() == AnswerType.TIMEOUOT_WRONG) {
+            animation = aminationFactory(
+                    game.getTextureConfig().getAnimationsTextureAtlas(), 
+                    "timeout", 0.25f, PlayMode.REVERSED
+                    );
+        } else {
+            throw new RuntimeException("cannot handle AnswerType = " + answerResultEvent.getResult());
         }
         
         setAnimation(animation);
-        
         super.resetFrame();
     }
     

@@ -76,7 +76,7 @@ public class QuestionModel {
         if (answerText.equals(SKIP_ANSWER_TEXT)) {
             return AnswerType.SKIPPED;
         } else if (answerText.equals(TIMEOUT_ANSWER_TEXT)) {
-            return AnswerType.WRONG;
+            return AnswerType.TIMEOUOT_WRONG;
         } else {
             // 正常回答A、B、C、D
             if (TextHelper.answerTextToInt(answerText) == this.answer) {

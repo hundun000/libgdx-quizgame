@@ -185,6 +185,8 @@ public abstract class BaseMatchStrategy {
     public void initMatch(BaseMatch baseMatch) {
         this.parent = baseMatch;
     }
+
+    public abstract int calculateSkillStartUseTime(int fullUseTime);
     
     
 }

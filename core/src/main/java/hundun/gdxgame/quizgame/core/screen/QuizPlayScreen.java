@@ -34,10 +34,9 @@ import hundun.gdxgame.quizgame.core.viewmodel.playscreen.QuestionResourceAreaVM.
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.SystemBoardVM.SystemButtonType;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.AbstractAnimationVM;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.AbstractNotificationBoardVM;
-import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.FirstGetQuestionNotificationBoardVM;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.GeneralDelayAnimationVM;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.MatchFinishNotificationBoardVM;
-import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.MatchSituationNotificationBoardVM;
+import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.PauseNotificationBoardVM;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.QuestionResultAnimationVM;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.SkillAnimationVM;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.TeamSwitchAnimationVM;
@@ -228,13 +227,13 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                 teamPrototypes = startMatchEvent.getTeamPrototypes();
                 
                 handleCurrentTeam(true);
-                
+                quizInputHandler.handleNewQuestion();
             } catch (QuizgameException e) {
                 Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());
             }
             
             
-            notificationCallerAndCallback.callShowFirstGetQuestionConfirm();
+            notificationCallerAndCallback.callShowPauseConfirm();
         }
 
         
@@ -255,6 +254,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                 MatchFinishEvent matchFinishEvent = currentMatchSituationView.getFinishEvent();
                 // --- post ---
                 countdownClockVM.clearCountdown();
+                questionResourceAreaVM.stopAudio();
                 questionOptionAreaVM.showAllOption();
                 
                 animationQueueHandler.addAnimationTask(() -> animationCallerAndCallback.callShowQuestionResultAnimation(answerResultEvent));
@@ -318,7 +318,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                     logicFrameHelper,
                     game.getTextureConfig().getPlayScreenUITextureAtlas()
                     );
-            countdownClockVM.setBounds(10, 650, 150, 150);
+            countdownClockVM.setBounds(10, 650, 200, 300);
             uiRootTable.addActor(countdownClockVM);
 //            uiRootTable.add(countdownClockVM)
 //                    .center()
@@ -342,7 +342,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             
             teamInfoBoardVM = new TeamInfoBoardVM(
                     game,
-                    DrawableFactory.getSimpleBoardBackground()
+                    DrawableFactory.getViewportBasedAlphaBoard(10,10)
                     );
             teamInfoBoardVM.setBounds(1100, 600, 350, 280);
             uiRootTable.addActor(teamInfoBoardVM);
@@ -356,7 +356,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             systemBoardVM = new SystemBoardVM(
                     game,
                     quizInputHandler,
-                    DrawableFactory.getSimpleBoardBackground()
+                    game.getTextureConfig().getPlayScreenUITextureAtlas()
                     );
             systemBoardVM.setBounds(1500, 600, 100, 280);
             uiRootTable.addActor(systemBoardVM);
@@ -365,9 +365,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             questionResourceAreaVM = new QuestionResourceAreaVM(
                     game,
                     quizInputHandler,
-                    DrawableFactory.getSimpleBoardBackground(),
-                    DrawableFactory.getSimpleBoardBackground(),
-                    DrawableFactory.getSimpleBoardBackground()
+                    game.getTextureConfig().getPlayScreenUITextureAtlas()
                     );
             questionResourceAreaVM.setBounds(0, 0, 400, 600);
             uiRootTable.addActor(questionResourceAreaVM);
@@ -380,7 +378,8 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             questionOptionAreaVM = new QuestionOptionAreaVM(
                     game, 
                     quizInputHandler,
-                    game.getTextureConfig().getPlayScreenUITextureAtlas()
+                    game.getTextureConfig().getPlayScreenUITextureAtlas(),
+                    game.getTextureConfig().getMaskTextureAtlas()
                     );
             questionOptionAreaVM.setBounds(450, 50, 500, 500);
             uiRootTable.addActor(questionOptionAreaVM);
@@ -500,14 +499,8 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         public void onChooseSystem(SystemButtonType type) {
             Gdx.app.log(this.getClass().getSimpleName(), "onChooseSystem called");
             switch (type) {
-                case SHOW_MATCH_SITUATION:
-                    notificationCallerAndCallback.callShowMatchSituationConfirm();
-                    break;
-                case EXIT_AS_DISCARD_MATCH:
-                    handelExitAsDiscardMatch();
-                    break;
-                case EXIT_AS_FINISH_MATCH:
-                    notificationCallerAndCallback.callShowMatchFinishConfirm();
+                case PAUSE:
+                    notificationCallerAndCallback.callShowPauseConfirm();
                     break;
                 default:
                     break;
@@ -566,34 +559,28 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
     }
 
     class NotificationCallerAndCallbackDelegation implements 
-            FirstGetQuestionNotificationBoardVM.CallerAndCallback,
-            MatchSituationNotificationBoardVM.CallerAndCallback, 
+            PauseNotificationBoardVM.CallerAndCallback, 
             MatchFinishNotificationBoardVM.CallerAndCallback {
         
         Runnable afterComfirmTask;
         
         // --- runtime add to stage ---
-        FirstGetQuestionNotificationBoardVM waitConfirmFirstGetQuestionMaskBoardVM;
-        MatchSituationNotificationBoardVM waitConfirmMatchSituationMaskBoardVM;
+        PauseNotificationBoardVM pauseNotificationBoardVM;
         MatchFinishNotificationBoardVM waitConfirmMatchFinishMaskBoardVM;
         
         public NotificationCallerAndCallbackDelegation() {
             float maskBoardScale = 0.8f;
             
-            waitConfirmFirstGetQuestionMaskBoardVM = new FirstGetQuestionNotificationBoardVM(
+            pauseNotificationBoardVM = new PauseNotificationBoardVM(
                     game, 
                     this, 
-                    DrawableFactory.getViewportBasedBoard(game.getWidth(), game.getHeight(), maskBoardScale)
-                    );
-            waitConfirmMatchSituationMaskBoardVM = new MatchSituationNotificationBoardVM(
-                    game, 
-                    this, 
-                    DrawableFactory.getViewportBasedBoard(game.getWidth(), game.getHeight(), maskBoardScale)
+                    DrawableFactory.getViewportBasedAlphaBoard(game.getWidth(), game.getHeight()),
+                    game.getTextureConfig().getPlayScreenUITextureAtlas()
                     );
             waitConfirmMatchFinishMaskBoardVM = new MatchFinishNotificationBoardVM(
                     game, 
                     this, 
-                    DrawableFactory.getViewportBasedBoard(game.getWidth(), game.getHeight(), maskBoardScale)
+                    DrawableFactory.getViewportBasedAlphaBoard(game.getWidth(), game.getHeight())
                     );
         }
         
@@ -625,24 +612,14 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                     }
                     );
         }
-     
-        @Override
-        public void callShowFirstGetQuestionConfirm() {
-            generalCallShowNotificationBoard(
-                    waitConfirmFirstGetQuestionMaskBoardVM, 
-                    matchConfig, 
-                    () -> {
-                        quizInputHandler.handleNewQuestion();
-                    }
-                    );
-        }
+
 
 
         @Override
-        public void callShowMatchSituationConfirm() {
+        public void callShowPauseConfirm() {
             generalCallShowNotificationBoard(
-                    waitConfirmMatchSituationMaskBoardVM, 
-                    currentMatchSituationView, 
+                    pauseNotificationBoardVM, 
+                    (Void)null, 
                     null
                     );
         }

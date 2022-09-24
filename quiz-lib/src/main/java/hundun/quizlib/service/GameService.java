@@ -3,16 +3,20 @@ package hundun.quizlib.service;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import hundun.quizlib.context.IQuizComponent;
 import hundun.quizlib.context.QuizComponentContext;
 import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.model.SessionDataPackage;
+import hundun.quizlib.model.domain.RoleRuntimeModel;
+import hundun.quizlib.model.domain.SkillSlotRuntimeModel;
 import hundun.quizlib.model.domain.TeamRuntimeModel;
 import hundun.quizlib.model.domain.match.BaseMatch;
 import hundun.quizlib.model.domain.match.MatchRecord;
 import hundun.quizlib.model.domain.match.strategy.BaseMatchStrategy;
 import hundun.quizlib.model.domain.match.strategy.MatchStrategyFactory;
+import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.view.match.MatchSituationView;
 
@@ -50,7 +54,22 @@ public class GameService implements IQuizComponent {
         BaseMatch match = new BaseMatch(sessionDataPackage.getSessionId(), strategy);
         List<TeamRuntimeModel> teamRuntimeModels = new ArrayList<>();
         for (String teamName : matchConfig.getTeamNames()) {
-            teamRuntimeModels.add(new TeamRuntimeModel(teamService.getTeam(teamName)));
+            TeamPrototype teamPrototype = teamService.getTeam(teamName);
+            RoleRuntimeModel roleRuntimeModel;
+            if (teamPrototype.getRolePrototype() != null) {
+                List<SkillSlotRuntimeModel> skillSlotRuntimeModels = teamPrototype.getRolePrototype().getSkillSlotPrototypes().stream()
+                        .map(prototype -> {
+                            int startUseTime = strategy.calculateSkillStartUseTime(prototype.getFullUseTime());
+                            SkillSlotRuntimeModel runtimeModel = new SkillSlotRuntimeModel(prototype, startUseTime);
+                            return runtimeModel;
+                        })
+                        .collect(Collectors.toList())
+                        ;
+                roleRuntimeModel = new RoleRuntimeModel(teamPrototype.getRolePrototype(), skillSlotRuntimeModels);
+            } else {
+                roleRuntimeModel = null;
+            }
+            teamRuntimeModels.add(new TeamRuntimeModel(teamPrototype, roleRuntimeModel));
         }
         match.initTeams(teamRuntimeModels);
         

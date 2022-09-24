@@ -48,6 +48,9 @@ public class PreStrategy extends BaseMatchStrategy {
         return currentHealth;
     }
 
-    
+    @Override
+    public int calculateSkillStartUseTime(int fullUseTime) {
+        return 0;
+    }
 
 }

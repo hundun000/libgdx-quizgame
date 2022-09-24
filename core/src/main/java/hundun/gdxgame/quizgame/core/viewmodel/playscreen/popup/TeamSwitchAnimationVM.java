@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -57,9 +58,9 @@ public class TeamSwitchAnimationVM extends AbstractAnimationVM<SwitchTeamEvent> 
     public void callShow(SwitchTeamEvent switchTeamEvent) {
 
         // Initialize the Animation with the frame interval and array of frames
-        setAnimation(aminationFactory(0.025f, 
-                game.getTextureConfig().getQuestionResultCorrectAnimationSheet(), 
-                FRAME_COLS, FRAME_ROWS
+        setAnimation(aminationFactory(
+                game.getTextureConfig().getAnimationsTextureAtlas(), 
+                "teamSwitch", 0.25f, PlayMode.REVERSED
                 ));
         resultLable.setText(switchTeamEvent.getToTeamName());
         

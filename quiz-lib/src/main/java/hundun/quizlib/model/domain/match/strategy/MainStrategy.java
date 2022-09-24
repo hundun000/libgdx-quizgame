@@ -51,4 +51,8 @@ public class MainStrategy extends BaseMatchStrategy {
         return currentHealth;
     }
 
+    @Override
+    public int calculateSkillStartUseTime(int fullUseTime) {
+        return fullUseTime;
+    }
 }

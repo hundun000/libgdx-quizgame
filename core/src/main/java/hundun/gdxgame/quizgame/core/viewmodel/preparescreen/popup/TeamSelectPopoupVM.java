@@ -4,15 +4,20 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
-import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TagNodeVM;
+import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamManageSlotVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamNodeVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.AbstractSelectPopoupVM.LayoutConfig;
+import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.TagSelectPopoupVM.TagSelectDoneClickListener;
 import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.quizlib.prototype.TeamPrototype;
 
@@ -23,25 +28,23 @@ import hundun.quizlib.prototype.TeamPrototype;
 public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
 
     IWaitTeamSelectCallback callback;
+    Button doneButton;
+    
     public TeamSelectPopoupVM(
             QuizGdxGame game, 
-            IWaitTeamSelectCallback callback,
-            Drawable background
+            IWaitTeamSelectCallback callback
             ) {
-        super(game, background, new LayoutConfig(TeamNodeVM.NODE_WIDTH, TeamNodeVM.NODE_HEIGHT, 2.5f, false));
+        super(game, 
+                DrawableFactory.getViewportBasedAlphaBoard(game.getWidth(), game.getHeight()), 
+                new LayoutConfig(TeamNodeVM.NODE_WIDTH, TeamNodeVM.NODE_HEIGHT, 2.5f, false));
         this.callback = callback;
         
+        this.doneButton = new TextButton("返回", game.getMainSkin());
         
-    }
-    
-    public static class Factory {
-        public static TeamSelectPopoupVM build(QuizGdxGame game, IWaitTeamSelectCallback callback) {
-            
-            return new TeamSelectPopoupVM(game, 
-                    callback,
-                    DrawableFactory.getViewportBasedBoard(game.getWidth(), game.getHeight(), 0.8f)
-                    );
-        }
+        doneButton.addListener(new TeamSelectClickListener(callback, null));
+        
+        this.row();
+        this.add(doneButton);
     }
     
     public static class TeamSelectClickListener extends ClickListener {
@@ -51,11 +54,10 @@ public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
             this.callback = callback;
             this.teamNodeVM = teamNodeVM;
         }
-        @Override
         public void clicked(InputEvent event, float x, float y) {
             super.clicked(event, x, y);
-            callback.onTeamSelectDone(teamNodeVM.getData());
-        }
+            callback.onTeamSelectDone(teamNodeVM != null ? teamNodeVM.getData() : null);
+        };
     }
     
     public static interface IWaitTeamSelectCallback {
@@ -75,4 +77,5 @@ public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
                 ;
         updateScrollPane(candidateVMs);
     }
+
 }

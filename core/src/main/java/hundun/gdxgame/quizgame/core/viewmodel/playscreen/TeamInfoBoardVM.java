@@ -46,17 +46,17 @@ public class TeamInfoBoardVM extends Table {
     
     private class TeamInfoNode extends Table {
         final static int SIGN_SIZE = 50;
-        final Image sign;
-        final TextureRegionDrawable drawable;
+        final Image signSlotImage;
+        final Drawable signDrawable;
         final static int NAME_WIDTH = 200;
         final Label teamInfoLabel;
         final Label teamInfoLabel2;
         
         TeamInfoNode() {
-            this.drawable = new TextureRegionDrawable(game.getTextureConfig().getPlayScreenUITextureAtlas().findRegion(TextureAtlasKeys.PLAYSCREEN_CURRENTTEAMSIGN));
+            this.signDrawable = new TextureRegionDrawable(game.getTextureConfig().getPlayScreenUITextureAtlas().findRegion(TextureAtlasKeys.PLAYSCREEN_CURRENTTEAMSIGN));
             
-            this.sign = new Image();
-            this.add(sign).width(SIGN_SIZE).height(SIGN_SIZE).padRight(SIGN_SIZE * 0.5f);
+            this.signSlotImage = new Image();
+            this.add(signSlotImage).width(SIGN_SIZE).height(SIGN_SIZE).padRight(SIGN_SIZE * 0.5f);
             
             this.teamInfoLabel = new Label("TEMP", game.getMainSkin());
             this.add(teamInfoLabel).width(NAME_WIDTH);
@@ -74,9 +74,9 @@ public class TeamInfoBoardVM extends Table {
         
         void updateRuntime(boolean isCurrent, TeamRuntimeView runtimeView, MatchStrategyType matchStrategyType) {
             if (isCurrent) {
-                sign.setDrawable(drawable);
+                signSlotImage.setDrawable(signDrawable);
             } else {
-                sign.setDrawable(null);
+                signSlotImage.setDrawable(null);
             }
             String healthInfoText;
             switch (matchStrategyType) {

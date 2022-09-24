@@ -36,8 +36,8 @@ public class TeamManageSlotVM extends Table {
         this.game = game;
         this.noTeamLabel = new Label("待选择", game.getMainSkin());
         this.teamNodeAreaContainer = new Container<>();
-        this.changeTeamButton = new TextButton("change", game.getMainSkin());
-        this.modifyTeamButton = new TextButton("modify", game.getMainSkin());
+        this.changeTeamButton = new TextButton("更换队伍", game.getMainSkin());
+        this.modifyTeamButton = new TextButton("配置ban/pick", game.getMainSkin());
         
         changeTeamButton.addListener(new ClickListener() {
             @Override
@@ -55,10 +55,10 @@ public class TeamManageSlotVM extends Table {
         });
         
         this.add(teamNodeAreaContainer).width(TeamNodeVM.NODE_WIDTH).height(TeamNodeVM.NODE_HEIGHT).padRight(50);
-        this.add(changeTeamButton).padRight(50);
-        this.add(modifyTeamButton);
+        this.add(changeTeamButton).grow().padRight(50);
+        this.add(modifyTeamButton).grow();
         
-        this.setBackground(DrawableFactory.getSimpleBoardBackground());
+        this.setBackground(DrawableFactory.getViewportBasedAlphaBoard(1, 1));
     }
     
     public void updateData(TeamPrototype data) {

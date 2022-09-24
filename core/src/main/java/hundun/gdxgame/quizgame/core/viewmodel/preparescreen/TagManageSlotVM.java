@@ -17,6 +17,8 @@ import lombok.Getter;
 
 public class TagManageSlotVM extends Table {
    
+    public static final int NODE_WIDTH = 800;
+    public static final int NODE_HEIGHT = 100;
     String tag;
     TeamPrototype currenTeamPrototype;
     

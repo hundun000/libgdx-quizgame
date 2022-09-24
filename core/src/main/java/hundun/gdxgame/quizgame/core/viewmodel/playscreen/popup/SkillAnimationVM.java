@@ -63,7 +63,7 @@ public class SkillAnimationVM extends AbstractAnimationVM<SkillResultEvent> {
 
         // Initialize the Animation with the frame interval and array of frames
         setAnimation(aminationFactory(0.025f, 
-                game.getTextureConfig().getQuestionResultCorrectAnimationSheet(), 
+                game.getTextureConfig().getTempAnimationSheet(), 
                 FRAME_COLS, FRAME_ROWS
                 ));
         resultLable.setText(skillResultEvent.getSkillName() + "\n" + skillResultEvent.getSkillDesc());

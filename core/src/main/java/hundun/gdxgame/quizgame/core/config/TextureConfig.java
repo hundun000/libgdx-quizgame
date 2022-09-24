@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class TextureConfig implements ISubSystemSettingHandler {
-    public static String DEFAULT_ENV = "dev";
+    public static String DEFAULT_ENV = "pro";
 
     private String currentEnv = DEFAULT_ENV;
     Map<String, EnvPackage> packageMap = new HashMap<>();
@@ -33,48 +33,34 @@ public class TextureConfig implements ISubSystemSettingHandler {
         Set<String> textureOrDefaultFailHistory = new HashSet<>();
         
         protected final AtlasRegion menuTexture;
+        protected final AtlasRegion prepareScreenBackground;
         protected final AtlasRegion playScreenBackground;
         
-        protected final Texture questionResultCorrectAnimationSheet;
-        protected final Texture questionResultWrongAnimationSheet;
-        protected final Texture questionResultSkippedAnimationSheet;
-        protected final Texture questionResultTineoutAnimationSheet;
+        protected final Texture tempAnimationSheet;
 
-        protected final Texture optionButtonCorrectMask;
-        protected final Texture optionButtonWrongMask;
 
+        protected final TextureAtlas maskTextureAtlas;
         protected final TextureAtlas animationsTextureAtlas;
         protected final TextureAtlas playScreenUITextureAtlas;
-        protected final Map<SystemButtonType, AtlasRegion> systemButtonIconMap = new HashMap<>();
-
+        
         
         EnvPackage(String ENV) {
             this.ENV = ENV;
             
 
-            optionButtonCorrectMask = textureOrDefault("optionButtonCorrectMask.png");
-            optionButtonWrongMask = textureOrDefault("optionButtonWrongMask.png");
-
-            questionResultCorrectAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
-            questionResultWrongAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
-            questionResultSkippedAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
-            questionResultTineoutAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
-        
-            animationsTextureAtlas = new TextureAtlas(fileOrDefault("quiz-animations.atlas"));
+            
+            tempAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
+            
+            animationsTextureAtlas = new TextureAtlas(fileOrDefault("playScreenAnimation.atlas"));
+            maskTextureAtlas = new TextureAtlas(fileOrDefault("maskUI.atlas"));
             playScreenUITextureAtlas = new TextureAtlas(fileOrDefault("playScreenUI.atlas"));
+            
+            
             
             TextureAtlas screensTextureAtlas = new TextureAtlas(fileOrDefault("screens.atlas"));
             menuTexture = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_MEMU);
-            playScreenBackground = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_MEMU);
-            
-            {
-                AtlasRegion texture = playScreenUITextureAtlas.findRegion(TextureAtlasKeys.PLAYSCREEN_SYSTEMBUTTON);
-                systemButtonIconMap.put(SystemButtonType.SHOW_MATCH_SITUATION, texture);
-                systemButtonIconMap.put(SystemButtonType.EXIT_AS_DISCARD_MATCH, texture);
-                systemButtonIconMap.put(SystemButtonType.EXIT_AS_FINISH_MATCH, texture);
-//                systemButtonIconMap.put(ConstructionId.QUEEN_BEEHIVE, regions[0][3]);
-//                systemButtonIconMap.put(ConstructionId.WOOD_KEEPING, regions[0][4]);
-            }
+            prepareScreenBackground = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_PREPARE);
+            playScreenBackground = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_PLAY);
             
             
         }
@@ -116,8 +102,6 @@ public class TextureConfig implements ISubSystemSettingHandler {
             }
         }
 
-        
-
     }
     
     
@@ -128,8 +112,14 @@ public class TextureConfig implements ISubSystemSettingHandler {
     public TextureConfig(QuizGdxGame game) {
         game.getSaveHandler().registerSubHandler(this);
         
-        packageMap.put("dev", new EnvPackage("dev"));
+        //packageMap.put("dev", new EnvPackage("dev"));
         packageMap.put("pro", new EnvPackage("pro"));
+        
+//        if (game.debugMode) {
+//            currentEnv = "dev";
+//        } else {
+//            currentEnv = "pro";
+//        }
     }
     
     public AtlasRegion getMenuTexture() {
@@ -140,33 +130,13 @@ public class TextureConfig implements ISubSystemSettingHandler {
         return packageMap.get(currentEnv).playScreenBackground;
     }
     
-    public Texture getQuestionResultCorrectAnimationSheet() {
-        return packageMap.get(currentEnv).questionResultCorrectAnimationSheet;
-    }
-
-    public Texture getQuestionResultWrongAnimationSheet() {
-        return packageMap.get(currentEnv).questionResultWrongAnimationSheet;
-    }
-
-    public Texture getQuestionResultSkippedAnimationSheet() {
-        return packageMap.get(currentEnv).questionResultSkippedAnimationSheet;
-    }
-
-    public Texture getQuestionResultTineoutAnimationSheet() {
-        return packageMap.get(currentEnv).questionResultTineoutAnimationSheet;
-    }
-
-    public Map<SystemButtonType, AtlasRegion> getSystemButtonIconMap() {
-        return packageMap.get(currentEnv).systemButtonIconMap;
+    public AtlasRegion getPrepareScreenBackground() {
+        return packageMap.get(currentEnv).prepareScreenBackground;
     }
 
     
-    public Texture getOptionButtonCorrectMask() {
-        return packageMap.get(currentEnv).optionButtonCorrectMask;
-    }
-
-    public Texture getOptionButtonWrongMask() {
-        return packageMap.get(currentEnv).optionButtonWrongMask;
+    public TextureAtlas getMaskTextureAtlas() {
+        return packageMap.get(currentEnv).maskTextureAtlas;
     }
     
     @Override
@@ -187,5 +157,9 @@ public class TextureConfig implements ISubSystemSettingHandler {
     
     public TextureAtlas getPlayScreenUITextureAtlas() {
         return packageMap.get(currentEnv).playScreenUITextureAtlas;
+    }
+    
+    public Texture getTempAnimationSheet() {
+        return packageMap.get(currentEnv).tempAnimationSheet;
     }
 }

@@ -13,42 +13,42 @@ audio
   index: 1
 audio
   rotate: false
-  xy: 1375, 1180
+  xy: 322, 630
   size: 146, 149
   orig: 146, 149
   offset: 0, 0
   index: 0
 clock
   rotate: false
-  xy: 1167, 1125
+  xy: 1113, 811
   size: 206, 204
   orig: 206, 204
   offset: 0, 0
   index: 1
 clock
   rotate: false
-  xy: 793, 811
+  xy: 1321, 811
   size: 206, 204
   orig: 206, 204
   offset: 0, 0
   index: 3
 clock
   rotate: false
-  xy: 322, 575
+  xy: 847, 607
   size: 206, 204
   orig: 206, 204
   offset: 0, 0
   index: 0
 clock
   rotate: false
-  xy: 322, 369
+  xy: 1055, 605
   size: 206, 204
   orig: 206, 204
   offset: 0, 0
   index: 2
 clockText
   rotate: false
-  xy: 527, 813
+  xy: 847, 813
   size: 264, 202
   orig: 264, 202
   offset: 0, 0
@@ -74,6 +74,20 @@ optionButton
   orig: 1001, 139
   offset: 0, 0
   index: 0
+pause
+  rotate: false
+  xy: 527, 1017
+  size: 318, 312
+  orig: 318, 312
+  offset: 0, 0
+  index: -1
+play
+  rotate: false
+  xy: 527, 703
+  size: 318, 312
+  orig: 318, 312
+  offset: 0, 0
+  index: -1
 questionStemBackground
   rotate: false
   xy: 2, 1613
@@ -83,7 +97,7 @@ questionStemBackground
   index: -1
 skillButton(SKILL_5050)
   rotate: false
-  xy: 847, 1017
+  xy: 1167, 1017
   size: 318, 312
   orig: 318, 312
   offset: 0, 0
@@ -97,14 +111,14 @@ skillButton(SKILL_HELP_1)
   index: -1
 skillButton(SKILL_HELP_2)
   rotate: false
-  xy: 1672, 1712
+  xy: 847, 1017
   size: 318, 312
   orig: 318, 312
   offset: 0, 0
   index: -1
 skillButton(SKILL_SKIP)
   rotate: false
-  xy: 527, 1017
+  xy: 1672, 1712
   size: 318, 312
   orig: 318, 312
   offset: 0, 0

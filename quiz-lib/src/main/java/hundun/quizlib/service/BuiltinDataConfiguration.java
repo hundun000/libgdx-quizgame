@@ -95,10 +95,16 @@ public class BuiltinDataConfiguration implements IQuizComponent {
 
         
         
-        teamService.registerTeam(HAS_ROLE_TEAM_NAME_1, Arrays.asList("单机游戏"), Arrays.asList("动画"), DEMO_ROLE_NAME);
-        teamService.registerTeam(HAS_ROLE_TEAM_NAME_2, Arrays.asList("动画"), Arrays.asList("单机游戏"), DEMO_ROLE_NAME);
-        
-        
+        teamService.registerTeam(HAS_ROLE_TEAM_NAME_1, 
+                new ArrayList<>(Arrays.asList("单机游戏")),
+                new ArrayList<>(Arrays.asList("动画")),
+                DEMO_ROLE_NAME
+                );
+        teamService.registerTeam(HAS_ROLE_TEAM_NAME_2, 
+                new ArrayList<>(Arrays.asList("动画")),
+                new ArrayList<>(Arrays.asList("单机游戏")),
+                DEMO_ROLE_NAME
+                );
         
 
 

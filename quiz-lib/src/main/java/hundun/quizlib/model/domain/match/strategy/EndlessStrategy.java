@@ -41,4 +41,9 @@ public class EndlessStrategy extends BaseMatchStrategy {
         return null;
     }
 
+    @Override
+    public int calculateSkillStartUseTime(int fullUseTime) {
+        return 0;
+    }
+
 }

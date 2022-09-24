@@ -17,12 +17,11 @@ public class RoleRuntimeModel {
     
     private final RolePrototype prototype;
 
-    private final List<SkillSlotRuntimeModel> skillSlotRuntimeModels = new ArrayList<>();
+    private final List<SkillSlotRuntimeModel> skillSlotRuntimeModels;
     
-    public RoleRuntimeModel(RolePrototype prototype) {
+    public RoleRuntimeModel(RolePrototype prototype, List<SkillSlotRuntimeModel> skillSlotRuntimeModels) {
         this.prototype = prototype;
-        skillSlotRuntimeModels.clear();
-        prototype.getSkillSlotPrototypes().forEach(skillSlotPrototype -> skillSlotRuntimeModels.add(new SkillSlotRuntimeModel(skillSlotPrototype)));
+        this.skillSlotRuntimeModels = skillSlotRuntimeModels;
     }
     
     

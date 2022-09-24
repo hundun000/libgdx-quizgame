@@ -29,16 +29,12 @@ public class TeamRuntimeModel {
 	private double hitPickRate;
 	
 	
-	public TeamRuntimeModel(TeamPrototype prototype) {
+	public TeamRuntimeModel(TeamPrototype prototype, RoleRuntimeModel roleRuntimeModel) {
 		this.prototype = prototype;
 		int currentHealth = -1;
 	    this.matchScore = 0;
         setHealth(currentHealth);
-        if (prototype.getRolePrototype() != null) {
-            roleRuntimeModel = new RoleRuntimeModel(prototype.getRolePrototype());
-        } else {
-            roleRuntimeModel = null;
-        }
+        this.roleRuntimeModel = roleRuntimeModel;
         
         resetHitPickRate();
         buffs.clear();

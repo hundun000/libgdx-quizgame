@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -16,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
+import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.view.question.QuestionView;
@@ -34,14 +38,25 @@ public class SystemBoardVM extends Table {
     public SystemBoardVM(
             QuizGdxGame game,
             CallerAndCallback callerAndCallback,
-            Drawable background
+            TextureAtlas textureAtlas
             ) {
         this.callerAndCallback = callerAndCallback;
-        setBackground(background);
+        
         
         SystemButton optionButton;
         for (int i = 0; i < SystemButtonType.types.length; i++) {
-            optionButton = new SystemButton(game, SystemButtonType.types[i]);
+            SystemButtonType type = SystemButtonType.types[i];
+            
+            AtlasRegion buttonAtlasRegion;
+            switch (type) {
+                case PAUSE:
+                    buttonAtlasRegion = textureAtlas.findRegion(TextureAtlasKeys.PLAYSCREEN_PAUSEBUTTON);
+                    break;
+                default:
+                    buttonAtlasRegion = null;
+                    break;
+            }
+            optionButton = new SystemButton(game, type, buttonAtlasRegion);
             buttons.add(optionButton);
             this.row();
             this.add(optionButton)
@@ -54,15 +69,12 @@ public class SystemBoardVM extends Table {
     }
     
     public enum SystemButtonType {
-        SHOW_MATCH_SITUATION,
-        EXIT_AS_DISCARD_MATCH, 
-        EXIT_AS_FINISH_MATCH,
+        PAUSE,
+
         ;
         
         static SystemButtonType[] types = new SystemButtonType[] {
-                SHOW_MATCH_SITUATION,
-                EXIT_AS_DISCARD_MATCH,
-                EXIT_AS_FINISH_MATCH
+                PAUSE
         };
     }
     
@@ -71,8 +83,8 @@ public class SystemBoardVM extends Table {
 
         final SystemButtonType type;
         
-        public SystemButton(QuizGdxGame game, SystemButtonType type) {
-            super(game.getTextureConfig().getSystemButtonIconMap().get(type));
+        public SystemButton(QuizGdxGame game, SystemButtonType type, AtlasRegion buttonAtlasRegion) {
+            super(buttonAtlasRegion);
             this.type = type;
             this.addListener(
                     new InputListener(){

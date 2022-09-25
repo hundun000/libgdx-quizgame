@@ -1,35 +1,39 @@
 package hundun.gdxgame.quizgame.core.domain;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
+import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.MyGameSaveData;
+import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler.ISubGameSaveHandler;
+import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.quizlib.context.IFrontEnd;
 import hundun.quizlib.context.QuizComponentContext;
 import hundun.quizlib.exception.QuizgameException;
-import hundun.quizlib.service.GameService;
 import lombok.Getter;
 
 /**
  * @author hundun
  * Created on 2022/08/30
  */
-public class QuizLibBridge implements IFrontEnd {
+public class QuizLibBridge implements IFrontEnd, ISubGameSaveHandler{
 
     @Getter
     QuizComponentContext quizComponentContext;
+    @Getter
+    LibDataConfiguration libDataConfiguration;
     
-    public QuizLibBridge() {
+    public QuizLibBridge(QuizGdxGame game) {
 
         try {
             this.quizComponentContext = QuizComponentContext.Factory.create(this);
-            quizComponentContext.getBuiltinDataConfiguration().register1();
+            this.libDataConfiguration = new LibDataConfiguration(quizComponentContext);
         } catch (QuizgameException e) {
             Gdx.app.error(this.getClass().getSimpleName(), "QuizgameException", e);
         }
+        
+        game.getSaveHandler().registerSubHandler(this);
     }
     
     
@@ -50,6 +54,28 @@ public class QuizLibBridge implements IFrontEnd {
         String result = file.readString();
         Gdx.app.log(this.getClass().getSimpleName(), "fileGetContent result.length = " + result.length());
         return result;
+    }
+
+
+
+    @Override
+    public void applyGameSaveData(MyGameSaveData myGameSaveData) {
+        try {
+            libDataConfiguration.registerForSaveData(myGameSaveData.getTeamPrototypes());
+            Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                    "applyGameSaveData TeamPrototypes.size = %s", 
+                    myGameSaveData.getTeamPrototypes() != null ? myGameSaveData.getTeamPrototypes().size() : null
+                    ));
+        } catch (QuizgameException e) {
+            Gdx.app.error(this.getClass().getSimpleName(), "error", e);
+        }
+    }
+
+
+
+    @Override
+    public void currentSituationToSaveData(MyGameSaveData myGameSaveData) {
+        myGameSaveData.setTeamPrototypes(quizComponentContext.getTeamService().listTeams());
     }
 
 }

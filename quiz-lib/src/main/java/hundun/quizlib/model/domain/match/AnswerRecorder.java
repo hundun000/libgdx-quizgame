@@ -7,29 +7,20 @@ package hundun.quizlib.model.domain.match;
 import java.util.LinkedList;
 
 import hundun.quizlib.prototype.match.AnswerType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class AnswerRecorder {
     
-    class RecordNode{
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    private static class RecordNode{
         private String teamName;
         private String answer;
         private String questionId;
         private AnswerType answerType;
-        
-        public RecordNode(String teamName, String answer, String questionId, AnswerType answerType) {
-            this.teamName = teamName;
-            this.answer = answer;
-            this.questionId = questionId;
-            this.answerType = answerType;
-        }
-        
-        public boolean isMe(String teamName) {
-            return this.teamName.equals(teamName);
-        }
-        
-        public AnswerType getAnswerType() {
-            return answerType;
-        }
     }
     
     
@@ -77,7 +68,7 @@ public class AnswerRecorder {
     public int count(String teamName, AnswerType check, int max, boolean consecutive) {
         int num = 0;
         for (RecordNode node : nodes) {
-            if(!node.isMe(teamName)) {
+            if(!node.teamName.equals(teamName)) {
                 continue;
             }
             

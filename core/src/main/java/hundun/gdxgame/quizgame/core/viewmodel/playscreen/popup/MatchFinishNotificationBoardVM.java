@@ -1,32 +1,24 @@
 package hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
-import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchFinishHistory;
-import hundun.gdxgame.quizgame.core.viewmodel.share.MatchFinishHistoryVM;
-import hundun.quizlib.prototype.event.MatchFinishEvent;
-import hundun.quizlib.prototype.match.MatchConfig;
-import hundun.quizlib.view.match.MatchSituationView;
+import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchHistoryDTO;
+import hundun.gdxgame.quizgame.core.viewmodel.share.MatchHistoryVM;
 
 /**
  * @author hundun
  * Created on 2021/11/12
  */
-public class MatchFinishNotificationBoardVM extends AbstractNotificationBoardVM<MatchFinishHistory> {
+public class MatchFinishNotificationBoardVM extends AbstractNotificationBoardVM<MatchHistoryDTO> {
 
-    MatchFinishHistory data;
+    MatchHistoryDTO data;
 
-    MatchFinishHistoryVM vm;
+    MatchHistoryVM vm;
     
     public MatchFinishNotificationBoardVM(
             QuizGdxGame game,
@@ -39,17 +31,13 @@ public class MatchFinishNotificationBoardVM extends AbstractNotificationBoardVM<
     }
     
     @Override
-    public void onCallShow(MatchFinishHistory history) {
+    public void onCallShow(MatchHistoryDTO history) {
         //this.setVisible(true);
         this.data = history;
-        
-        // --- render data ---
-        this.clear();
-        
-        this.vm = new MatchFinishHistoryVM(game, history.getData());
-        this.add(vm).row();
-        
-        Button textButton = new TextButton("yes", this.game.getMainSkin());
+        this.vm = MatchHistoryVM.Factory.fromBO(game, history);
+        Label label = new Label("比赛记录", game.getMainSkin());
+        label.setFontScale(1.5f);
+        Button textButton = new TextButton("离开并保存", this.game.getMainSkin());
         textButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -57,7 +45,18 @@ public class MatchFinishNotificationBoardVM extends AbstractNotificationBoardVM<
                 MatchFinishNotificationBoardVM.this.callback.onNotificationConfirmed();
             }
         });
-        this.add(textButton);
+        
+        // --- render data ---
+        this.clear();
+        
+        
+        this.add(label).padBottom(50).row();
+        this.add(vm).padBottom(50).row();
+        this.add(textButton).width(200).height(50).fill();
+        
+        if (game.debugMode) {
+            this.debugCell();
+        }
     }
     
     

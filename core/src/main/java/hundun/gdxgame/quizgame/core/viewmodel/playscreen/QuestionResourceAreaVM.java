@@ -1,6 +1,5 @@
 package hundun.gdxgame.quizgame.core.viewmodel.playscreen;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,31 +9,28 @@ import java.util.stream.Stream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Music.OnCompletionListener;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Scaling;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
+import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.prototype.question.ResourceType;
 import hundun.quizlib.view.question.QuestionView;
-import lombok.Getter;
 
 /**
  * @author hundun
@@ -102,7 +98,7 @@ public class QuestionResourceAreaVM extends Table {
         final OnCompletionListener onCompletionListener;
         int playCount;
         Label timeLabel;
-        Button playButton;
+        TextButton playButton;
         Image animationImage;
         List<TextureRegionDrawable> animations;
         
@@ -128,7 +124,9 @@ public class QuestionResourceAreaVM extends Table {
                 ) {
             this.format = NumberFormat.getFormat(1, 1);
             this.timeLabel = new Label("TEMP", game.getMainSkin());
-            this.playButton = new TextButton("play", game.getMainSkin());
+            timeLabel.setFontScale(1.5f);
+            this.playButton = new TextButton("播放", game.getMainSkin());
+            playButton.getLabel().setFontScale(1.5f);
             this.animationImage = new Image();
             AtlasRegion[] animationAtlasRegions = game.getTextureConfig().getPlayScreenUITextureAtlas().findRegions(TextureAtlasKeys.PLAYSCREEN_AUDIO).items;
             this.animations = Stream.of(animationAtlasRegions)
@@ -143,13 +141,14 @@ public class QuestionResourceAreaVM extends Table {
                     if (!music.isPlaying()) {
                         music.play();
                         playCount++;
+                        Gdx.app.log(this.getClass().getSimpleName(), "playCount change to " + playCount);
                     }
                 }
             });
             this.onCompletionListener = new OnCompletionListener() {
                 @Override
                 public void onCompletion(Music music) {
-                    if (AudioResourceNode.this.playCount > 1) {
+                    if (AudioResourceNode.this.playCount >= 1) {
                         callback.onFirstPlayDone();
                     }
                 }
@@ -159,13 +158,15 @@ public class QuestionResourceAreaVM extends Table {
             this.row();
             this.add(timeLabel);
             this.row();
-            this.add(playButton);
+            this.add(playButton).fill();
+            
+            this.background(DrawableFactory.getSimpleBoardBackground(10, 10));
         }
         
         public void updateTimer() {
             String text;
             if (!music.isPlaying()) {
-                text = "wait play";
+                text = "";
                 animationImage.setDrawable(animations.get(0));
             } else {
                 text = format.format(music.getPosition());
@@ -197,7 +198,7 @@ public class QuestionResourceAreaVM extends Table {
         }
         
         public ImageResourceNode() {
-            
+            this.setScaling(Scaling.fit);
         }
         
         public void updateResource(String data) {

@@ -1,15 +1,12 @@
 package hundun.quizlib.tool;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,15 +34,24 @@ public class OldVersionDataConvertTool {
             String[] tags = getTags(file.getName());
             String newQuestionFileName = toNewResourceId(file.getName());
             String newQuestionFilePath = "OldVersionDataConvert/new/questions" + File.separator + newQuestionFileName;
-            convertQuestions(
-                    questions, 
-                    tags,
-                    newQuestionFilePath, 
-                    "OldVersionDataConvert/old/pictures", 
-                    "OldVersionDataConvert/old/audios", 
-                    "OldVersionDataConvert/new/pictures", 
-                    "OldVersionDataConvert/new/audios"
-                    );
+            PrintWriter writer = new PrintWriter(newQuestionFilePath, "UTF-8");;
+            try {
+                convertQuestions(
+                        writer,
+                        questions, 
+                        tags,
+                        newQuestionFilePath, 
+                        "OldVersionDataConvert/old/pictures", 
+                        "OldVersionDataConvert/old/audios", 
+                        "OldVersionDataConvert/new/pictures", 
+                        "OldVersionDataConvert/new/audios"
+                        );
+            } catch (Exception e) {
+                throw e;
+            } finally {
+                writer.close();
+            }
+            
             newQuestionFileNames.add(newQuestionFileName);
             System.out.println(file.getName() + " -> " + newQuestionFileName);
         }
@@ -57,7 +63,7 @@ public class OldVersionDataConvertTool {
     }
     
     
-    private static void convertQuestions(List<QuestionModel> questions, 
+    private static void convertQuestions(PrintWriter writer, List<QuestionModel> questions, 
             String[] tags, 
             String newQuestionFile, 
             String oldImageFolder,
@@ -67,7 +73,7 @@ public class OldVersionDataConvertTool {
             ) throws Exception { 
         int size = questions.size();
         
-        PrintWriter writer = new PrintWriter(newQuestionFile, "UTF-8");
+        
         writer.println(size);
         writer.println(Stream.of(tags).collect(Collectors.joining(QuestionLoaderService.TAGS_SPLIT)));
         writer.println();
@@ -123,7 +129,7 @@ public class OldVersionDataConvertTool {
             
         }
         
-        writer.close();
+        
     }
     
     private static String[] getTags(String fileName) {

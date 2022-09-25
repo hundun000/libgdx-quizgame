@@ -6,7 +6,7 @@ filter: Nearest, Nearest
 repeat: none
 break
   rotate: false
-  xy: 2, 806
+  xy: 804, 1208
   size: 800, 400
   orig: 800, 400
   offset: 0, 0
@@ -24,13 +24,6 @@ break
   size: 800, 400
   orig: 800, 400
   offset: 0, 0
-  index: 4
-break
-  rotate: false
-  xy: 2, 404
-  size: 800, 400
-  orig: 800, 400
-  offset: 0, 0
   index: 5
 break
   rotate: false
@@ -39,6 +32,13 @@ break
   orig: 800, 400
   offset: 0, 0
   index: 7
+break
+  rotate: false
+  xy: 2, 404
+  size: 800, 400
+  orig: 800, 400
+  offset: 0, 0
+  index: 4
 continue
   rotate: false
   xy: 2, 1208
@@ -74,6 +74,41 @@ continue
   orig: 800, 400
   offset: 0, 0
   index: 2
+delay
+  rotate: false
+  xy: 1606, 1810
+  size: 400, 200
+  orig: 400, 200
+  offset: 0, 0
+  index: 0
+delay
+  rotate: false
+  xy: 1606, 1608
+  size: 400, 200
+  orig: 400, 200
+  offset: 0, 0
+  index: 2
+delay
+  rotate: false
+  xy: 1606, 1406
+  size: 400, 200
+  orig: 400, 200
+  offset: 0, 0
+  index: 4
+delay
+  rotate: false
+  xy: 1606, 1204
+  size: 400, 200
+  orig: 400, 200
+  offset: 0, 0
+  index: 1
+delay
+  rotate: false
+  xy: 1606, 1002
+  size: 400, 200
+  orig: 400, 200
+  offset: 0, 0
+  index: 3
 matchFinish
   rotate: false
   xy: 2, 1610
@@ -104,7 +139,7 @@ matchFinish
   index: 2
 teamSwitch
   rotate: false
-  xy: 804, 1208
+  xy: 804, 1610
   size: 800, 400
   orig: 800, 400
   offset: 0, 0
@@ -118,7 +153,7 @@ teamSwitch
   index: 1
 timeout
   rotate: false
-  xy: 804, 1610
+  xy: 2, 806
   size: 800, 400
   orig: 800, 400
   offset: 0, 0
@@ -145,7 +180,7 @@ break
   index: 3
 break
   rotate: false
-  xy: 804, 1610
+  xy: 804, 1208
   size: 800, 400
   orig: 800, 400
   offset: 0, 0
@@ -194,14 +229,14 @@ matchFinish
   index: 3
 teamSwitch
   rotate: false
-  xy: 2, 806
+  xy: 804, 1610
   size: 800, 400
   orig: 800, 400
   offset: 0, 0
   index: 3
 timeout
   rotate: false
-  xy: 804, 1208
+  xy: 2, 806
   size: 800, 400
   orig: 800, 400
   offset: 0, 0

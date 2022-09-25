@@ -1,9 +1,5 @@
 package hundun.gdxgame.share.base;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -12,9 +8,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.eskalon.commons.screen.ManagedScreen;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import lombok.Getter;
-import lombok.Setter;
 
 
 

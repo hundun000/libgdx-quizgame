@@ -7,18 +7,9 @@ import hundun.gdxgame.quizgame.core.domain.QuizLibBridge;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler;
 import hundun.gdxgame.quizgame.core.domain.QuizViewModelContext;
-import hundun.gdxgame.quizgame.core.screen.HistoryScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizMenuScreen;
-import hundun.gdxgame.quizgame.core.screen.QuizPlayScreen;
-import hundun.gdxgame.quizgame.core.screen.PrepareScreen;
-import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchFinishHistory;
 import hundun.gdxgame.share.base.BaseHundunGame;
-import hundun.gdxgame.share.base.BaseViewModelContext;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.share.base.util.save.ISaveTool;
-import hundun.gdxgame.share.starter.StarterMenuScreen;
-import hundun.quizlib.prototype.event.MatchFinishEvent;
-import hundun.quizlib.prototype.match.MatchConfig;
 import lombok.Getter;
 
 public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {
@@ -37,11 +28,11 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {
 	    this.debugMode = true;
 	}
 	
-	@Override
-	public void pause() {
-	    super.pause();
-	    gameSaveCurrent();
-	}
+//	@Override
+//	public void pause() {
+//	    super.pause();
+//	    gameSaveCurrent();
+//	}
 
     
     @Override
@@ -52,7 +43,7 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {
         this.mainSkinFilePath = "skins/DefaultSkinWithChineseHeiti26/uiskin.json";
         // ------ for self ------
         this.textureConfig = new TextureConfig(this);
-        this.quizLibBridge = new QuizLibBridge();
+        this.quizLibBridge = new QuizLibBridge(this);
     }
 
     @Override

@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
-import hundun.gdxgame.quizgame.core.screen.PrepareScreen;
 import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.quizlib.prototype.match.MatchStrategyType;
 

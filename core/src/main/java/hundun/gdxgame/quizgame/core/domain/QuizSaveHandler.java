@@ -15,14 +15,14 @@ import hundun.gdxgame.share.base.AbstractSaveHandler;
  * Created on 2022/09/09
  */
 public class QuizSaveHandler extends AbstractSaveHandler<QuizRootSaveData> {
-    private final QuizGdxGame game;
+
     boolean gameSaveInited = false;
     boolean systemSettingInited = false;
     List<ISubGameSaveHandler> subGameSaveHandlers = new ArrayList<>();
     List<ISubSystemSettingHandler> subSystemSettingHandlers = new ArrayList<>();
     
     public QuizSaveHandler(QuizGdxGame game) {
-        this.game = game;
+        
     }
 
     @Override
@@ -80,6 +80,7 @@ public class QuizSaveHandler extends AbstractSaveHandler<QuizRootSaveData> {
         void currentSituationToSystemSetting(SystemSetting systemSetting);
     }
     
+    @Override
     public void registerSubHandler(Object object) {
         if (object instanceof ISubGameSaveHandler) {
             subGameSaveHandlers.add((ISubGameSaveHandler)object);

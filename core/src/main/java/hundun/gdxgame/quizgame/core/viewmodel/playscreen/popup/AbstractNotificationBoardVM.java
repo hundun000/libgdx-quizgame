@@ -1,7 +1,5 @@
 package hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -9,11 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
-import hundun.quizlib.prototype.match.MatchConfig;
-import hundun.quizlib.view.match.MatchSituationView;
 
 /**
  * @author hundun

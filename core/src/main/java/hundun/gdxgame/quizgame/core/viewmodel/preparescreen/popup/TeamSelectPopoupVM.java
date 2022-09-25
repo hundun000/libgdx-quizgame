@@ -1,23 +1,15 @@
 package hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
-import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamManageSlotVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamNodeVM;
-import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.AbstractSelectPopoupVM.LayoutConfig;
-import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.TagSelectPopoupVM.TagSelectDoneClickListener;
 import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.quizlib.prototype.TeamPrototype;
 
@@ -54,6 +46,7 @@ public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
             this.callback = callback;
             this.teamNodeVM = teamNodeVM;
         }
+        @Override
         public void clicked(InputEvent event, float x, float y) {
             super.clicked(event, x, y);
             callback.onTeamSelectDone(teamNodeVM != null ? teamNodeVM.getData() : null);

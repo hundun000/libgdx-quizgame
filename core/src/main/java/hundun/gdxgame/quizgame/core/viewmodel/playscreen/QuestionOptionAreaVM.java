@@ -2,38 +2,22 @@ package hundun.gdxgame.quizgame.core.viewmodel.playscreen;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
-import hundun.gdxgame.share.base.util.DrawableFactory;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.view.question.QuestionView;
-import lombok.Setter;
 
 /**
  * @author hundun
@@ -60,7 +44,7 @@ public class QuestionOptionAreaVM extends Table {
         this.game = game;
         this.callerAndCallback = callerAndCallback;
         //setBackground(background);
-        this.NODE_WIDTH = 500;
+        this.NODE_WIDTH = 700;
         this.NODE_HEIGHT = 100;
         
         OptionNode optionButton;
@@ -131,16 +115,16 @@ public class QuestionOptionAreaVM extends Table {
                     );
             this.wrongMask = new TextureRegionDrawable(
                     maskTextureAtlas.findRegion(TextureAtlasKeys.MASK_WRONGOPTION)
-                    );
-                    
+                    );   
             this.textButton = new Label("TEMP", game.getMainSkin(), "whiteType");
+            textButton.setFontScale(1.5f);
+            this.maskActor = new Image();
+            maskActor.setBounds(0, 0, NODE_WIDTH, NODE_HEIGHT);
+            
             this.add(textButton)
                     .expand()
                     //.fill()
                     ;
-            
-            this.maskActor = new Image();
-            maskActor.setBounds(0, 0, NODE_WIDTH, NODE_HEIGHT);
             this.addActor(maskActor);
             
             this.addListener(

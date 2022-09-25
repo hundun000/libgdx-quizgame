@@ -20,44 +20,58 @@ audio
   index: 0
 clock
   rotate: false
-  xy: 1113, 811
+  xy: 1167, 607
   size: 206, 204
   orig: 206, 204
   offset: 0, 0
   index: 1
 clock
   rotate: false
-  xy: 1321, 811
+  xy: 1530, 1506
   size: 206, 204
   orig: 206, 204
   offset: 0, 0
   index: 3
 clock
   rotate: false
-  xy: 847, 607
+  xy: 1738, 1506
   size: 206, 204
   orig: 206, 204
   offset: 0, 0
   index: 0
 clock
   rotate: false
-  xy: 1055, 605
+  xy: 1530, 1300
   size: 206, 204
   orig: 206, 204
   offset: 0, 0
   index: 2
 clockText
   rotate: false
-  xy: 847, 813
+  xy: 1167, 813
   size: 264, 202
   orig: 264, 202
   offset: 0, 0
   index: -1
 currentTeamSign
   rotate: false
-  xy: 1352, 1662
+  xy: 1433, 967
   size: 48, 48
   orig: 48, 48
+  offset: 0, 0
+  index: -1
+currentTeamSign_BLACK
+  rotate: false
+  xy: 1992, 1976
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+currentTeamSign_ORANGE
+  rotate: false
+  xy: 1375, 779
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
   index: -1
 optionButton
@@ -83,7 +97,7 @@ pause
   index: -1
 play
   rotate: false
-  xy: 527, 703
+  xy: 847, 703
   size: 318, 312
   orig: 318, 312
   offset: 0, 0
@@ -97,7 +111,7 @@ questionStemBackground
   index: -1
 skillButton(SKILL_5050)
   rotate: false
-  xy: 1167, 1017
+  xy: 527, 703
   size: 318, 312
   orig: 318, 312
   offset: 0, 0
@@ -111,7 +125,7 @@ skillButton(SKILL_HELP_1)
   index: -1
 skillButton(SKILL_HELP_2)
   rotate: false
-  xy: 847, 1017
+  xy: 1167, 1017
   size: 318, 312
   orig: 318, 312
   offset: 0, 0
@@ -133,6 +147,13 @@ skillButtonUseOut
 systemButton
   rotate: false
   xy: 2, 467
+  size: 318, 312
+  orig: 318, 312
+  offset: 0, 0
+  index: -1
+systemButtonExit
+  rotate: false
+  xy: 847, 1017
   size: 318, 312
   orig: 318, 312
   offset: 0, 0

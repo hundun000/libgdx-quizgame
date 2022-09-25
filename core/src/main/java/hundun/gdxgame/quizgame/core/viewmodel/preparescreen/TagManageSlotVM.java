@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.quizlib.prototype.TeamPrototype;
-import lombok.Getter;
 
 public class TagManageSlotVM extends Table {
    

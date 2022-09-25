@@ -1,31 +1,28 @@
 package hundun.gdxgame.quizgame.core.screen;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.MyGameSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler.ISubGameSaveHandler;
-import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamNodeVM;
+import hundun.gdxgame.quizgame.core.viewmodel.historyscreen.HistoryAreaVM;
+import hundun.gdxgame.quizgame.core.viewmodel.historyscreen.HistoryAreaVM.LayoutConfig;
+import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TagManageSlotVM;
+import hundun.gdxgame.quizgame.core.viewmodel.share.MatchHistoryVM;
 import hundun.gdxgame.share.base.BaseHundunScreen;
+import hundun.gdxgame.share.base.util.DrawableFactory;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
-import hundun.quizlib.prototype.event.MatchFinishEvent;
-import hundun.quizlib.prototype.match.MatchConfig;
-import hundun.quizlib.prototype.match.MatchStrategyType;
-import hundun.quizlib.service.BuiltinDataConfiguration;
-import hundun.quizlib.service.QuestionLoaderService;
-import hundun.quizlib.service.TeamService;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +35,9 @@ public class HistoryScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
 
     @Getter
     @Setter
-    List<MatchFinishHistory> histories = new ArrayList<>();
+    List<MatchHistoryDTO> histories = new ArrayList<>();
+    
+    HistoryAreaVM historyAreaVM;
     
     public HistoryScreen(QuizGdxGame game) {
         super(game);
@@ -51,10 +50,8 @@ public class HistoryScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         Gdx.input.setInputProcessor(uiStage);
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
         
-        
-        
-        if (pushParams.length > 0) {
-            MatchFinishHistory newHistory = (MatchFinishHistory) pushParams[0];
+        if (pushParams != null && pushParams.length > 0) {
+            MatchHistoryDTO newHistory = (MatchHistoryDTO) pushParams[0];
             Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
                     "pushParams by newHistory = %s", 
                     newHistory.toString()
@@ -62,14 +59,30 @@ public class HistoryScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
             addNewHistory(newHistory);
         }
         
+        this.historyAreaVM = new HistoryAreaVM(game, 
+                null, 
+                new LayoutConfig(MatchHistoryVM.MatchHistoryVM_WIDTH, MatchHistoryVM.MatchHistoryVM_HEIGHT, 6.0f)
+                );
+        
+        backUiStage.clear();
         uiRootTable.clear();
+        
+        Image backImage = new Image(game.getTextureConfig().getHistoryScreenBackground());
+        backImage.setBounds(0, 0, game.getWidth(), game.getHeight());
+        backUiStage.addActor(backImage);
 
-        uiRootTable.add(new ToNextScreenButtonVM(game));
+        uiRootTable.add(historyAreaVM);
+        uiRootTable.row();
+        uiRootTable.add(new ToNextScreenButtonVM(game)).width(200).height(100).fill();
         
         if (game.debugMode) {
             uiRootTable.debugCell();
         }
 
+        historyAreaVM.updateScrollPane(histories.stream()
+                .map(it -> MatchHistoryVM.Factory.fromBO(game, it))
+                .collect(Collectors.toList())
+                );
     }
 
     @Override
@@ -81,20 +94,13 @@ public class HistoryScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
     private static class ToNextScreenButtonVM extends TextButton {
 
         public ToNextScreenButtonVM(QuizGdxGame game) {
-            super("Next", game.getMainSkin());
+            super("返回", game.getMainSkin());
             
             this.addListener(
-                    new InputListener(){
-                        @Override
-                        public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-
-                            game.getScreenManager().pushScreen(PrepareScreen.class.getSimpleName(), "blending_transition");;
-                            
-                        }
-                        @Override
-                        public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                            return true;
-                        }
+                    new ClickListener() {
+                        public void clicked(InputEvent event, float x, float y) {
+                            game.getScreenManager().pushScreen(QuizMenuScreen.class.getSimpleName(), "blending_transition");;
+                        };
                     }
             );
         }
@@ -110,17 +116,21 @@ public class HistoryScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
     }
 
     @Data
-    public static class MatchFinishHistory {
+    public static class MatchHistoryDTO {
         Map<String, Integer> data;
     }
     
-    private void addNewHistory(MatchFinishHistory history) {
+    private void addNewHistory(MatchHistoryDTO history) {
         histories.add(0, history);
     }
 
     @Override
     public void applyGameSaveData(MyGameSaveData myGameSaveData) {
         histories = myGameSaveData.getMatchFinishHistories();
+        Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
+                "applyGameSaveData histories.size = %s", 
+                histories.size()
+                ));
     }
 
     @Override

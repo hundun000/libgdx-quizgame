@@ -1,28 +1,16 @@
 package hundun.gdxgame.quizgame.core.screen;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
-import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchFinishHistory;
+import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchHistoryDTO;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.CountdownClockVM;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.QuestionOptionAreaVM;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.QuestionResourceAreaVM;
@@ -55,11 +43,9 @@ import hundun.quizlib.prototype.event.SwitchQuestionEvent;
 import hundun.quizlib.prototype.event.SwitchTeamEvent;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.prototype.skill.SkillSlotPrototype;
-import hundun.quizlib.service.BuiltinDataConfiguration;
 import hundun.quizlib.service.BuiltinDataConfiguration.BuiltinSkill;
 import hundun.quizlib.service.GameService;
 import hundun.quizlib.view.match.MatchSituationView;
-import hundun.quizlib.view.team.TeamRuntimeView;
 import lombok.Setter;
 
 /**
@@ -201,9 +187,9 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
 
 
        
-        private MatchFinishHistory toHistory() {
+        private MatchHistoryDTO toHistory() {
             
-            MatchFinishHistory history = new MatchFinishHistory();
+            MatchHistoryDTO history = new MatchHistoryDTO();
             history.setData(currentMatchSituationView.getTeamRuntimeInfos().stream()
                     .collect(Collectors.toMap(
                             teamRuntimeInfo -> teamRuntimeInfo.getName(), 
@@ -283,22 +269,15 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                 Gdx.app.error(this.getClass().getSimpleName(), "QuizgameException", e);
             }
         }
-        
-        private void handelExitAsDiscardMatch() {
-            exitClear();
-            game.getScreenManager().pushScreen(PrepareScreen.class.getSimpleName(), "blending_transition");
-        }
 
-        private void handelExitAsFinishMatch(MatchFinishHistory history) {
+        private void handelExitAsFinishMatch(MatchHistoryDTO history) {
             exitClear();
             game.getScreenManager().pushScreen(HistoryScreen.class.getSimpleName(), 
                     "blending_transition",
                     history
                     );
         }
-        
 
-        
         private void handleCurrentTeam(boolean isNewPrototypes) {
             
             if (isNewPrototypes) {
@@ -367,7 +346,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                     quizInputHandler,
                     game.getTextureConfig().getPlayScreenUITextureAtlas()
                     );
-            questionResourceAreaVM.setBounds(0, 0, 400, 600);
+            questionResourceAreaVM.setBounds(0, 0, 450, 600);
             uiRootTable.addActor(questionResourceAreaVM);
 //            uiRootTable.add(imageAreaVM)
 //                    .center()
@@ -381,7 +360,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                     game.getTextureConfig().getPlayScreenUITextureAtlas(),
                     game.getTextureConfig().getMaskTextureAtlas()
                     );
-            questionOptionAreaVM.setBounds(450, 50, 500, 500);
+            questionOptionAreaVM.setBounds(450, 50, 700, 500);
             uiRootTable.addActor(questionOptionAreaVM);
 //            uiRootTable.add(questionOptionAreaVM)
 //                    .center()
@@ -394,7 +373,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                     quizInputHandler,
                     DrawableFactory.getSimpleBoardBackground()
                     );
-            skillBoardVM.setBounds(1000, 50, 500, 500);
+            skillBoardVM.setBounds(1200, 50, 400, 500);
             uiRootTable.addActor(skillBoardVM);
 
             if (game.debugMode) {
@@ -503,7 +482,12 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
                     notificationCallerAndCallback.callShowPauseConfirm();
                     break;
                 case EXIT:
-                    notificationCallerAndCallback.callShowMatchFinishConfirm();
+                    animationQueueHandler.addAnimationTask(() -> notificationCallerAndCallback.callShowMatchFinishConfirm());
+                    animationQueueHandler.setAfterAllAnimationDoneTask(() -> {
+                                handleCurrentTeam(false);        
+                                handelExitAsFinishMatch(toHistory());
+                            });
+                    animationQueueHandler.checkNextAnimation();
                     break;
                 default:
                     break;
@@ -572,7 +556,6 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         MatchFinishNotificationBoardVM waitConfirmMatchFinishMaskBoardVM;
         
         public NotificationCallerAndCallbackDelegation() {
-            float maskBoardScale = 0.8f;
             
             pauseNotificationBoardVM = new PauseNotificationBoardVM(
                     game, 
@@ -606,7 +589,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
 
         @Override
         public void callShowMatchFinishConfirm() {
-            MatchFinishHistory history = quizInputHandler.toHistory();
+            MatchHistoryDTO history = quizInputHandler.toHistory();
             generalCallShowNotificationBoard(
                     waitConfirmMatchFinishMaskBoardVM, 
                     history, 
@@ -668,7 +651,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         
         @Override
         public void callShowGeneralDelayAnimation(float second) {
-            generalCallShowAnimation(generalDelayAnimationVM, second, false);
+            generalCallShowAnimation(generalDelayAnimationVM, second, true);
         }
 
         @Override

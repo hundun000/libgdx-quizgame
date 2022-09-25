@@ -1,7 +1,5 @@
 package hundun.gdxgame.share.base.util.save;
 
-import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
-
 /**
  * @author hundun
  * Created on 2022/04/08

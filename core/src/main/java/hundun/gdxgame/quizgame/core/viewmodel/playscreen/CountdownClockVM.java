@@ -1,8 +1,6 @@
 package hundun.gdxgame.quizgame.core.viewmodel.playscreen;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -14,7 +12,6 @@ import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
 import hundun.gdxgame.share.base.LogicFrameHelper;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author hundun
@@ -25,7 +22,7 @@ public class CountdownClockVM extends Table {
     private final CallerAndCallback callerAndCallback;
     private final LogicFrameHelper logicFrameHelper;
     
-    private static final String WORD = "Time: ";
+    private static final String WORD = "秒";
     private final Image image;
     Table textAreaTable;
     private final Label wordPart;
@@ -46,7 +43,7 @@ public class CountdownClockVM extends Table {
             ) {
         this.callerAndCallback = callerAndCallback;
         this.logicFrameHelper = logicFrameHelper;
-        this.format = NumberFormat.getFormat(1, 1);
+        this.format = NumberFormat.getFormat(1, 0);
         //setBackground(background);
         
         this.clockDrawables = new Drawable[TextureAtlasKeys.PLAYSCREEN_CLOCK_SIZE];
@@ -57,12 +54,14 @@ public class CountdownClockVM extends Table {
         }
         
         this.wordPart = new Label(WORD, game.getMainSkin());
+        wordPart.setFontScale(1.5f);
         this.countdownPart = new Label("TEMP", game.getMainSkin());
+        countdownPart.setFontScale(1.5f);
         this.image = new Image();
         this.textAreaTable = new Table();
         
-        textAreaTable.add(wordPart).padLeft(25);
-        textAreaTable.add(countdownPart).expandX().fillX().left();
+        textAreaTable.add(countdownPart).expandX().right();
+        textAreaTable.add(wordPart).padRight(50);
         textAreaTable.setBackground(new TextureRegionDrawable(
                 atlas.findRegion(TextureAtlasKeys.PLAYSCREEN_CLOCKTEXT)
                 ));

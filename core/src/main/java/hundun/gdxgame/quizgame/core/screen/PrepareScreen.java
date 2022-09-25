@@ -1,39 +1,37 @@
 package hundun.gdxgame.quizgame.core.screen;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
+import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.MatchStrategyInfoVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.MatchStrategySelectVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamManageAreaVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamManageSlotVM;
-import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamNodeVM;
+import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.ToPlayScreenButtonVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.MatchStrategySelectVM.IMatchStrategyChangeListener;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.TagSelectPopoupVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.TeamSelectPopoupVM;
-import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.TeamSelectPopoupVM.IWaitTeamSelectCallback;
 import hundun.gdxgame.share.base.BaseHundunScreen;
 import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.match.MatchConfig;
 import hundun.quizlib.prototype.match.MatchStrategyType;
-import hundun.quizlib.service.BuiltinDataConfiguration;
 import hundun.quizlib.service.QuestionLoaderService;
 import hundun.quizlib.service.QuestionService;
 import hundun.quizlib.service.TeamService;
@@ -65,6 +63,7 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
     TeamManageAreaVM teamManageAreaVM;
     MatchStrategyInfoVM matchStrategyInfoVM;
     ToPlayScreenButtonVM toPlayScreenButtonVM;
+    ToMenuScreenButtonVM toMenuScreenButtonVM;
     
     Image backImage;
     
@@ -82,11 +81,28 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         this.teamSelectPopoupVM = new TeamSelectPopoupVM(game, this);
         this.tagSelectPopoupVM = new TagSelectPopoupVM(game, this);
         
+        InputListener toPlayScreenButtonListener = new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                MatchConfig matchConfig = new MatchConfig();
+                matchConfig.setTeamNames(selectedTeamNames);
+                matchConfig.setQuestionPackageName(currentQuestionPackageName);
+                matchConfig.setMatchStrategyType(currenType);
+                
+                game.getScreenManager().pushScreen(QuizPlayScreen.class.getSimpleName(), 
+                        "blending_transition",
+                        matchConfig
+                        );
+            }
+        };
+        
         this.teamManageAreaVM = new TeamManageAreaVM(game, this);
         this.matchStrategySelectVM = new MatchStrategySelectVM(game, this);
-        this.toPlayScreenButtonVM = new ToPlayScreenButtonVM(game);
+        this.toPlayScreenButtonVM = new ToPlayScreenButtonVM(game, toPlayScreenButtonListener);
         this.matchStrategyInfoVM = new MatchStrategyInfoVM(game);
         this.backImage = new Image(game.getTextureConfig().getPrepareScreenBackground());
+        this.toMenuScreenButtonVM = new ToMenuScreenButtonVM(game);
         
         backUiStage.clear();
         uiRootTable.clear();
@@ -106,8 +122,11 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         matchStrategyInfoVM.setBounds(1100, 500, MATCHSTRATEGYINFOVM_WIDTH, 350);
         uiRootTable.addActor(matchStrategyInfoVM);
         
-        toPlayScreenButtonVM.setBounds(1100, 50, 400, 350);
+        toPlayScreenButtonVM.setBounds(1100, 50, 350, 350);
         uiRootTable.addActor(toPlayScreenButtonVM);
+        
+        toMenuScreenButtonVM.setBounds(1450, 50, 100, 100);
+        uiRootTable.addActor(toMenuScreenButtonVM);
         
         if (game.debugMode) {
             uiRootTable.debugAll();
@@ -130,30 +149,27 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         }
     }
     
-    private class ToPlayScreenButtonVM extends TextButton {
+    private class ToMenuScreenButtonVM extends Image {
 
-        public ToPlayScreenButtonVM(QuizGdxGame game) {
-            super("Next", game.getMainSkin());
+        public ToMenuScreenButtonVM(QuizGdxGame game) {
             
-            this.addListener(new ChangeListener() {
-                        @Override
-                        public void changed(ChangeEvent event, Actor actor) {
-                            MatchConfig matchConfig = new MatchConfig();
-                            matchConfig.setTeamNames(selectedTeamNames);
-                            matchConfig.setQuestionPackageName(currentQuestionPackageName);
-                            matchConfig.setMatchStrategyType(currenType);
-                            
-                            game.getScreenManager().pushScreen(QuizPlayScreen.class.getSimpleName(), 
-                                    "blending_transition",
-                                    matchConfig
-                                    );
-                        }
-                    });
+            this.setDrawable(new TextureRegionDrawable(
+                    game.getTextureConfig().getPlayScreenUITextureAtlas().findRegion(
+                            TextureAtlasKeys.PLAYSCREEN_EXITBUTTON
+                            )
+                    ));
+            this.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    game.getScreenManager().pushScreen(QuizMenuScreen.class.getSimpleName(), 
+                            "blending_transition"
+                            );
+                }
+            });
         }
-        
-        
-        
     }
+
 
 
     @Override
@@ -161,7 +177,7 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         this.teamService = game.getQuizLibBridge().getQuizComponentContext().getTeamService();
         this.questionService = game.getQuizLibBridge().getQuizComponentContext().getQuestionService();
         
-        this.currentQuestionPackageName = QuestionLoaderService.BUSINESS_PACKAGE_NAME;
+        this.currentQuestionPackageName = QuestionLoaderService.PRELEASE_PACKAGE_NAME;
     }
 
     @Override

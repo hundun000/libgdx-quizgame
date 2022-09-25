@@ -10,16 +10,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.SystemSetting;
 import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler.ISubSystemSettingHandler;
-import hundun.gdxgame.quizgame.core.viewmodel.playscreen.SystemBoardVM.SystemButtonType;
 import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
-import lombok.Getter;
-//import lombok.Getter;
-import lombok.Setter;
 
 public class TextureConfig implements ISubSystemSettingHandler {
     public static String DEFAULT_ENV = "pro";
@@ -32,7 +26,8 @@ public class TextureConfig implements ISubSystemSettingHandler {
         private final String ENV;
         Set<String> textureOrDefaultFailHistory = new HashSet<>();
         
-        protected final AtlasRegion menuTexture;
+        protected final AtlasRegion menuTitle;
+        protected final AtlasRegion menuScreenBackground;
         protected final AtlasRegion prepareScreenBackground;
         protected final AtlasRegion playScreenBackground;
         
@@ -58,14 +53,13 @@ public class TextureConfig implements ISubSystemSettingHandler {
             
             
             TextureAtlas screensTextureAtlas = new TextureAtlas(fileOrDefault("screens.atlas"));
-            menuTexture = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_MEMU);
+            menuTitle = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_MEMU_TITLE);
+            menuScreenBackground = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_MEMU);
             prepareScreenBackground = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_PREPARE);
             playScreenBackground = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_PLAY);
             
             
         }
-        
-        
         
         private Texture textureOrDefault(FileHandle file) {
             try {
@@ -73,10 +67,6 @@ public class TextureConfig implements ISubSystemSettingHandler {
             } catch (Exception e) {
                 return new Texture(Gdx.files.internal("badlogic.jpg"));
             }
-        }
-        
-        private Texture textureOrDefault(String subName) {
-            return new Texture(fileOrDefault(subName));
         }
         
         private FileHandle envfile(String subName) {
@@ -122,8 +112,12 @@ public class TextureConfig implements ISubSystemSettingHandler {
 //        }
     }
     
-    public AtlasRegion getMenuTexture() {
-        return packageMap.get(currentEnv).menuTexture;
+    public AtlasRegion getMenuTitle() {
+        return packageMap.get(currentEnv).menuTitle;
+    }
+    
+    public AtlasRegion getMenuScreenBackground() {
+        return packageMap.get(currentEnv).menuScreenBackground;
     }
 
     public AtlasRegion getPlayScreenBackground() {
@@ -134,6 +128,9 @@ public class TextureConfig implements ISubSystemSettingHandler {
         return packageMap.get(currentEnv).prepareScreenBackground;
     }
 
+    public AtlasRegion getHistoryScreenBackground() {
+        return packageMap.get(currentEnv).playScreenBackground;
+    }
     
     public TextureAtlas getMaskTextureAtlas() {
         return packageMap.get(currentEnv).maskTextureAtlas;

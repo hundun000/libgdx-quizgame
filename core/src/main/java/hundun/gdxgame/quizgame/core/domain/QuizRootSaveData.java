@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hundun.gdxgame.quizgame.core.config.TextureConfig;
-import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchFinishHistory;
+import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchHistoryDTO;
+import hundun.quizlib.prototype.TeamPrototype;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class QuizRootSaveData {
     
     MyGameSaveData gameSaveData;
@@ -27,7 +29,8 @@ public class QuizRootSaveData {
     @NoArgsConstructor
     @Builder
     public static class MyGameSaveData {
-        List<MatchFinishHistory> matchFinishHistories;
+        List<TeamPrototype> teamPrototypes;
+        List<MatchHistoryDTO> matchFinishHistories;
     }
     
     @Data
@@ -39,12 +42,14 @@ public class QuizRootSaveData {
     
     public static class Factory {
         public static QuizRootSaveData newGame() {
-            return new QuizRootSaveData(
-                    MyGameSaveData.builder()
+            return QuizRootSaveData.builder()
+                    .gameSaveData(MyGameSaveData.builder()
+                            .teamPrototypes(null)
                             .matchFinishHistories(new ArrayList<>())
-                            .build(),
-                    new SystemSetting(TextureConfig.DEFAULT_ENV)
-                    );
+                            .build()
+                            )
+                    .systemSetting(new SystemSetting(TextureConfig.DEFAULT_ENV))
+                    .build();
         }
     }
 

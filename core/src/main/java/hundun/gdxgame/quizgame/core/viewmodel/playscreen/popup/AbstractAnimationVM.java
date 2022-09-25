@@ -1,6 +1,5 @@
 package hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -8,15 +7,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
-import hundun.quizlib.prototype.event.AnswerResultEvent;
-import hundun.quizlib.prototype.event.SkillResultEvent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,15 +26,11 @@ public abstract class AbstractAnimationVM<T_CALL_ARG> extends Table {
     private final IAnimationCallback callback;
     
     protected final QuizGdxGame game;
+    
     @Getter
     private boolean runningState;
-    
-    // Objects used
     @Setter(value = AccessLevel.PROTECTED)
-    private Animation<Drawable> animation; // Must declare frame type (TextureRegion)
-    
-
-    // A variable for tracking elapsed time for the animation
+    private Animation<Drawable> animation;
     private float stateTime;
     
     public AbstractAnimationVM(QuizGdxGame game, IAnimationCallback callback) {
@@ -78,6 +70,17 @@ public abstract class AbstractAnimationVM<T_CALL_ARG> extends Table {
         for (int i = 0; i < regionArray.size; i++) {
             drawableArray.add(new TextureRegionDrawable(regionArray.get(i)));
         }
+        return new Animation<Drawable>(frameDuration, drawableArray, playMode);
+    }
+    
+    public Animation<Drawable> aminationFactoryBySumTime(TextureAtlas atlas, String id,
+            float second, PlayMode playMode) {
+        Array<AtlasRegion> regionArray = atlas.findRegions(id);
+        Array<Drawable> drawableArray = new Array<>(true, regionArray.size, Drawable.class);
+        for (int i = 0; i < regionArray.size; i++) {
+            drawableArray.add(new TextureRegionDrawable(regionArray.get(i)));
+        }
+        float frameDuration = second / regionArray.size;
         return new Animation<Drawable>(frameDuration, drawableArray, playMode);
     }
     

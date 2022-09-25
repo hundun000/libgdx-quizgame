@@ -1,12 +1,9 @@
 package hundun.gdxgame.share.base.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import hundun.gdxgame.share.base.BaseHundunScreen;
 
 /**
  * @author hundun
@@ -56,9 +53,14 @@ public class JavaFeatureForGwt {
         }
         
         public static void main(String[] args) {
-            NumberFormat format = new NumberFormat(2, 2);
+            NumberFormat format;
+            
+            format = new NumberFormat(2, 2);
             System.out.println(format.format(42));
             System.out.println(format.format(0.1));
+            System.out.println(format.format(114.514));
+            
+            format = new NumberFormat(1, 0);
             System.out.println(format.format(114.514));
         }
 
@@ -81,7 +83,7 @@ public class JavaFeatureForGwt {
         String delimiter = "%s";
 
         for (int i = 0; i < args.length; i++) {
-            format = format.replaceFirst(delimiter, args[i].toString());
+            format = format.replaceFirst(delimiter, args[i] != null ? args[i].toString() : "null");
         }
 
         return format;

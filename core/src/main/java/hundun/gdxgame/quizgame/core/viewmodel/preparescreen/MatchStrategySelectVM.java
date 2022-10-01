@@ -102,7 +102,7 @@ public class MatchStrategySelectVM extends Table {
         
         void updatePrototype(MatchStrategyType type) {
             this.type = type;
-            nameLabel.setText(type.name());
+            nameLabel.setText(MatchStrategyInfoVM.toMatchStrategyTypeChinese(type));
         }
         
         void updateRuntime(boolean isCurrent) {

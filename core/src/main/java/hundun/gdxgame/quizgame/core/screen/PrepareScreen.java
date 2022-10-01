@@ -177,7 +177,7 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         this.teamService = game.getQuizLibBridge().getQuizComponentContext().getTeamService();
         this.questionService = game.getQuizLibBridge().getQuizComponentContext().getQuestionService();
         
-        this.currentQuestionPackageName = QuestionLoaderService.PRELEASE_PACKAGE_NAME;
+        this.currentQuestionPackageName = QuestionLoaderService.RELEASE_PACKAGE_NAME;
     }
 
     @Override

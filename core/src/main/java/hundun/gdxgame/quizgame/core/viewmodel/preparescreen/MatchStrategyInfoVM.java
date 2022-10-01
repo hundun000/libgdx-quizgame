@@ -37,11 +37,22 @@ public class MatchStrategyInfoVM extends Table {
         
     }
     
+    public static String toMatchStrategyTypeChinese(MatchStrategyType type) {
+        switch (type) {
+            case PRE:
+                return "预赛";
+            case MAIN:
+                return "决赛";
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+    
     public void updateStrategy(MatchStrategyType type) {
 
         switch (type) {
             case PRE:
-                nameLabel.setText("预赛");
+                nameLabel.setText(toMatchStrategyTypeChinese(type));
                 labelMap[0][1].setText("20秒");
                 labelMap[1][1].setText("5");
                 labelMap[2][1].setText("否");
@@ -49,7 +60,7 @@ public class MatchStrategyInfoVM extends Table {
                 labelMap[4][1].setText("1");
                 break;
             case MAIN:
-                nameLabel.setText("决赛");
+                nameLabel.setText(toMatchStrategyTypeChinese(type));
                 labelMap[0][1].setText("20秒");
                 labelMap[1][1].setText("");
                 labelMap[2][1].setText("是");
@@ -57,7 +68,7 @@ public class MatchStrategyInfoVM extends Table {
                 labelMap[4][1].setText("2");
                 break;
             default:
-                nameLabel.setText("决赛");
+                nameLabel.setText(toMatchStrategyTypeChinese(type));
                 labelMap[1][0].setText("");
                 labelMap[1][1].setText("");
                 labelMap[1][2].setText("");

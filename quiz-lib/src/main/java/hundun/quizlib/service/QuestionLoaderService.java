@@ -26,7 +26,7 @@ public class QuestionLoaderService implements IQuizComponent {
 //    public File RESOURCE_ICON_FOLDER;
 //	private File PACKAGES_FOLDER;
     public static String PACKAGE_FOLDER = "quiz/question_packages/";
-	public static String BUSINESS_PACKAGE_NAME = "questions";
+	public static String RELEASE_PACKAGE_NAME = "questions";
 	public static String PRELEASE_PACKAGE_NAME = "questions_small";
 	public static String TEST_PACKAGE_NAME = "questions_test";
 	public static String TEST_SMALL_PACKAGE_NAME = "questions_test_small";

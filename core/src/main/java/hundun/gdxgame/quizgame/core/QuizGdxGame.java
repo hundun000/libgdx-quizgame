@@ -25,7 +25,7 @@ public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {
 	
 	public QuizGdxGame(ISaveTool<QuizRootSaveData> saveTool) {
 	    super(constMainViewportWidth, constMainViewportHeight, saveTool);
-	    this.debugMode = true;
+	    this.debugMode = false;
 	}
 	
 //	@Override

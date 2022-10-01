@@ -1,4 +1,4 @@
-package hundun.quizlib.tool;
+package hundun.gdxgame.quizgame.desktop;
 
 import java.io.File;
 import java.io.PrintWriter;

@@ -104,7 +104,29 @@ project(":swing-desktop") {
 }
 
 project(":quiz-lib") {
+    apply plugin: 'maven'
+
     eclipse.project.name = appName + '-quiz-lib'
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+    artifacts {
+        archives sourcesJar
+    }
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                // useless for jitpack: groupId = GROUP
+                artifactId = "quiz-lib"
+                // useless for jitpack: version = VERSION
+    
+                from components.java
+            }
+        }
+    }
+
 
     dependencies {
         

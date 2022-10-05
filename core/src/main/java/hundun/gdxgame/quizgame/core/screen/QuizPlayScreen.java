@@ -8,6 +8,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.crashinvaders.vfx.effects.ChainVfxEffect;
+import com.crashinvaders.vfx.effects.GaussianBlurEffect;
+
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.screen.HistoryScreen.MatchHistoryDTO;
@@ -62,6 +65,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
     private final AnimationCallerAndCallbackDelegation animationCallerAndCallback = new AnimationCallerAndCallbackDelegation();
     private final NotificationCallerAndCallbackDelegation notificationCallerAndCallback = new NotificationCallerAndCallbackDelegation();
     private final QuizInputHandler quizInputHandler = new QuizInputHandler(); 
+    private GaussianBlurEffect vfxEffect = new GaussianBlurEffect();
     
     // --- for quizLib ---
     MatchConfig matchConfig;
@@ -86,6 +90,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         this.quizLib = game.getQuizLibBridge().getQuizComponentContext().getGameService();
         
         this.logicFrameHelper = new LogicFrameHelper(QuizGdxGame.LOGIC_FRAME_PER_SECOND);
+        
     }
 
     @Override
@@ -651,12 +656,12 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
         
         @Override
         public void callShowGeneralDelayAnimation(float second) {
-            generalCallShowAnimation(generalDelayAnimationVM, second, true);
+            generalCallShowAnimation(generalDelayAnimationVM, second, true, null);
         }
 
         @Override
         public void callShowQuestionResultAnimation(AnswerResultEvent answerResultEvent) {
-            generalCallShowAnimation(questionResultAnimationVM, answerResultEvent, true);
+            generalCallShowAnimation(questionResultAnimationVM, answerResultEvent, true, vfxEffect);
         }
 
         @Override
@@ -667,19 +672,25 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             Gdx.input.setInputProcessor(uiStage);
             logicFrameHelper.setLogicFramePause(false);
             // --- for animationVM ---
+            vfxManager.removeAllEffects();
             animationQueueHandler.setCurrentAnimationVM(null);
             animationQueueHandler.checkNextAnimation();
         }
         
         @Override
         public void callShowSkillAnimation(SkillResultEvent skillResultEvent) {
-            generalCallShowAnimation(skillAnimationVM, skillResultEvent, false);
+            generalCallShowAnimation(skillAnimationVM, skillResultEvent, false, vfxEffect);
         }
         
         /**
          * popupRootTable-cell always expand(), fill is optional by argument.
          */
-        private <T> void generalCallShowAnimation(AbstractAnimationVM<T> animationVM, T arg, boolean fill) {
+        private <T> void generalCallShowAnimation(
+                AbstractAnimationVM<T> animationVM, 
+                T arg, 
+                boolean fill,
+                ChainVfxEffect effect
+                ) {
             Gdx.app.log(this.getClass().getSimpleName(), JavaFeatureForGwt.stringFormat(
                     "generalCallShowAnimation called, animationVM = %s", 
                     animationVM.getClass().getSimpleName()
@@ -696,13 +707,16 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             Gdx.input.setInputProcessor(popupUiStage);
             logicFrameHelper.setLogicFramePause(true);
             // --- for animationVM ---
+            if (effect != null) {
+                vfxManager.addEffect(effect);
+            }
             animationQueueHandler.setCurrentAnimationVM(animationVM);
             animationVM.callShow(arg);
         }
         
         @Override
         public void callShowTeamSwitchAnimation(SwitchTeamEvent switchTeamEvent) {
-            generalCallShowAnimation(teamSwitchAnimationVM, switchTeamEvent, true);
+            generalCallShowAnimation(teamSwitchAnimationVM, switchTeamEvent, true, vfxEffect);
         }
     }
     

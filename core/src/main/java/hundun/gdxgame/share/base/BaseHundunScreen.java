@@ -1,11 +1,13 @@
 package hundun.gdxgame.share.base;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.crashinvaders.vfx.VfxManager;
 
 import de.eskalon.commons.screen.ManagedScreen;
 import lombok.Getter;
@@ -26,7 +28,7 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
     protected final Stage uiStage;
     protected final Stage popupUiStage;
     protected final Stage backUiStage;
-
+    protected final VfxManager vfxManager;
 
     // ------ lazy init ------
     protected final Table uiRootTable;
@@ -49,6 +51,11 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
         popupRootTable = new Table();
         popupRootTable.setFillParent(true);
         popupUiStage.addActor(popupRootTable);
+        
+        // VfxManager is a host for the effects.
+        // It captures rendering into internal off-screen buffer and applies a chain of defined effects.
+        // Off-screen buffers may have any pixel format, for this example we will use RGBA8888.
+        vfxManager = new VfxManager(Format.RGBA8888);
     }
     
     protected void onLogicFrame() {
@@ -73,8 +80,17 @@ public abstract class BaseHundunScreen<T_GAME extends BaseHundunGame<T_SAVE>, T_
         popupUiStage.act();
         
         // ====== be careful of draw order ======
+        
+        vfxManager.cleanUpBuffers();
+        vfxManager.beginInputCapture();
+        
         backUiStage.draw();
         uiStage.draw();
+        
+        vfxManager.endInputCapture();
+        vfxManager.applyEffects();
+        vfxManager.renderToScreen();
+        
         popupUiStage.draw();
         renderPopupAnimations(delta, game.getBatch());
     }

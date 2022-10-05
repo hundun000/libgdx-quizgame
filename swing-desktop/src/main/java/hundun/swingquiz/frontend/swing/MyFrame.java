@@ -1,4 +1,4 @@
-package hundun.quizlib.frontend.swing;
+package hundun.swingquiz.frontend.swing;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -31,6 +31,7 @@ import hundun.quizlib.service.GameService;
 import hundun.quizlib.service.QuestionLoaderService;
 import hundun.quizlib.service.TeamService;
 import hundun.quizlib.view.match.MatchSituationView;
+import hundun.swingquiz.frontend.SimpleFrontEnd;
 
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
@@ -40,9 +41,10 @@ import javax.swing.JLabel;
  * @author hundun
  * Created on 2019/09/11
  */
-public class MyFrame extends JFrame implements ISecondEventReceiver, IFrontEnd {
+public class MyFrame extends JFrame implements ISecondEventReceiver {
 
     GameService gameService;
+    SimpleFrontEnd simpleFrontEnd;
     
     String matchId;
     MatchSituationView matchSituationView;
@@ -75,8 +77,9 @@ public class MyFrame extends JFrame implements ISecondEventReceiver, IFrontEnd {
      * @param questionService2 
      * @throws Exception 
      */
-    public void lazyInit(QuizComponentContext context) {
+    public void lazyInit(QuizComponentContext context, SimpleFrontEnd simpleFrontEnd) {
         this.gameService = context.getGameService();
+        this.simpleFrontEnd = simpleFrontEnd;
         
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -287,34 +290,6 @@ public class MyFrame extends JFrame implements ISecondEventReceiver, IFrontEnd {
             } else {
                 lblTime.setForeground(Color.BLUE);
             }
-    }
-
-    @Override
-    public String[] fileGetChilePathNames(String folderName) {
-        String actualPath = "../assets/" + folderName;
-        File folder = new File(actualPath);
-        System.out.println("fileGetChilePathNames folder " + folder.getAbsolutePath() + ", exist = " + folder.exists());
-        String[] result = Stream.of(folder.list())
-                .filter(it -> !it.equals(QuestionLoaderService.FOLDER_CHILD_HINT_FILE_NAME))
-                .collect(Collectors.toList())
-                .toArray(new String[0]);
-        System.out.println("fileGetChilePathNames result = " + Arrays.toString(result));
-        return result;
-    }
-
-    @Override
-    public String fileGetContent(String fileName) {
-        String actualPath = "../assets/" + fileName;
-        File file = new File(actualPath);
-        Path path = Paths.get(file.getPath());
-        try {
-            String result = new String(Files.readAllBytes(path));
-            System.out.println("fileGetContent result.length = " + result.length());
-            return result;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }  
     }
     
 

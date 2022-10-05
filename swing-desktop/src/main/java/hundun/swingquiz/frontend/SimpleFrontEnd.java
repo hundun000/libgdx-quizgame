@@ -1,4 +1,4 @@
-package hundun.quizlib.frontend.console;
+package hundun.swingquiz.frontend;
 
 import java.awt.Color;
 import java.io.File;
@@ -19,7 +19,7 @@ import hundun.quizlib.service.QuestionLoaderService;
  * @author hundun
  * Created on 2022/10/21
  */
-public class ConsoleFrontEnd implements IFrontEnd {
+public class SimpleFrontEnd implements IFrontEnd {
 
 
     @Override

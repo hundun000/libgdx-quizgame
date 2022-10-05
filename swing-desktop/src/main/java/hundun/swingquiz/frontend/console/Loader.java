@@ -1,4 +1,4 @@
-package hundun.quizlib.frontend.console;
+package hundun.swingquiz.frontend.console;
 
 import java.util.Arrays;
 
@@ -10,6 +10,7 @@ import hundun.quizlib.service.BuiltinDataConfiguration;
 import hundun.quizlib.service.GameService;
 import hundun.quizlib.service.QuestionLoaderService;
 import hundun.quizlib.view.match.MatchSituationView;
+import hundun.swingquiz.frontend.SimpleFrontEnd;
 
 /**
  * @author hundun
@@ -25,7 +26,7 @@ public class Loader {
 
     public static void main(String[] args) {
         
-        ConsoleFrontEnd frontEnd = new ConsoleFrontEnd();
+        SimpleFrontEnd frontEnd = new SimpleFrontEnd();
         QuizComponentContext quizComponentContext;
         try {
             quizComponentContext = QuizComponentContext.Factory.create(frontEnd);

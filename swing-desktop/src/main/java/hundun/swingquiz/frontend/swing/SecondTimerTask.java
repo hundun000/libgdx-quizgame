@@ -1,4 +1,4 @@
-package hundun.quizlib.frontend.swing;
+package hundun.swingquiz.frontend.swing;
 
 import java.util.TimerTask;
 

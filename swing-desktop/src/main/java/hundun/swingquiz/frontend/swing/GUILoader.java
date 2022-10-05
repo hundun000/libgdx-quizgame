@@ -1,8 +1,9 @@
-package hundun.quizlib.frontend.swing;
+package hundun.swingquiz.frontend.swing;
 
 import hundun.quizlib.context.QuizComponentContext;
 import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.service.GameService;
+import hundun.swingquiz.frontend.SimpleFrontEnd;
 
 /**
  * @author hundun
@@ -11,31 +12,29 @@ import hundun.quizlib.service.GameService;
 public class GUILoader {
 
     
-    static boolean usingSmallFrame = true;
     static int SMALL_WIDTH = 460;
     static int BIG_WIDTH = 850;
 
 
     public static void main(String[] args) {
         
-        MyFrame frame = new MyFrame();
+        
+        SimpleFrontEnd simpleFrontEnd = new SimpleFrontEnd();
         QuizComponentContext quizComponentContext;
         try {
-            quizComponentContext = QuizComponentContext.Factory.create(frame);
+            quizComponentContext = QuizComponentContext.Factory.create(simpleFrontEnd);
             quizComponentContext.getBuiltinDataConfiguration().registerForGuest();
         } catch (QuizgameException e) {
             e.printStackTrace();
             return;
         }
         
-        frame.lazyInit(quizComponentContext);
+        MyFrame frame = new MyFrame();
+        frame.lazyInit(quizComponentContext, simpleFrontEnd);
         
         
-        if (usingSmallFrame) {
-            frame.setBounds(frame.getX(), frame.getY(), SMALL_WIDTH, frame.getHeight());
-        } else {
-            frame.setBounds(frame.getX(), frame.getY(), BIG_WIDTH, frame.getHeight());
-        }
+        frame.setBounds(frame.getX(), frame.getY(), SMALL_WIDTH, frame.getHeight());
+
     }
 
 }

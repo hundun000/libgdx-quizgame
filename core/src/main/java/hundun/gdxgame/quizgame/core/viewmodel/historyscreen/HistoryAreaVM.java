@@ -37,7 +37,7 @@ public class HistoryAreaVM extends Table {
         //this.setBounds(0, 0, game.getWidth(), game.getHeight());
 
         childTable = new Table();
-        childTable.setBackground(DrawableFactory.getSimpleBoardBackground());
+        childTable.setBackground(game.getTextureConfig().getHistoryAreaVMBackgroundDrawable());
         this.scrollPane = new ScrollPane(childTable, game.getMainSkin());
         scrollPane.setScrollingDisabled(true, false);
         

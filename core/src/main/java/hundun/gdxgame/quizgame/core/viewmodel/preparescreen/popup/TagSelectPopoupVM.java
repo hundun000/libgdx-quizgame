@@ -29,6 +29,7 @@ public class TagSelectPopoupVM extends AbstractSelectPopoupVM<TagManageSlotVM> {
             ) {
         super(game, 
                 DrawableFactory.getViewportBasedAlphaBoard(game.getWidth(), game.getHeight()), 
+                game.getTextureConfig().getHistoryAreaVMBackgroundDrawable(),
                 new LayoutConfig(TagManageSlotVM.NODE_WIDTH, TagManageSlotVM.NODE_HEIGHT, 8.0f, false)
                 );
         this.doneButton = new TextButton("返回", game.getMainSkin());

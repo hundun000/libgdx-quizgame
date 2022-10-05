@@ -28,6 +28,7 @@ public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
             ) {
         super(game, 
                 DrawableFactory.getViewportBasedAlphaBoard(game.getWidth(), game.getHeight()), 
+                game.getTextureConfig().getHistoryAreaVMBackgroundDrawable(),
                 new LayoutConfig(TeamNodeVM.NODE_WIDTH, TeamNodeVM.NODE_HEIGHT, 2.5f, false));
         this.callback = callback;
         

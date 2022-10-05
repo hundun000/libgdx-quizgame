@@ -8,8 +8,12 @@ import java.util.Set;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.SystemSetting;
 import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler.ISubSystemSettingHandler;
@@ -37,6 +41,7 @@ public class TextureConfig implements ISubSystemSettingHandler {
         protected final TextureAtlas maskTextureAtlas;
         protected final TextureAtlas animationsTextureAtlas;
         protected final TextureAtlas playScreenUITextureAtlas;
+        public final Drawable historyAreaVMBackgroundDrawable;
         
         
         EnvPackage(String ENV) {
@@ -58,7 +63,11 @@ public class TextureConfig implements ISubSystemSettingHandler {
             prepareScreenBackground = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_PREPARE);
             playScreenBackground = screensTextureAtlas.findRegion(TextureAtlasKeys.SCREEN_PLAY);
             
-            
+            NinePatch testNinePatch = new NinePatch(
+                    textureOrDefault(Gdx.files.internal("testNinePatch.png")),
+                    8, 8, 8, 8
+                    ); 
+            historyAreaVMBackgroundDrawable = new NinePatchDrawable(testNinePatch);
         }
         
         private Texture textureOrDefault(FileHandle file) {
@@ -158,5 +167,9 @@ public class TextureConfig implements ISubSystemSettingHandler {
     
     public Texture getTempAnimationSheet() {
         return packageMap.get(currentEnv).tempAnimationSheet;
+    }
+
+    public Drawable getHistoryAreaVMBackgroundDrawable() {
+        return packageMap.get(currentEnv).historyAreaVMBackgroundDrawable;
     }
 }

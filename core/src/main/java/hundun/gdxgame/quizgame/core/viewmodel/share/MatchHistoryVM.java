@@ -67,7 +67,7 @@ public class MatchHistoryVM extends Table {
         
         public TeamScorePairSlotVM(QuizGdxGame game) {
             this.game = game;
-            this.setBackground(DrawableFactory.getSimpleBoardBackground());
+            this.setBackground(game.getTextureConfig().getHistoryAreaVMBackgroundDrawable());
         }
         
         public void update(String name, Integer score) {

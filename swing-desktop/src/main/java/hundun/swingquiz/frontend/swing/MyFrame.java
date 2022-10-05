@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -292,7 +294,10 @@ public class MyFrame extends JFrame implements ISecondEventReceiver, IFrontEnd {
         String actualPath = "../assets/" + folderName;
         File folder = new File(actualPath);
         System.out.println("fileGetChilePathNames folder " + folder.getAbsolutePath() + ", exist = " + folder.exists());
-        String[] result = folder.list();
+        String[] result = Stream.of(folder.list())
+                .filter(it -> !it.equals(QuestionLoaderService.FOLDER_CHILD_HINT_FILE_NAME))
+                .collect(Collectors.toList())
+                .toArray(new String[0]);
         System.out.println("fileGetChilePathNames result = " + Arrays.toString(result));
         return result;
     }

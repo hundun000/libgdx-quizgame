@@ -11,6 +11,7 @@ import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
 import hundun.quizlib.context.IFrontEnd;
 import hundun.quizlib.context.QuizComponentContext;
 import hundun.quizlib.exception.QuizgameException;
+import hundun.quizlib.service.QuestionLoaderService;
 import lombok.Getter;
 
 /**
@@ -41,7 +42,7 @@ public class QuizLibBridge implements IFrontEnd, ISubGameSaveHandler{
     @Override
     public String[] fileGetChilePathNames(String folder) {  
         FileHandle file = Gdx.files.internal(folder);
-        FileHandle listFile = file.child("list.txt");
+        FileHandle listFile = file.child(QuestionLoaderService.FOLDER_CHILD_HINT_FILE_NAME);
         String listContent = fileGetContent(listFile.path());
         String[] result = listContent.split("\r?\n|\r");
         Gdx.app.log(this.getClass().getSimpleName(), "fileGetChilePathNames result = " + Arrays.toString(result));

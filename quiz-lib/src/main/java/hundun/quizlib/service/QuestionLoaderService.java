@@ -30,6 +30,7 @@ public class QuestionLoaderService implements IQuizComponent {
 	public static String PRELEASE_PACKAGE_NAME = "questions_small";
 	public static String TEST_PACKAGE_NAME = "questions_test";
 	public static String TEST_SMALL_PACKAGE_NAME = "questions_test_small";
+	public static String FOLDER_CHILD_HINT_FILE_NAME = "list.txt";
 	
 	public static final String TAGS_SPLIT = ";";
 	

@@ -28,6 +28,7 @@ public abstract class AbstractSelectPopoupVM<T extends Actor> extends Table {
     public AbstractSelectPopoupVM(
             QuizGdxGame game,
             Drawable background,
+            Drawable childTableBackground,
             LayoutConfig layoutConfig
             ) {
         this.game = game;
@@ -36,7 +37,7 @@ public abstract class AbstractSelectPopoupVM<T extends Actor> extends Table {
         //this.setBounds(0, 0, game.getWidth(), game.getHeight());
 
         childTable = new Table();
-        childTable.setBackground(DrawableFactory.getSimpleBoardBackground());
+        childTable.setBackground(childTableBackground);
         this.scrollPane = new ScrollPane(childTable, game.getMainSkin());
         scrollPane.setScrollingDisabled(!layoutConfig.horizontal, layoutConfig.horizontal);
         

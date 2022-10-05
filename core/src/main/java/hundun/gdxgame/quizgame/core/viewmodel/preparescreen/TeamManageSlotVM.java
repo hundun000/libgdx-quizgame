@@ -57,7 +57,7 @@ public class TeamManageSlotVM extends Table {
         this.add(changeTeamButton).grow().padRight(50);
         this.add(modifyTeamButton).grow();
         
-        this.setBackground(DrawableFactory.getViewportBasedAlphaBoard(1, 1));
+        this.setBackground(game.getTextureConfig().getHistoryAreaVMBackgroundDrawable());
     }
     
     public void updateData(TeamPrototype data) {

@@ -23,7 +23,7 @@ public class MatchStrategyInfoVM extends Table {
     public MatchStrategyInfoVM(QuizGdxGame game) {
         this.nameLabel = new Label("TEMP", game.getMainSkin());
         this.labelMap = new Label[MAP_LINE_SIZE][2];
-        this.setBackground(DrawableFactory.getViewportBasedAlphaBoard(1, 1));
+        this.setBackground(game.getTextureConfig().getHistoryAreaVMBackgroundDrawable());
         
         labelMap[0][0] = new Label("每题时间限制：", game.getMainSkin());
         labelMap[1][0] = new Label("每局答题总数限制：", game.getMainSkin());

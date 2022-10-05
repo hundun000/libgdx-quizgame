@@ -32,7 +32,7 @@ public class MatchStrategySelectVM extends Table {
     public MatchStrategySelectVM(QuizGdxGame game, IMatchStrategyChangeListener slotNumListener) {
         this.game = game;
         this.slotNumListener = slotNumListener;
-        this.setBackground(DrawableFactory.getSimpleBoardBackground());
+        this.setBackground(game.getTextureConfig().getHistoryAreaVMBackgroundDrawable());
 
         initUI(JavaFeatureForGwt.arraysAsList(MatchStrategyType.PRE, MatchStrategyType.MAIN));
         

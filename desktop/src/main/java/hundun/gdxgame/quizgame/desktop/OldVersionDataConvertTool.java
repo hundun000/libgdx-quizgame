@@ -56,7 +56,7 @@ public class OldVersionDataConvertTool {
             System.out.println(file.getName() + " -> " + newQuestionFileName);
         }
         
-        PrintWriter writer = new PrintWriter("OldVersionDataConvert/new/questions/list.txt", "UTF-8");
+        PrintWriter writer = new PrintWriter("OldVersionDataConvert/new/questions/" + QuestionLoaderService.FOLDER_CHILD_HINT_FILE_NAME, "UTF-8");
         newQuestionFileNames.forEach(line -> writer.println(line));
         writer.close();
         

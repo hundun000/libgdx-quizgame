@@ -321,7 +321,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
             
             teamInfoBoardVM = new TeamInfoBoardVM(
                     game,
-                    DrawableFactory.getViewportBasedAlphaBoard(10,10)
+                    game.getTextureConfig().getHistoryAreaVMBackgroundDrawable()
                     );
             teamInfoBoardVM.setBounds(1100, 600, 350, 280);
             uiRootTable.addActor(teamInfoBoardVM);

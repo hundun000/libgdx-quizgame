@@ -65,6 +65,7 @@ public class TagManageSlotVM extends Table {
         this.add(normalCheckBox).padRight(20);
         this.add(pickedCheckBox).padRight(20);
         this.add(bannedCheckBox);
+        this.setBackground(game.getTextureConfig().getHistoryAreaVMBackgroundDrawable());
     }
     
     public void updateData(String tag, TeamPrototype currenTeamPrototype) {

@@ -39,6 +39,7 @@ public class TeamNodeVM extends Table {
         
         this.add(label).padRight(50);
         this.add(banpickInfoGroup);
+        this.setBackground(game.getTextureConfig().getHistoryAreaVMBackgroundDrawable());
         
         updateData(teamPrototype);
     }

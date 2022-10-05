@@ -1,0 +1,8 @@
+### from https://www.mgsx.net/html5-libgdx-tutorial
+
+But what is this refresh button which doesn’t work ? Actually distribution contains all dev/debug stuff we don’t want for production, that’s why we removed the WEB-INF folder but we need to tweak things a little more :
+
+edit the index.html file and remove the button (the ugly a tag)
+remove the refresh.png file
+edit the style.css file and remove all superdev classes.
+Refresh the webpage, it should be better.

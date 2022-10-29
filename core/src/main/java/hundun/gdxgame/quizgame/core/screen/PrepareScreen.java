@@ -27,7 +27,7 @@ import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.ToPlayScreenButtonVM
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.MatchStrategySelectVM.IMatchStrategyChangeListener;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.TagSelectPopoupVM;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.popup.TeamSelectPopoupVM;
-import hundun.gdxgame.share.base.BaseHundunScreen;
+import hundun.gdxgame.corelib.base.BaseHundunScreen;
 import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.match.MatchConfig;

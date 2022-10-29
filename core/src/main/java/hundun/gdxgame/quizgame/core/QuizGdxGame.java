@@ -8,8 +8,8 @@ import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler;
 import hundun.gdxgame.quizgame.core.domain.QuizViewModelContext;
 import hundun.gdxgame.quizgame.core.screen.QuizMenuScreen;
-import hundun.gdxgame.share.base.BaseHundunGame;
-import hundun.gdxgame.share.base.util.save.ISaveTool;
+import hundun.gdxgame.corelib.base.BaseHundunGame;
+import hundun.gdxgame.corelib.base.util.save.ISaveTool;
 import lombok.Getter;
 
 public class QuizGdxGame extends BaseHundunGame<QuizRootSaveData> {

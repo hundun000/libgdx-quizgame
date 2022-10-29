@@ -3,6 +3,6 @@
 <module>
     <source path="hundun/gdxgame/quizgame/core" />
     <source path="hundun/gdxgame/quizgame/html" />
-    <source path="hundun/gdxgame/share" />
+    <source path="hundun/gdxgame/corelib" />
     <source path="hundun/quizlib" />
 </module>

@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.SystemSetting;
 import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler.ISubSystemSettingHandler;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
+import hundun.gdxgame.corelib.base.util.JavaFeatureForGwt;
 
 public class TextureConfig implements ISubSystemSettingHandler {
     public static String DEFAULT_ENV = "pro";

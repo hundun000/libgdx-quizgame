@@ -7,7 +7,7 @@ import com.badlogic.gdx.files.FileHandle;
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.MyGameSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizSaveHandler.ISubGameSaveHandler;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
+import hundun.gdxgame.corelib.base.util.JavaFeatureForGwt;
 import hundun.quizlib.context.IFrontEnd;
 import hundun.quizlib.context.QuizComponentContext;
 import hundun.quizlib.exception.QuizgameException;

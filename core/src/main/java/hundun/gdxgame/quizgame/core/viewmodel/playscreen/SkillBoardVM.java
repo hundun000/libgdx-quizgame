@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
+import hundun.gdxgame.corelib.base.util.JavaFeatureForGwt;
 import hundun.quizlib.prototype.RolePrototype;
 import hundun.quizlib.prototype.skill.SkillSlotPrototype;
 import hundun.quizlib.view.role.RoleRuntimeView;

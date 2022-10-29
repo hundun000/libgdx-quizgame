@@ -8,7 +8,7 @@ import com.badlogic.gdx.Gdx;
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.MyGameSaveData;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData.SystemSetting;
-import hundun.gdxgame.share.base.AbstractSaveHandler;
+import hundun.gdxgame.corelib.base.AbstractSaveHandler;
 
 /**
  * @author hundun

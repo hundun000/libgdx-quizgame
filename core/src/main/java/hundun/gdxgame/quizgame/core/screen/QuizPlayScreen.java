@@ -31,10 +31,10 @@ import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.PauseNotification
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.QuestionResultAnimationVM;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.SkillAnimationVM;
 import hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup.TeamSwitchAnimationVM;
-import hundun.gdxgame.share.base.BaseHundunScreen;
-import hundun.gdxgame.share.base.LogicFrameHelper;
-import hundun.gdxgame.share.base.util.DrawableFactory;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
+import hundun.gdxgame.corelib.base.BaseHundunScreen;
+import hundun.gdxgame.corelib.base.LogicFrameHelper;
+import hundun.gdxgame.corelib.base.util.DrawableFactory;
+import hundun.gdxgame.corelib.base.util.JavaFeatureForGwt;
 import hundun.quizlib.exception.QuizgameException;
 import hundun.quizlib.model.domain.QuestionModel;
 import hundun.quizlib.prototype.TeamPrototype;

@@ -16,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TeamManageAreaVM.ICallerAndCallback;
-import hundun.gdxgame.share.base.util.DrawableFactory;
+import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.quizlib.prototype.TeamPrototype;
 import lombok.Getter;
 

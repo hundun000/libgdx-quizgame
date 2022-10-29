@@ -6,14 +6,14 @@ import com.github.nmorel.gwtjackson.client.ObjectMapper;
 import com.google.gwt.core.client.GWT;
 
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
-import hundun.gdxgame.share.base.util.save.AbstractSaveDataSaveTool;
+import hundun.gdxgame.corelib.base.util.save.AbstractSaveDataSaveTool;
 
 
 /**
  * @author hundun
  * Created on 2021/11/10
  */
-public class GwtPreferencesSaveTool extends AbstractSaveDataSaveTool {
+public class GwtPreferencesSaveTool extends AbstractSaveDataSaveTool<QuizRootSaveData> {
 
     
     private SaveDataMapper objectMapper;

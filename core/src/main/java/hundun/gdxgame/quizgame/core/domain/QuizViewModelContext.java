@@ -6,8 +6,8 @@ import hundun.gdxgame.quizgame.core.screen.HistoryScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizMenuScreen;
 import hundun.gdxgame.quizgame.core.screen.QuizPlayScreen;
 import hundun.gdxgame.quizgame.core.screen.PrepareScreen;
-import hundun.gdxgame.share.base.BaseHundunScreen;
-import hundun.gdxgame.share.base.BaseViewModelContext;
+import hundun.gdxgame.corelib.base.BaseHundunScreen;
+import hundun.gdxgame.corelib.base.BaseViewModelContext;
 
 /**
  * @author hundun

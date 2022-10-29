@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.viewmodel.preparescreen.TagManageSlotVM;
-import hundun.gdxgame.share.base.util.DrawableFactory;
+import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.quizlib.prototype.TeamPrototype;
 
 /**

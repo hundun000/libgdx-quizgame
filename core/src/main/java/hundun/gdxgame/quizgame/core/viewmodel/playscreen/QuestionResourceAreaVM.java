@@ -27,8 +27,8 @@ import com.badlogic.gdx.utils.Scaling;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
-import hundun.gdxgame.share.base.util.DrawableFactory;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt.NumberFormat;
+import hundun.gdxgame.corelib.base.util.DrawableFactory;
+import hundun.gdxgame.corelib.base.util.JavaFeatureForGwt.NumberFormat;
 import hundun.quizlib.prototype.question.ResourceType;
 import hundun.quizlib.view.question.QuestionView;
 

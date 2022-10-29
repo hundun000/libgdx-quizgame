@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
-import hundun.gdxgame.share.base.util.save.AbstractSaveDataSaveTool;
+import hundun.gdxgame.corelib.base.util.save.AbstractSaveDataSaveTool;
 
 
 
@@ -15,7 +15,7 @@ import hundun.gdxgame.share.base.util.save.AbstractSaveDataSaveTool;
  * @author hundun
  * Created on 2021/11/10
  */
-public class DesktopPreferencesSaveTool extends AbstractSaveDataSaveTool {
+public class DesktopPreferencesSaveTool extends AbstractSaveDataSaveTool<QuizRootSaveData> {
     
     private ObjectMapper objectMapper;
     

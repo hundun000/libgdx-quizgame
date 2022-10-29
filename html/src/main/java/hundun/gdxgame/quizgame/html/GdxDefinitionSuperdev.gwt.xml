@@ -9,6 +9,8 @@
     <inherits name='com.crashinvaders.vfx.GdxVfxGwt' />
     <inherits name='com.crashinvaders.vfx.GdxVfxEffects' />
     
+    <inherits name='hundun.gdxgame.corelib.HundunLibCorelib' />
+    
     <inherits name='HtmlApp' />
     <entry-point class='hundun.gdxgame.quizgame.html.client.HtmlLauncher' />
 	

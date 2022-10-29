@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.config.TextureAtlasKeys;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
+import hundun.gdxgame.corelib.base.util.JavaFeatureForGwt;
 import hundun.quizlib.prototype.TeamPrototype;
 import hundun.quizlib.prototype.match.MatchStrategyType;
 import hundun.quizlib.view.team.TeamRuntimeView;

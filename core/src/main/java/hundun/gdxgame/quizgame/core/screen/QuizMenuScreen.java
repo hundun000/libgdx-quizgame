@@ -13,10 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.gdxgame.quizgame.core.domain.QuizRootSaveData;
-import hundun.gdxgame.share.base.BaseHundunGame;
-import hundun.gdxgame.share.base.BaseHundunScreen;
-import hundun.gdxgame.share.base.util.JavaFeatureForGwt;
-import hundun.gdxgame.share.starter.StarterMenuScreen;
+import hundun.gdxgame.corelib.base.BaseHundunGame;
+import hundun.gdxgame.corelib.base.BaseHundunScreen;
+import hundun.gdxgame.corelib.base.util.JavaFeatureForGwt;
+import hundun.gdxgame.corelib.starter.StarterMenuScreen;
 
 /**
  * @author hundun

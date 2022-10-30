@@ -77,7 +77,7 @@ public class TeamManageAreaVM extends Table {
                 .collect(Collectors.toList());
     }
 
-    public void onTeamWantChange(TeamManageSlotVM teamSlotVM) {
+    public void onTeamWantChangeOrModify(TeamManageSlotVM teamSlotVM) {
         this.operatingSlotVM = teamSlotVM;
     }
 

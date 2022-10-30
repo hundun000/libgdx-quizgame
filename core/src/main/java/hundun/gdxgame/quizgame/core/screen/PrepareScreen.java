@@ -195,12 +195,13 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
 
     @Override
     public void onTeamWantChange(TeamManageSlotVM teamSlotVM) {
-        teamManageAreaVM.onTeamWantChange(teamSlotVM);
+        teamManageAreaVM.onTeamWantChangeOrModify(teamSlotVM);
         callShowTeamSelectPopoup();
     }
     @Override
     public void onTeamWantModify(TeamManageSlotVM teamSlotVM) {
         try {
+            teamManageAreaVM.onTeamWantChangeOrModify(teamSlotVM);
             callShowTagSelectPopoup(teamSlotVM.getData(), questionService.getTags(currentQuestionPackageName));
         } catch (QuizgameException e) {
             Gdx.app.error(this.getClass().getSimpleName(), e.getClass().getSimpleName() + ": " + e.getMessage());

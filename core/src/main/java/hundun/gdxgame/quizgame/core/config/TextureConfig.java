@@ -39,10 +39,10 @@ public class TextureConfig implements ISubSystemSettingHandler {
 
 
         protected final TextureAtlas maskTextureAtlas;
-        protected final TextureAtlas animationsTextureAtlas;
+        protected final TextureAtlas playScreenAnimationsTextureAtlas;
         protected final TextureAtlas playScreenUITextureAtlas;
         public final Drawable historyAreaVMBackgroundDrawable;
-        
+        protected final TextureAtlas skillAnimationsTextureAtlas;
         
         EnvPackage(String ENV) {
             this.ENV = ENV;
@@ -51,10 +51,10 @@ public class TextureConfig implements ISubSystemSettingHandler {
             
             tempAnimationSheet = textureOrDefault(Gdx.files.internal("sprite-animation4.png"));
             
-            animationsTextureAtlas = new TextureAtlas(fileOrDefault("playScreenAnimation.atlas"));
+            playScreenAnimationsTextureAtlas = new TextureAtlas(fileOrDefault("playScreenAnimation.atlas"));
             maskTextureAtlas = new TextureAtlas(fileOrDefault("maskUI.atlas"));
             playScreenUITextureAtlas = new TextureAtlas(fileOrDefault("playScreenUI.atlas"));
-            
+            skillAnimationsTextureAtlas = new TextureAtlas(fileOrDefault("skillAnimation.atlas"));
             
             
             TextureAtlas screensTextureAtlas = new TextureAtlas(fileOrDefault("screens.atlas"));
@@ -157,17 +157,21 @@ public class TextureConfig implements ISubSystemSettingHandler {
         //systemSetting.setEnv(currentEnv);
     }
     
-    public TextureAtlas getAnimationsTextureAtlas() {
-        return packageMap.get(currentEnv).animationsTextureAtlas;
+    public TextureAtlas getPlayScreenAnimationsTextureAtlas() {
+        return packageMap.get(currentEnv).playScreenAnimationsTextureAtlas;
+    }
+    
+    public TextureAtlas getSkillAnimationsTextureAtlas() {
+        return packageMap.get(currentEnv).skillAnimationsTextureAtlas;
     }
     
     public TextureAtlas getPlayScreenUITextureAtlas() {
         return packageMap.get(currentEnv).playScreenUITextureAtlas;
     }
     
-    public Texture getTempAnimationSheet() {
-        return packageMap.get(currentEnv).tempAnimationSheet;
-    }
+//    public Texture getTempAnimationSheet() {
+//        return packageMap.get(currentEnv).tempAnimationSheet;
+//    }
 
     public Drawable getHistoryAreaVMBackgroundDrawable() {
         return packageMap.get(currentEnv).historyAreaVMBackgroundDrawable;

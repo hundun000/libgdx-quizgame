@@ -1,5 +1,6 @@
 package hundun.gdxgame.quizgame.core.viewmodel.playscreen.popup;
 
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import hundun.gdxgame.quizgame.core.QuizGdxGame;
 import hundun.quizlib.prototype.event.SkillResultEvent;
@@ -37,10 +38,11 @@ public class SkillAnimationVM extends AbstractAnimationVM<SkillResultEvent> {
     @Override
     public void callShow(SkillResultEvent skillResultEvent) {
 
-        // Initialize the Animation with the frame interval and array of frames
-        setAnimation(aminationFactory(0.025f, 
-                game.getTextureConfig().getTempAnimationSheet(), 
-                FRAME_COLS, FRAME_ROWS
+        // TODO different animations by skillName
+        setAnimation(aminationFactory( 
+                game.getTextureConfig().getSkillAnimationsTextureAtlas(), 
+                "skill",
+                0.75f, PlayMode.NORMAL
                 ));
         resultLable.setText(skillResultEvent.getSkillName() + "\n" + skillResultEvent.getSkillDesc());
         

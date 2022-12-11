@@ -66,7 +66,11 @@ public class TeamManageAreaVM extends Table {
     }
 
     public List<String> getSelectedTeamNames() {
-        return teamSlotVMs.stream().map(it -> it.getData().getName()).collect(Collectors.toList());
+        return teamSlotVMs.stream()
+                .filter(it -> it.getData() != null)
+                .map(it -> it.getData().getName())
+                .collect(Collectors.toList())
+                ;
     }
 
     public List<String> updateWaitChangeDone(TeamPrototype teamPrototype) {

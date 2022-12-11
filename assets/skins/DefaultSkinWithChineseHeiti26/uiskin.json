@@ -52,8 +52,8 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle": {
 	"default": {
-		"up": "default-round",
-		"down": "default-round-down"
+		"up": "button2_rounded_CC",
+		"down": "button2_rounded_CC_down"
 	},
 	"toggle": {
 		"up": "default-round",
@@ -69,15 +69,28 @@
 		"fontColor": "white"
 	}
 },
+"com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle": {
+	"default": {
+		"imageUp": "button2_rounded_CC",
+		"imageDown": "button2_rounded_CC_down"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle": {
+	"default": {
+		"imageUp": "button2_rounded_CC",
+		"imageDown": "button2_rounded_CC_down",
+		"font": "heiti26white"
+	}
+},
 "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
 	"default": {
 		"font": "heiti26white",
 		"fontColor": "black"
 	},
 	"whiteType": {
-        "font": "heiti26white",
-        "fontColor": "white"
-    }
+		"font": "heiti26white",
+		"fontColor": "white"
+	}
 },
 "com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
 	"default": {
@@ -136,9 +149,9 @@
 "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
 	"default": {
 		"font": "heiti26white",
-		"fontColor": "white",
-		"up": "default-round",
-		"down": "default-round-down"
+		"fontColor": "black",
+		"up": "button2_rounded_CC",
+		"down": "button2_rounded_CC_down"
 	},
 	"toggle": {
 		"font": "default-font",

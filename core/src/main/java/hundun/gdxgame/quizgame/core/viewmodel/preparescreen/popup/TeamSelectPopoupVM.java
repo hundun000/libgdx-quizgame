@@ -59,8 +59,9 @@ public class TeamSelectPopoupVM extends AbstractSelectPopoupVM<TeamNodeVM> {
         void onTeamSelectDone(TeamPrototype teamPrototype);
     }
 
-    public void callShow(List<TeamPrototype> teamPrototypes) {
+    public void callShow(List<TeamPrototype> teamPrototypes, List<String> selectedTeamNames) {
         List<TeamNodeVM> candidateVMs = teamPrototypes.stream()
+                .filter(teamPrototype -> !selectedTeamNames.contains(teamPrototype.getName()))
                 .map(teamPrototype -> {
                     TeamNodeVM teamNodeVM = new TeamNodeVM(game, teamPrototype);
                     teamNodeVM.addListener(new TeamSelectClickListener(callback, teamNodeVM));

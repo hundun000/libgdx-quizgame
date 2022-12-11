@@ -277,6 +277,7 @@ public class QuizPlayScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDa
 
         private void handelExitAsFinishMatch(MatchHistoryDTO history) {
             exitClear();
+            game.gameSaveCurrent();
             game.getScreenManager().pushScreen(HistoryScreen.class.getSimpleName(), 
                     "blending_transition",
                     history

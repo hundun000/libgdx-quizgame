@@ -28,7 +28,7 @@ public class GeneralDelayAnimationVM extends AbstractAnimationVM<Float> {
     @Override
     public void callShow(Float second) {
         Animation<Drawable> animation = aminationFactoryBySumTime(
-                game.getTextureConfig().getAnimationsTextureAtlas(), 
+                game.getTextureConfig().getPlayScreenAnimationsTextureAtlas(), 
                 "delay", 
                 second, 
                 PlayMode.NORMAL

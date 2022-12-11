@@ -30,18 +30,18 @@ public class QuestionResultAnimationVM extends AbstractAnimationVM<AnswerResultE
         Animation<Drawable> animation;
         if (answerResultEvent.getResult() == AnswerType.CORRECT) {
             animation = aminationFactory(
-                    game.getTextureConfig().getAnimationsTextureAtlas(), 
+                    game.getTextureConfig().getPlayScreenAnimationsTextureAtlas(), 
                     "break", 0.25f, PlayMode.REVERSED
                     ); 
         } else if (answerResultEvent.getResult() == AnswerType.WRONG 
                 || answerResultEvent.getResult() == AnswerType.SKIPPED) {
             animation = aminationFactory(
-                    game.getTextureConfig().getAnimationsTextureAtlas(), 
+                    game.getTextureConfig().getPlayScreenAnimationsTextureAtlas(), 
                     "continue", 0.25f, PlayMode.REVERSED
                     );
         } else if (answerResultEvent.getResult() == AnswerType.TIMEOUOT_WRONG) {
             animation = aminationFactory(
-                    game.getTextureConfig().getAnimationsTextureAtlas(), 
+                    game.getTextureConfig().getPlayScreenAnimationsTextureAtlas(), 
                     "timeout", 0.25f, PlayMode.REVERSED
                     );
         } else {

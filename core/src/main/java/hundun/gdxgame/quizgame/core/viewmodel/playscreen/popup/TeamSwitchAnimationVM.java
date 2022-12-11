@@ -31,7 +31,7 @@ public class TeamSwitchAnimationVM extends AbstractAnimationVM<SwitchTeamEvent> 
 
         // Initialize the Animation with the frame interval and array of frames
         setAnimation(aminationFactory(
-                game.getTextureConfig().getAnimationsTextureAtlas(), 
+                game.getTextureConfig().getPlayScreenAnimationsTextureAtlas(), 
                 "teamSwitch", 0.25f, PlayMode.REVERSED
                 ));
         resultLable.setText(switchTeamEvent.getToTeamName());

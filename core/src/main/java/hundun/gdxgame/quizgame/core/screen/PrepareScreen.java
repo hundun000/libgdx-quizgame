@@ -85,6 +85,9 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
+                
+                game.gameSaveCurrent();
+                
                 MatchConfig matchConfig = new MatchConfig();
                 matchConfig.setTeamNames(selectedTeamNames);
                 matchConfig.setQuestionPackageName(currentQuestionPackageName);
@@ -162,6 +165,7 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     super.clicked(event, x, y);
+                    game.gameSaveCurrent();
                     game.getScreenManager().pushScreen(QuizMenuScreen.class.getSimpleName(), 
                             "blending_transition"
                             );
@@ -216,7 +220,7 @@ public class PrepareScreen extends BaseHundunScreen<QuizGdxGame, QuizRootSaveDat
         popupUiStage.setScrollFocus(teamSelectPopoupVM.getScrollPane());
         Gdx.input.setInputProcessor(popupUiStage);
         // --- logic ---
-        teamSelectPopoupVM.callShow(teamService.listTeams());
+        teamSelectPopoupVM.callShow(teamService.listTeams(), teamManageAreaVM.getSelectedTeamNames());
     }
 
     @Override

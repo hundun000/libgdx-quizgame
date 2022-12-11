@@ -1,0 +1,34 @@
+
+skillAnimation.png
+size: 2048, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+skill
+  rotate: false
+  xy: 2, 404
+  size: 800, 400
+  orig: 800, 400
+  offset: 0, 0
+  index: 0
+skill
+  rotate: false
+  xy: 2, 2
+  size: 800, 400
+  orig: 800, 400
+  offset: 0, 0
+  index: 2
+skill
+  rotate: false
+  xy: 2, 2
+  size: 800, 400
+  orig: 800, 400
+  offset: 0, 0
+  index: 3
+skill
+  rotate: false
+  xy: 804, 404
+  size: 800, 400
+  orig: 800, 400
+  offset: 0, 0
+  index: 1

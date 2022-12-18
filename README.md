@@ -2,6 +2,8 @@
 
 一个答题游戏（一站到底）。含有libgdx框架实现的桌面端和网页端。或许还可将其中的答题业务逻辑复用于其他项目，获得不同的前端实现。
 
+- [在线游玩](https://hundun.itch.io/zaca-quiz-libgdx)
+
 ![](./docs/1.png)
 
 # 项目结构
@@ -14,6 +16,7 @@
 
 # 其他
 
+- [Unity-quizgame项目](https://github.com/hundun000/Unity-quizgame)。相同内容的Unity实现，翻译自本项目。
 - [StillStanding项目](https://github.com/hundun000/StillStanding)。曾经的桌面端+lib实现，使用GMS游戏引擎。
 - [quizgame-server项目](https://github.com/hundun000/quizgame)。曾经的Server端+lib实现，使用SpringBoot。
 
